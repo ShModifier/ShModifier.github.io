@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/%E9%A1%B6%E9%83%A8%E5%A4%A7%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-02-23T13:25:15.000Z">
-<meta property="article:modified_time" content="2023-02-23T15:23:31.513Z">
+<meta property="article:modified_time" content="2023-02-23T15:30:18.326Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary_large_image">
@@ -234,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.4k 字
+          1.3k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
         
-          12 分钟
+          11 分钟
         
       </span>
     
@@ -291,11 +291,11 @@
                 <p>遇到的一些奇怪问题和修改主题页面的经验✂️</p>
 <span id="more"></span>
 
-<h3 id="奇怪问题"><a href="#奇怪问题" class="headerlink" title="奇怪问题"></a>奇怪问题</h3><h5 id="插入图片坑"><a href="#插入图片坑" class="headerlink" title="插入图片坑"></a>插入图片坑</h5><p>在最开始写博客的时候，千挑万选找了张美图准备当封面，复制文件地址插入。<code>hexo g</code> <code>hexo s</code>本地预览一切正常，<code>hexo d</code>一条龙推上去发现图片被和谐掉了（<del>不是</del>）</p>
+<h2 id="奇怪问题"><a href="#奇怪问题" class="headerlink" title="奇怪问题"></a>奇怪问题</h2><h4 id="插入图片坑"><a href="#插入图片坑" class="headerlink" title="插入图片坑"></a>插入图片坑</h4><p>在最开始写博客的时候，千挑万选找了张美图准备当封面，复制文件地址插入。<code>hexo g</code> <code>hexo s</code>本地预览一切正常，<code>hexo d</code>一条龙推上去发现图片被和谐掉了（<del>不是</del>）</p>
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_20-13-07.png" srcset="/img/loading.gif" lazyload></p>
-<p>前去万能的互联网寻找了一下答案，有的说写文章的时候要建一个同名文件夹放图片，有的说要安装插件。C:\Users\86155\blog\source\img\Hexo使用记录</p>
+<p>前去万能的互联网寻找了一下答案，有的说写文章的时候要建一个同名文件夹放图片，有的说要安装插件。</p>
 <p>我当然是选择建文件夹这个更简单的操作。</p>
-<p>在配置文件**_config.yml**里找到<code>post_asset_folder</code>，把false改为true，再次<code>hexo new</code>就建好.md文件和文件夹了。经过本人一顿Ctrl+C和Ctrl+V的操作把原文件和图片移到新的文件，充满信心地再次<code>hexo g</code> <code>hexo d</code></p>
+<p>在配置文件_config.yml里找到<strong>post_asset_folder</strong>，把false改为true，再次<code>hexo new</code>就建好.md文件和文件夹了。经过本人一顿Ctrl+C和Ctrl+V的操作把原文件和图片移到新的文件，充满信心地再次<code>hexo g</code> <code>hexo d</code></p>
 <p>还是不显示图片</p>
 <p>好的😢<del>一定是图片它真的违禁了</del></p>
 <p>当我再次在互联网搜索时，我发现了一个华点</p>
@@ -304,7 +304,7 @@
 <p>我尝试着修改之后再次<code>hexo d</code></p>
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_20-30-47.png" srcset="/img/loading.gif" lazyload></p>
 <p>就这么成功了🤨</p>
-<h5 id="Spawn-failed坑"><a href="#Spawn-failed坑" class="headerlink" title="Spawn failed坑"></a>Spawn failed坑</h5><p>美滋滋发了一篇笔记上来，发现格式有bug，抓紧时间修改。修改之后再次丝滑一条龙上传······</p>
+<h4 id="Spawn-failed坑"><a href="#Spawn-failed坑" class="headerlink" title="Spawn failed坑"></a>Spawn failed坑</h4><p>美滋滋发了一篇笔记上来，发现格式有bug，抓紧时间修改。修改之后再次丝滑一条龙上传······</p>
 <p>没丝滑成功</p>
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_20-07-25.png" srcset="/img/loading.gif" lazyload></p>
 <p>报错喽🥳<del>我面容平和根本就没有在生气</del></p>
@@ -312,7 +312,7 @@
 <p>看到一条说因为git 进行<code>push</code>或者<code>hexo d</code>的时候改变了一些**.deploy_git**文件下的内容，只需要重新down一下就行。</p>
 <p>于是删除.deploy_git文件夹，再次<code>hexo c</code> <code>hexo g</code> <code>hexo d</code>。出现了一个新的.deploy_git文件！</p>
 <p>依旧报错🥀</p>
-<p>又继续冲浪找解决方案，又看到一条说要在**_config.yml<strong>文件里把</strong>repo<strong>地址改成git地址。我早就改过了但是我发现这个人的</strong>deploy<strong>条目比我多一个</strong>branch**。</p>
+<p>又继续冲浪找解决方案，又看到一条说要在_config.yml文件里把<strong>repo</strong>地址改成git地址。我早就改过了但是我发现这个人的<strong>deploy</strong>条目比我多一个<strong>branch</strong>。</p>
 <p>秉承着不错过任何一个细节的态度我在自己的文件里也加上了这条并认真填入master。</p>
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_21-11-55.png" srcset="/img/loading.gif" lazyload></p>
 <p>保存，<code>hexo d</code>，加载成功？？？</p>
@@ -322,7 +322,7 @@
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_21-17-43.png" srcset="/img/loading.gif" lazyload></p>
 <p>我脑海中的小灯泡突然就亮了，我回到浏览器看自己的博客，格式已经修改过来了，也就是说那次眼花是真的推上去了。</p>
 <p>Github你不要太荒谬😅</p>
-<h3 id="修改主题配置"><a href="#修改主题配置" class="headerlink" title="修改主题配置"></a>修改主题配置</h3><h5 id="页脚版权声明"><a href="#页脚版权声明" class="headerlink" title="页脚版权声明"></a>页脚版权声明</h5><p>原本的主题页脚，姐不喜欢，这个爱心太不符合姐Bking的人设了。</p>
+<h2 id="修改主题配置"><a href="#修改主题配置" class="headerlink" title="修改主题配置"></a>修改主题配置</h2><h4 id="页脚版权声明"><a href="#页脚版权声明" class="headerlink" title="页脚版权声明"></a>页脚版权声明</h4><p>原本的主题页脚，姐不喜欢，这个爱心太不符合姐Bking的人设了。</p>
 <p><img src="/img/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/Snipaste_2023-02-23_22-35-37.png" srcset="/img/loading.gif" lazyload></p>
 <p>我想要有个人版权声明的页脚，经过学习掌握版权声明格式后我开始准备大改特改。</p>
 <p>凭借我只有一点知识的脑壳告诉我这种页面要用HTML来写。奈何肚子里墨水太少，只有图纸没有工具没法盖房子<del>（就是不会写代码）</del></p>
