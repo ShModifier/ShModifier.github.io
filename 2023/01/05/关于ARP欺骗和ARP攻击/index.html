@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="趁着寒假偷偷卷哈哈哈🤪">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于ARP欺骗和ARP攻击">
+<meta property="og:url" content="https://shmodifier.github.io/2023/01/05/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="趁着寒假偷偷卷哈哈哈🤪">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/%E5%B0%81%E9%9D%A2%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-01-05T15:40:09.000Z">
+<meta property="article:modified_time" content="2023-01-07T06:13:24.210Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="ARP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/%E5%B0%81%E9%9D%A2%E5%9B%BE.jpg">
+  
+  
+  
+  <title>关于ARP欺骗和ARP攻击 - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/%E5%B0%81%E9%9D%A2%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="关于ARP欺骗和ARP攻击"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-05 23:40" pubdate>
+          2023年1月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">关于ARP欺骗和ARP攻击</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>趁着寒假偷偷卷哈哈哈🤪</p>
+<span id="more"></span>
+
+<h3 id="ARP协议"><a href="#ARP协议" class="headerlink" title="ARP协议"></a>ARP协议</h3><p>地址解析协议，即ARP（Address Resolution Protocol），是根据IP地址获取物理地址的一个TCP&#x2F;IP协议。</p>
+<blockquote>
+<p>每一台主机都有一个arp高速缓存，里面有本局域网中的各主机和路由器的IP地址到硬件地址的映射表</p>
+</blockquote>
+<h4 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h4><p>主机A和主机B各自有自己的IP地址和MAC地址，在主机A与主机B通信时，ARP协议可将主机B的IP地址解析为MAC地址。</p>
+<p>第一步：</p>
+<p>主机A首先确定用于访问主机B的IP地址，然后主机A在自己的本地ARP缓存中检查主机B的IP地址匹配的MAC地址</p>
+<p>第二步：</p>
+<p>如果主机A在ARP缓存中没有找到主机B的IP映射，它将询问主机B对应的硬件地址，会将ARP请求帧广播到本地网络上的所有主机，主机A的IP地址和MAC地址都包括在ARP请求中。本地网络上的每台主机都接受到ARP请求并检查是否与自己的IP地址匹配。如果主机发现请求的IP地址以自己的IP地址不匹配，他将丢弃ARP请求。</p>
+<p><img src="/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/ARP1.png" srcset="/img/loading.gif" lazyload></p>
+<p>第三步：</p>
+<p>主机B确定AARP请求中的IP地址于自己的IP地址匹配，并将主机A的IP地址和MAC地址映射添加到本地ARP缓存中。</p>
+<p>第四步：</p>
+<p>主机B将包含MAC地址的ARP回复消息直接发送到主机A</p>
+<p><img src="/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/ARP2.png" srcset="/img/loading.gif" lazyload></p>
+<p>第五步：</p>
+<p>当主机A收到从主机B发来的ARP回复消息时，会使用主机B的IP地址和MAC地址映射更新ARP缓存。本机缓存是有生存期的，生存期结束，将再次重复上面的内容。主机B的MAC地址一旦确定，主机A就能向主机B发送IP通信了。</p>
+<h4 id="命令窗口玩转ARP"><a href="#命令窗口玩转ARP" class="headerlink" title="命令窗口玩转ARP"></a>命令窗口玩转ARP</h4><p>输入<code>arp</code>提示使用方法</p>
+<p><img src="/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/Snipaste_2023-01-04_18-08-45.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>这里一开始总是说“’ARP’不是可执行的程序”，凭我踩坑经验知道这是环境变量的问题。费尽千辛万苦发现是因为我的环境变量里居然没有system32🥲。但是输入path查看是有它的，不知道哪里出了问题，加上之后重启就好啦</p>
+</blockquote>
+<p>输入<code>arp -a</code>查看ARP缓存表信息</p>
+<p><img src="/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/Snipaste_2023-01-04_18-09-19.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><strong>静态</strong>地址即主机自己配置生成的地址。</p>
+<p>当主机新连接入一台设备，并且与主机产生通信后，aqp表会更新一条<strong>动态</strong>地址。</p>
+<h3 id="ARP攻击"><a href="#ARP攻击" class="headerlink" title="ARP攻击"></a>ARP攻击</h3><p>ARP攻击就是通过伪造IP地址和MAC地址的对应关系，使得网络无法正常通信。即修改靶机的IP地址和MAC地址，使其他设备与靶机的通信无法正常进行，进而截断靶机流量。</p>
+<blockquote>
+<p>可以直接使用arpspoof插件攻击</p>
+</blockquote>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">sudo arpspoof -<span class="hljs-selector-tag">i</span> eth0  -t <span class="hljs-selector-attr">[目标IP]</span> -r <span class="hljs-selector-attr">[网关]</span><br></code></pre></td></tr></table></figure>
+
+<p>这里”r”的用法没搞懂😣好像就是直接双向攻击</p>
+<p>Ctrl+C或关闭终端即停止攻击</p>
+<h3 id="ARP欺骗"><a href="#ARP欺骗" class="headerlink" title="ARP欺骗"></a>ARP欺骗</h3><p><del>听说ARP欺骗配合DNS欺骗效果更佳</del>🤨</p>
+<h5 id="可以用来干的坏事"><a href="#可以用来干的坏事" class="headerlink" title="可以用来干的坏事"></a>可以用来干的坏事</h5><ul>
+<li>获取浏览图片</li>
+<li>获取靶机各平台输入的账号密码</li>
+<li>获取浏览地址</li>
+</ul>
+<h5 id="行骗方法"><a href="#行骗方法" class="headerlink" title="行骗方法"></a>行骗方法</h5><h6 id="1-伪装成网关"><a href="#1-伪装成网关" class="headerlink" title="1.伪装成网关"></a>1.伪装成网关</h6><p>欺骗源把自己伪装成网关，向局域网内的目标主机发送ARP报文，使得局域网内的主机误以为欺骗源的MAC地址是网关MAC地址，并将原本应该流向网关的数据都发送到欺骗源。</p>
+<blockquote>
+<p>直接对靶机实施ARP欺骗</p>
+</blockquote>
+<h6 id="2-伪装成主机"><a href="#2-伪装成主机" class="headerlink" title="2.伪装成主机"></a>2.伪装成主机</h6><p>用来欺骗局域网内的其他所有主机</p>
+<p>欺骗源将自己伪装成局域网内的另一台主机3，将主机3的IP地址对应的MAC地址替换为欺骗元的IP地址对应的MAC地址使得局域网内靶机发往主机3的报文都流向欺骗源</p>
+<blockquote>
+<p>分别对网关和靶机实施ARP欺骗</p>
+</blockquote>
+<h3 id="操作步骤（行骗步骤）"><a href="#操作步骤（行骗步骤）" class="headerlink" title="操作步骤（行骗步骤）"></a>操作步骤<del>（行骗步骤）</del></h3><blockquote>
+<p>伪装成网关</p>
+</blockquote>
+<p>首先查看欺骗源和靶机的IP地址</p>
+<ul>
+<li><p>直接查看：kali命令窗口输入<code>ifconfig</code>，Windows命令窗口输入<code>ipconfig</code></p>
+</li>
+<li><p>正经方法：</p>
+<p>1.在kali命令窗口输入<code>fping -g xxx.xxx.xxx[网络号码].1/24</code>查询目标网络下的所有主机IP </p>
+<p>2.输入命令<code>nmap -sP xxx.xxx.xxx[网络号码].0/24</code>查询目标网络下的所有主机IP</p>
+</li>
+</ul>
+<p>输入命令<code>route-n</code>查看网关</p>
+<p>使用arpspoof行骗</p>
+<blockquote>
+<p>kali命令窗口输入sudo arpspoof -h查看已经安装的arpspoof版本号，如果未安装，系统会弹出提示，按照提示安装即可 </p>
+</blockquote>
+<p>断网操作</p>
+<p>把靶机发出的请求接受到攻击源主机，因为linux默认ip_forward为0，即不进行流量转发，所以靶机会断网</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">让靶机认为攻击源为网关：<br>sudo arpspoof -<span class="hljs-selector-tag">i</span> <span class="hljs-selector-attr">[网卡]</span> -t <span class="hljs-selector-attr">[目标IP]</span> <span class="hljs-selector-attr">[网关]</span><br></code></pre></td></tr></table></figure>
+
+<p>或者反向欺骗</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">让网关认为攻击源是靶机：<br>sudo arpspoof -<span class="hljs-selector-tag">i</span> <span class="hljs-selector-attr">[网卡]</span> -t <span class="hljs-selector-attr">[网关]</span> <span class="hljs-selector-attr">[目标IP]</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>网卡默认eth0</p>
+</blockquote>
+<p><img src="/img/%E5%85%B3%E4%BA%8EARP%E6%AC%BA%E9%AA%97%E5%92%8CARP%E6%94%BB%E5%87%BB/Snipaste_2023-01-05_23-10-21.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><code>cat /proc/sys/net/ipv4/ip_forward </code>查看ip_forward的值。如果ip_forward为0，则被攻击主机不能上网；如果ip_forward为1，则被攻击主机可以上网</p>
+<p>修改数值让他上网</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">echo <span class="hljs-number">1</span> &gt; <span class="hljs-regexp">/proc/</span>sys<span class="hljs-regexp">/net/i</span>pv4/ip_forward<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>权限不够就<code>sudo -i</code> 使用root权限改</p>
+</blockquote>
+<p>限制网速</p>
+<p>可以使用的工具有tc、iptables、WonderShaper等等，</p>
+<p>以tc为例<del>本菜鸡还没学会后两个</del>😢：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs maxima">限制网速200ms延时<br>sudo tc qdisc add dev eth0 root netem <span class="hljs-built_in">delay</span> 200ms<br> <br>取消限制网速200ms延时<br>sudo tc qdisc <span class="hljs-built_in">del</span> dev eth0 root netem <span class="hljs-built_in">delay</span> 200ms<br></code></pre></td></tr></table></figure>
+
+<p>拦截数据—获取浏览网页及账号密码</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">ettercap -Tq -<span class="hljs-selector-tag">i</span> <span class="hljs-selector-attr">[网卡]</span><br></code></pre></td></tr></table></figure>
+
+<p>嗅探图片</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">driftnet  -<span class="hljs-selector-tag">i</span> <span class="hljs-selector-attr">[网卡]</span><br></code></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="工具说明书"><a href="#工具说明书" class="headerlink" title="工具说明书"></a>工具说明书</h3><p>因为各种工具的使用说明都是英文的，所以直接利用万能的互联网搜了一下中文的使用指南：</p>
+<h5 id="driftnet"><a href="#driftnet" class="headerlink" title="driftnet"></a>driftnet</h5> <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs css">语法： driftnet   <span class="hljs-selector-attr">[options]</span>   <span class="hljs-selector-attr">[filter code]</span><br><br> -<span class="hljs-selector-tag">b</span>  捕获到新的图片时发出嘟嘟声<br> -<span class="hljs-selector-tag">i</span>  interface     选择监听接口<br> -f  file   读取一个指定pcap数据包中的图片<br> -<span class="hljs-selector-tag">p</span>  不让所监听的接口使用混杂模式<br> -<span class="hljs-selector-tag">a</span>  后台模式：将捕获的图片保存到目录中（不会显示在屏幕上）<br> -m  number 指定保存图片数的数目<br> -d  directory  指定保存图片的路径<br> -x  prefix  指定保存图片的前缀名<br></code></pre></td></tr></table></figure>
+
+<h5 id="arpspoof"><a href="#arpspoof" class="headerlink" title="arpspoof"></a>arpspoof</h5><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs markdown">名字 <br><span class="hljs-code">       arpspoof - 截获交换局域网中的数据包</span><br><span class="hljs-code"></span><br>用法<br><span class="hljs-code">       arpspoof [-i interface] [-c own|host|both] [-t target] [-r] host</span><br><span class="hljs-code"></span><br>描述<br><span class="hljs-code">       arpspoof通过伪造的ARP响应包改变局域网中从目标主机（或所有主机）到另一个主机（host）的数据包转发路径。这是交换局域网中嗅探网络流量的一种极为有效的方法。</span><br><span class="hljs-code">       内核IP转发（或如fragrouter这样的、用户层面的、能完成同样功能的软件）必须提前开启。</span><br><span class="hljs-code"></span><br>参数<br><span class="hljs-code">       -i interface</span><br><span class="hljs-code">              指定要使用的接口（即指定一块网卡）</span><br><span class="hljs-code"></span><br><span class="hljs-code">       -c own|host|both</span><br><span class="hljs-code">              指定在恢复ARP配置时使用的硬件地址；当在清理（cleaning up）时，数据包的源地址可以用自己的也可以用主机（host）的硬件地址。</span><br><span class="hljs-code">              使用伪造的硬件地址可能导致某些配置下的交换网络、AP网络或桥接网络通信中断，然而它比起默认值————使用自己的硬件地址要工作地更为可靠。</span><br><span class="hljs-code"></span><br><span class="hljs-code">       -t target</span><br><span class="hljs-code">              指定一个特殊的、将被ARP毒化的主机（如果没有指定，则认为是局域网中所有主机）。重复可以指定多个主机。</span><br><span class="hljs-code"></span><br><span class="hljs-code">       -r     毒化两个主机（目标和主机（host））以捕获两个方向的网络流量。（仅仅在和-t参数一起使用时有效）</span><br><span class="hljs-code"></span><br><span class="hljs-code">       host   host是你想要截获数据包的主机 (通常是网关)。</span><br><span class="hljs-code"></span><br></code></pre></td></tr></table></figure>
+
+<h5 id="ettercap"><a href="#ettercap" class="headerlink" title="ettercap"></a>ettercap</h5><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">i</span>	后面跟着连接局域网的网卡<br>T	指的是text文本模式<br><span class="hljs-selector-tag">q</span>	以安静模式执行这个命令<br>M	指定攻击模式<br>&gt;&gt;	输出文件<br></code></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>发个笔记上来不然这个博客真的成碎碎念专栏了😶‍🌫️</p>
+<p>我就是个菜鸡🍃</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/ARP/">#ARP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>关于ARP欺骗和ARP攻击</div>
+      <div>https://shmodifier.github.io/2023/01/05/关于ARP欺骗和ARP攻击/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/07/%E4%B8%80%E8%B5%B7%E6%9D%A5%E6%90%AD%E5%8D%9A%E5%AE%A2/" title="一起来搭博客">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一起来搭博客</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/29/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" title="年终总结">
+                        <span class="hidden-mobile">年终总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
