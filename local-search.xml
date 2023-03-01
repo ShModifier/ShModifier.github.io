@@ -4,6 +4,27 @@
   
   
   <entry>
+    <title>在浏览器打开本地PHP文件</title>
+    <link href="/2023/02/28/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/"/>
+    <url>/2023/02/28/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/</url>
+    
+    <content type="html"><![CDATA[<p>随机掉落废物Mod研究php的笔记😮</p><span id="more"></span><h2 id="01-配置PHP运行环境"><a href="#01-配置PHP运行环境" class="headerlink" title="01 配置PHP运行环境"></a>01 配置PHP运行环境</h2><p>万能的互联网教我下载Apache，PHP和MySQL。好多好麻烦。我选择直接用集成环境。</p><p><a href="https://www.xp.cn/">phpstudy官网</a></p><p>直接去官网下载，会有一个压缩包，解压以后打开第一个exe文件安装就好。</p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_20-04-46.png"></p><p>注意：压缩包保存的路径不能有中文和空格</p><p>在安装时的自定义选项中可以修改安装包的位置，我的是默认在D盘根目录，把它改到放压缩包的文件夹里了。</p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_20-06-25.png"></p><p>根据本人尝试，在浏览器看PHP文件只需要把Apache打开就行。</p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_20-32-00.png"></p><h2 id="02-把文件丢进网站根目录"><a href="#02-把文件丢进网站根目录" class="headerlink" title="02 把文件丢进网站根目录"></a>02 把文件丢进网站根目录</h2><p>在上述安装步骤步骤中，会生成<strong>phpstudy_pro</strong>文件夹，文件夹中又有<strong>WWW</strong>文件夹。</p><p>网站根目录就是www文件下，必须将文件放置此位置才算有效，否则无法运行php文件。</p><h2 id="03-运行PHP文件"><a href="#03-运行PHP文件" class="headerlink" title="03 运行PHP文件"></a>03 运行PHP文件</h2><p>打开浏览器，在导航栏输入<code>localhost/[文件名]</code>就可以啦</p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_20-42-05.png"></p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_20-41-36.png"></p><h2 id="04-土狗发言"><a href="#04-土狗发言" class="headerlink" title="04 土狗发言"></a>04 土狗发言</h2><p>因为有一个文件写错了，在浏览器打开的时候报错了。</p><p>它居然还可以报错！</p><p><img src="/img/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E6%9C%AC%E5%9C%B0PHP%E6%96%87%E4%BB%B6/Snipaste_2023-02-28_21-09-18.png"></p><p>太高级了</p><hr><p>集成环境yyds🥳</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>Knowledge</tag>
+      
+      <tag>PHP</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hexo使用记录</title>
     <link href="/2023/02/23/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/"/>
     <url>/2023/02/23/Hexo%E4%BD%BF%E7%94%A8%E8%AE%B0%E5%BD%95/</url>
