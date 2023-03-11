@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/PHP%E9%BB%91%E9%AD%94%E6%B3%95/%E9%A1%B6%E9%83%A8%E5%A4%A7%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-03-01T10:38:29.000Z">
-<meta property="article:modified_time" content="2023-03-10T11:23:55.177Z">
+<meta property="article:modified_time" content="2023-03-11T11:39:53.060Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="PHP">
@@ -411,7 +411,7 @@
 <p>因为s2和s2不能相等，所以单纯md5加密得出的密文一定也不完全一样，这时就要利用一些歪门邪道<del>（不是）</del>。</p>
 <p><strong>紧急补课—md5</strong></p>
 <p>md5一种密码散列函数。MD5算法的原理可简要的叙述为：MD5码以512位分组来处理输入的信息，且每一分组又被划分为16个32位子分组，经过了一系列的处理后，算法的输出由四个32位分组组成，将这四个32位分组级联后将生成一个128位散列值。</p>
-<p><img src="D:\笔记\PHP\精美配图\Snipaste_2023-02-28_18-46-11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/PHP%E9%BB%91%E9%AD%94%E6%B3%95/Snipaste_2023-02-28_18-46-11.png" srcset="/img/loading.gif" lazyload></p>
 <p><del>补不了我看不懂</del>🥲</p>
 <h5 id="001-科学计数法绕过"><a href="#001-科学计数法绕过" class="headerlink" title="001 科学计数法绕过"></a>001 科学计数法绕过</h5><p>字符串经过md5加密后，会生成既有数字又有字母的密文，可以利用<strong>科学计数法</strong>的语法规律反推明文。</p>
 <blockquote>
@@ -453,7 +453,7 @@
 <h4 id="解题思路-3"><a href="#解题思路-3" class="headerlink" title="解题思路"></a>解题思路</h4><p>这个代码好长让我来认真看一下🧐</p>
 <p>从最后看<code>echo $info</code>、<code>$info=$flag</code>，我们知道如果满足前面的条件，flag会被赋值给<code>$info</code>并输出。</p>
 <p>再往上找条件</p>
-<p><img src="D:\笔记\PHP\精美配图\Snipaste_2023-02-27_21-01-29.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/PHP%E9%BB%91%E9%AD%94%E6%B3%95/Snipaste_2023-02-27_21-01-29.png" srcset="/img/loading.gif" lazyload></p>
 <p>要不满足条件，即<code>is_palindrome_number($req[&quot;number&quot;])</code>为假。</p>
 <p>前面代码有写<code>is_palindrome_number</code>函数用来判断回文数字。</p>
 <p><img src="/img/PHP%E9%BB%91%E9%AD%94%E6%B3%95/Snipaste_2023-03-01_19-24-52.png" srcset="/img/loading.gif" lazyload></p>
