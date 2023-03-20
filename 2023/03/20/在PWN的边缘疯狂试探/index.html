@@ -16,16 +16,16 @@
   <meta name="author" content="Modifier">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一点点 pwn 基础——栈和堆、还有汇编基础">
+    <meta name="description" content="一点点 pwn 基础——栈和堆、汇编基础和Linux常用保护机制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在PWN的边缘疯狂试探">
 <meta property="og:url" content="https://shmodifier.github.io/2023/03/20/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/index.html">
 <meta property="og:site_name" content="Modifier">
-<meta property="og:description" content="一点点 pwn 基础——栈和堆、还有汇编基础">
+<meta property="og:description" content="一点点 pwn 基础——栈和堆、汇编基础和Linux常用保护机制">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-03-20T11:48:53.000Z">
-<meta property="article:modified_time" content="2023-03-20T12:06:03.510Z">
+<meta property="article:modified_time" content="2023-03-20T13:46:19.868Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta name="twitter:card" content="summary_large_image">
@@ -234,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.1k 字
+          5.7k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
         
-          34 分钟
+          48 分钟
         
       </span>
     
@@ -288,7 +288,7 @@
             
               <div class="markdown-body">
                 
-                <p>一点点 pwn 基础——栈和堆、还有汇编基础</p>
+                <p>一点点 pwn 基础——栈和堆、汇编基础和Linux常用保护机制</p>
 <span id="more"></span>
 
 <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>PWN是一个黑客语法的俚语词 ，是指攻破设备或者系统 。发音类似”砰”，对黑客而言，这就是成功实施黑客攻击的声音–砰的一声，被”黑”的电脑或手机就被你操纵了 。</p>
@@ -460,6 +460,41 @@
 </tbody></table>
 <p>跳转指令不同于 mov 指令，他可以用于修改段寄存器 cs、ip 的值，从而修改 CPU 在内存中所读取的内容的地址。</p>
 <p><del>表格是从小卓的博客copy来的</del></p>
+<h1 id="Linux常用保护机制"><a href="#Linux常用保护机制" class="headerlink" title="Linux常用保护机制"></a>Linux常用保护机制</h1><p>操作系统提供了许多安全机制来尝试降低或阻止缓冲区溢出攻击带来的安全风险。在编写漏洞利用代码的时候，需要特别注意目标进程是否开启了 保护机制</p>
+<h4 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h4><p>这不是个保护机制是个脚本软件。</p>
+<p>checksec用来检查可执行文件的属性，查看文件开启了哪些保护机制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shellcode">checksec [filename]<br></code></pre></td></tr></table></figure>
+
+<p>以之前一道 Pwn 题题目为例：<br><img src="/img/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/Snipaste_2023-03-20_21-08-51.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h3><h4 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h4><p>RELRO即为read only relocation，可以理解为我们熟悉的windows系统里的只读。</p>
+<p>设置符号重定向表格为只读或在程序启动时就解析并绑定所有动态符号，从而减少对 GOT（Global Offset Table）攻击。</p>
+<h4 id="参数设置"><a href="#参数设置" class="headerlink" title="参数设置"></a>参数设置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gcc">gcc -o hello test.c // 默认情况下，是Partial RELRO<br>gcc -z norelro -o hello test.c // 关闭，即No RELRO<br>gcc -z lazy -o hello test.c // 部分开启，即Partial RELRO<br>gcc -z now -o hello test.c // 全部开启，即Full RELRO<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="CANNARY（栈保护）"><a href="#CANNARY（栈保护）" class="headerlink" title="CANNARY（栈保护）"></a>CANNARY（栈保护）</h3><h4 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h4><p>栈溢出保护是一种缓冲区溢出攻击缓解手段，当函数存在缓冲区溢出攻击漏洞时，攻击者可以覆盖栈上的返回地址来让 shellcode 能够得到执行。</p>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>当启用栈保护后，函数开始执行的时候会先往栈里插入 cookie 信息，当函数真正返回的时候会验证 cookie 信息是否合法，如果不合法就停止程序运行。攻击者在覆盖返回地址的时候往往也会将 cookie 信息给覆盖掉，导致栈保护检查失败而阻止 shellcode 的执行。</p>
+<p>在 Linux 中我们将 cookie 信息称为 canary。</p>
+<h4 id="参数设置-1"><a href="#参数设置-1" class="headerlink" title="参数设置"></a>参数设置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gcc">gcc -fstack-protector 启用保护，不过只为局部变量中含有数组的函数插入保护<br>gcc -fstack-protector-all 启用保护，为所有函数插入保护<br>gcc -fstack-protector-strong<br>gcc -fstack-protector-explicit 只对有明确stack_protect attribute 的函数开启保护<br>gcc -fno-stack-protector 禁用保护<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="NX-DEP"><a href="#NX-DEP" class="headerlink" title="NX(DEP)"></a>NX(DEP)</h3><h4 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h4><p>NX 即 No-eXecute（不可执行），NX（DEP）的基本原理是将数据所在内存页标识为不可执行，当程序溢出成功转入 shellcode 时，程序会尝试在数据页面上执行指令，此时 CPU 就会抛出异常，而不是去执行恶意指令。</p>
+<h4 id="参数设置-2"><a href="#参数设置-2" class="headerlink" title="参数设置"></a>参数设置</h4><p>gcc 编译器默认开启了 NX 选项，如果需要关闭 NX 选项，可以给 gcc 编译器添加 - z execstack 参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gcc">gcc -o test test.c                    // 默认情况下，开启NX保护<br>gcc -z execstack -o test test.c        // 禁用NX保护<br>gcc -z noexecstack -o test test.c    // 开启NX保护<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="PIE"><a href="#PIE" class="headerlink" title="PIE"></a>PIE</h3><h4 id="介绍-4"><a href="#介绍-4" class="headerlink" title="介绍"></a>介绍</h4><p>PIE即Position-Independent Executable（ 位置无关可执行文件），与ASLR 技术类似。</p>
+<p>ASLR 将程序运行时的堆栈以及共享库的加载地址随机化，而 PIE 技术则在编译时将程序编译为位置无关，即程序运行时各个段（如代码段等）加载的虚拟地址也是在装载时才确定。</p>
+<p>这就意味着，在 PIE 和 ASLR 同时开启的情况下，攻击者将对程序的内存布局一无所知，传统的改写GOT 表项的方法也难以进行，因为攻击者不能获得程序的.got 段的虚地址。</p>
+<p>liunx 下关闭 PIE 的命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shellcode">sudo -s echo 0 &gt; /proc/sys/kernel/randomize_va_space<br></code></pre></td></tr></table></figure>
+
+<h4 id="参数设置-3"><a href="#参数设置-3" class="headerlink" title="参数设置"></a>参数设置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gcc">gcc -o test test.c       // 默认情况下，不开启PIE<br>gcc -fpie -pie -o test test.c        // 开启PIE，此时强度为1<br>gcc -fPIE -pie -o test test.c        // 开启PIE，此时为最高强度2<br>gcc -fpic -o test test.c        // 开启PIC，此时强度为1，不会开启PIE<br>gcc -fPIC -o test test.c        // 开启PIC，此时为最高强度2，不会开启PIE<br></code></pre></td></tr></table></figure>
+
+
+
 <hr>
 <p>杂七杂八忙了一个周，抽时间学了这么点东西。我是菜鸡🥬</p>
 <p>有看几道pwn题，发现大部分题目都是需要一些逆向技巧的，有些还会和web结合 <del>非常疯狂</del></p>
