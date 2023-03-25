@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-03-20T11:48:53.000Z">
-<meta property="article:modified_time" content="2023-03-21T13:21:57.602Z">
+<meta property="article:modified_time" content="2023-03-25T08:51:19.127Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta name="twitter:card" content="summary_large_image">
@@ -234,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.7k 字
+          6.1k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
         
-          48 分钟
+          51 分钟
         
       </span>
     
@@ -335,7 +335,16 @@
 <p>pwn 研究二进制还是要学习底层计算机语言的😢</p>
 </blockquote>
 <p>汇编语言是二进制指令的文本形式，与指令是一一对应的关系。比如，加法指令<code>00000011</code>写成汇编语言就是 <code>ADD</code>。</p>
-<h3 id="堆和栈"><a href="#堆和栈" class="headerlink" title="堆和栈"></a>堆和栈</h3><h4 id="Heap-堆"><a href="#Heap-堆" class="headerlink" title="Heap-堆"></a>Heap-堆</h4><p>程序运行的时候，操作系统会给它分配一段内存，用来储存程序和运行产生的数据。这段内存有起始地址和结束地址，比如从<code>0x1000</code>到<code>0x8000</code>，起始地址是较小的那个地址(低位），结束地址是较大的那个地址（高位）。</p>
+<h3 id="堆和栈"><a href="#堆和栈" class="headerlink" title="堆和栈"></a>堆和栈</h3><h4 id="段"><a href="#段" class="headerlink" title="段"></a>段</h4><p>一般情况下，程序都是由bss段，text段和date段三个段组成。</p>
+<p><img src="/img/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/11.png" srcset="/img/loading.gif" lazyload></p>
+<p>bss 段：只有定义而没有赋初值的全局变量和静态变量。</p>
+<p>data 段：存放在编译阶段 (而非运行时) 就能确定的数据，可读可写。就是通常所说的<strong>静态存储区</strong>，存储赋了初值的全局变量和赋初值的静态变量以及常量。</p>
+<p>text 段：放<strong>程序代码</strong>，在编译时确定，只读。</p>
+<h5 id="bss段"><a href="#bss段" class="headerlink" title=".bss段"></a>.bss段</h5><p>bss段是用来存放未初始化的全局变量和静态变量的一块内存区域，一般在初始化时bss段部分会清零。</p>
+<h5 id="text段"><a href="#text段" class="headerlink" title=".text段"></a>.text段</h5><p>存放程序代码的区域，在编译时确定，只读。</p>
+<p>更进一步讲是存放处理器的机器指令，当各个源文件单独编译之后生成目标文件，经连接器连接各个目标文件并解决各个源文件之间的函数引用。与此同时，还要将所有目标文件中的.text段合在一起，但不是简单的将他们“堆”在一起，还要处理各个段之间函数引用问题。</p>
+<h5 id="date段"><a href="#date段" class="headerlink" title=".date段"></a>.date段</h5><p>用于存放在编译阶段（而非运行时）就能确定的数据，可读可写。也是通常所说的静态存储区，赋了初值的全局变量，常量和静态变量都存放在这个区域。</p>
+<h4 id="Heap-堆"><a href="#Heap-堆" class="headerlink" title="Heap-堆"></a>Heap-堆</h4><p>程序运行的时候，操作系统会给它分配一段内存，用来储存程序和运行产生的数据。这段内存有起始地址和结束地址，比如从<code>0x1000</code>到<code>0x8000</code>，起始地址是较小的那个地址(低位），结束地址是较大的那个地址（高位）。</p>
 <p>程序运行过程中，对于动态的内存占用请求（比如新建对象，或者使用<code>malloc</code>命令），系统就会从预先分配好的那段内存之中，划出一部分给用户，具体规则是从起始地址开始划分。</p>
 <blockquote>
 <p>实际上，起始地址会有一段静态数据，这里忽略</p>
@@ -354,7 +363,7 @@
 <p><img src="/img/%E5%9C%A8PWN%E7%9A%84%E8%BE%B9%E7%BC%98%E7%96%AF%E7%8B%82%E8%AF%95%E6%8E%A2/Snipaste_2023-03-20_18-49-52.png" srcset="/img/loading.gif" lazyload></p>
 <p>等到<code>add_a_and_b</code>运行结束，它的帧就会被回收，系统会回到函数<code>main</code>刚才中断执行的地方，继续往下执行。</p>
 <p>生成新的帧，叫做”压栈”，英文是 push；栈的回收叫做”出栈”，英文是 pop。Stack 的特点就是，最晚入栈的帧最早出栈（因为最内层的函数调用，最先结束运行），这就叫做”<strong>后进先出</strong>“的数据结构。每一次函数执行结束，就自动释放一个帧，所有函数执行结束，整个 Stack 就都释放了。通过这种机制，就实现了函数的层层调用，并且每一层都能使用自己的本地变量。</p>
-<h3 id="CPU指令"><a href="#CPU指令" class="headerlink" title="CPU指令"></a>CPU指令</h3><h4 id="一个🌰"><a href="#一个🌰" class="headerlink" title="一个🌰"></a>一个🌰</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">add_a_and_b</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> &#123;<br>   <span class="hljs-keyword">return</span> a + b;<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> &#123;<br>   <span class="hljs-keyword">return</span> add_a_and_b(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="一个🌰"><a href="#一个🌰" class="headerlink" title="一个🌰"></a>一个🌰</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">add_a_and_b</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> &#123;<br>   <span class="hljs-keyword">return</span> a + b;<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> &#123;<br>   <span class="hljs-keyword">return</span> add_a_and_b(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>将其转换为汇编语言就是</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs x86">	.file	&quot;test.c&quot;<br>	.text<br>	.globl	add_a_and_b<br>	.type	add_a_and_b, @function<br>add_a_and_b:<br>.LFB0:<br>	.cfi_startproc<br>	pushq	%rbp<br>	.cfi_def_cfa_offset 16<br>	.cfi_offset 6, -16<br>	movq	%rsp, %rbp<br>	.cfi_def_cfa_register 6<br>	movl	%edi, -4(%rbp)<br>	movl	%esi, -8(%rbp)<br>	movl	-4(%rbp), %edx<br>	movl	-8(%rbp), %eax<br>	addl	%edx, %eax<br>	popq	%rbp<br>	.cfi_def_cfa 7, 8<br>	ret<br>	.cfi_endproc<br>.LFE0:<br>	.size	add_a_and_b, .-add_a_and_b<br>	.globl	main<br>	.type	main, @function<br>main:<br>.LFB1:<br>	.cfi_startproc<br>	pushq	%rbp<br>	.cfi_def_cfa_offset 16<br>	.cfi_offset 6, -16<br>	movq	%rsp, %rbp<br>	.cfi_def_cfa_register 6<br>	movl	$3, %esi<br>	movl	$2, %edi<br>	call	add_a_and_b<br>	popq	%rbp<br>	.cfi_def_cfa 7, 8<br>	ret<br>	.cfi_endproc<br>.LFE1:<br>	.size	main, .-main<br>	.ident	&quot;GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609&quot;<br>	.section	.note.GNU-stack,&quot;&quot;,@progbits<br></code></pre></td></tr></table></figure>
