@@ -22,6 +22,10 @@
       
       <tag>Knowledge</tag>
       
+      <tag>ubuntu</tag>
+      
+      <tag>x86汇编</tag>
+      
     </tags>
     
   </entry>
@@ -46,6 +50,10 @@
     <tags>
       
       <tag>Knowledge</tag>
+      
+      <tag>MySQL</tag>
+      
+      <tag>phpstudy</tag>
       
     </tags>
     
@@ -101,6 +109,8 @@
       
       <tag>PHP</tag>
       
+      <tag>phpstudy</tag>
+      
     </tags>
     
   </entry>
@@ -149,7 +159,15 @@
     
     <tags>
       
-      <tag>Hexo</tag>
+      <tag>hexo</tag>
+      
+      <tag>GitHub</tag>
+      
+      <tag>Node</tag>
+      
+      <tag>Git</tag>
+      
+      <tag>ssh</tag>
       
     </tags>
     
