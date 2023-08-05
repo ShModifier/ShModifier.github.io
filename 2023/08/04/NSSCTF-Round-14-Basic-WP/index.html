@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/NSSCTF-Round-14-Basic-WP/%E9%A1%B5%E9%A6%96%E5%9B%BE.png">
 <meta property="article:published_time" content="2023-08-04T05:15:54.000Z">
-<meta property="article:modified_time" content="2023-08-04T05:35:04.208Z">
+<meta property="article:modified_time" content="2023-08-05T06:31:13.639Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="格式化字符串">
 <meta property="article:tag" content="libc">
@@ -298,12 +298,12 @@
 <p>格式化字符串+ret2libc</p>
 </blockquote>
 <p>是个64位的程序，开启了 canary 保护</p>
-<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round#14_love_main.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_love_main.png" srcset="/img/loading.gif" lazyload></p>
 <p>主函数中有一个明显的格式化字符串漏洞，在 <code>vlun</code> 函数中 gets 不限制输入</p>
-<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round#14_love_vuln.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_love_vuln.png" srcset="/img/loading.gif" lazyload></p>
 <p>考虑里用格式化字符串泄露 libc 基址，计算偏移获取 system 地址。再利用 gets 改写 GOT 表获取 shell。</p>
 <p>格式化字符串部分 buf 存储在 BSS 段上，需要借用栈上的跳板。利用 GDB 查看 printf 处的栈数据：</p>
-<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round#14_love_stack.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_love_stack.png" srcset="/img/loading.gif" lazyload></p>
 <p>栈上的第三个参数，也就是格式化字符串的第九个参数 0x7fffffffdfb8 存储的是0x7fffffffdfa8 地址，而这个地址存储 v4 的数值 （555LL 就是以十六进制存储555 这个十进制数字，就是 0x22b；同理 520LL就是 0x208），我们可以直接来改写 V4 数值实现 main 函数中的 if 条件判断进入 vuln 漏洞函数。</p>
 <p>同时栈上的第九个参数 ( <code>%15$</code> )存储的是 canary 的值，第十一个参数 ( <code>%17$</code> ) 指向 <code>__libc_start_main+231</code>，可以推算出 libc 的基址。</p>
 <p>所以我们的格式化字符串就构造为 <code>%520c%9$n,,%15$p,,%17$p</code>（其中 <code>,,</code> 用来分隔不同地址）</p>
@@ -322,7 +322,7 @@
 
 
 <h1 id="xor"><a href="#xor" class="headerlink" title="xor"></a>xor</h1><p>题目是一个任何保护都没有被开启并且 rwx 全部开启的程序</p>
-<p><img src="D:/笔记/NSS/Round%2314_xor_main.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_xor_main.png" srcset="/img/loading.gif" lazyload></p>
 <p>首先程序中有一个 flag 判断的循环，我们要保证 flag 小于 0 程序才不会退出，方便我们进行接下来的操作。</p>
 <p>我们可以将 flag 的高位写成 0xff，这样的话 flag 的符号位会被覆写为1，即负数。</p>
 <p><code>xorByteWithAddress()</code> 中只有两行代码</p>
@@ -338,9 +338,9 @@
 <p>但是在 load_file 处有 “flag” 字符检测，也就是说我们不能直接 load flag，要尝试修改 flag 文件的 “flag” 字符。</p>
 <p>同时在 read_file 处有文本长度的判断，不过长素质由用户输入，小于55时会自动读取 content_size + 56 的数据。</p>
 <p>我们首先需要绕过 flag 的检查。</p>
-<p><img src="D:/笔记/NSS/Round%2314_readfile_load.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_readfile_load.png" srcset="/img/loading.gif" lazyload></p>
 <p>在 <code>load_file()</code> 函数中，scanf 负责接受用户读入信息。我们知道scanf读取数据会在指定长度的数据后添加<code>\x00 </code>空字符</p>
-<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round#14_readfile_bss.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/NSSCTF-Round-14-Basic-WP/Round14_readfile_bss.png" srcset="/img/loading.gif" lazyload></p>
 <p>如上图，<em>file_name</em> 和 <em>file_id</em> 都是储存在 BSS 段并且相邻，偏移相差 8 字节。也就是说如果我们在 file_name 读取了刚好8字节的数据，其对应的 <code>\x00</code> 就会覆盖住 <em>file_id</em>，使 <em>file_id</em> 为 0。</p>
 <p>而利用到 fild_id 的函数 <code>read(file_fd, file_content, content_size);</code> 在 fild_id&#x3D;0 时会从用户键盘来获取用户的输入而不是读取文件。</p>
 <p>又因为在此之前由 alloca 来分配 v2 栈空间，我们可以利用 content_size 小于55的条件判断造成溢出，直接覆盖返回地址使程序跳转到 <code>file_fd = open(file_name, 0, 0LL);</code>，绕过检查再按照程序流程正常读取 flag 。</p>
