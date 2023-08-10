@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/%E4%B8%8D%E9%82%A3%E4%B9%88%E8%8F%9C%E8%8F%9C%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-07-06T12:32:15.000Z">
-<meta property="article:modified_time" content="2023-07-09T09:19:15.043Z">
+<meta property="article:modified_time" content="2023-08-10T09:06:13.955Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="栈">
@@ -235,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.3k 字
+          6.4k 字
         
       </span>
     
@@ -246,7 +246,7 @@
         
         
         
-          53 分钟
+          54 分钟
         
       </span>
     
@@ -299,6 +299,31 @@
 <li>栈可以控制的空间过小不足以构造完整的rop链</li>
 <li>开启了 PIE 保护，栈地址未知，我们可以将栈劫持到已知的区域</li>
 </ul>
+<p>说到底栈迁移就是 <code>&#39;a&#39;*offset+p64(fake_stack)+P64(leave)</code></p>
+<p>首先我们需要了解函数在执行结束后会执行的 <code>leave;ret</code> 这条汇编代码的含义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs assembly"># leave, 相当于执行<br>mov esp, ebp<br>pop ebp<br><br># retn, 相当于执行<br>pop eip<br><br>#执行leave指令后，首先绘将ebp的值赋给esp，然后做一个出栈操作，栈指针会向栈底移动一个地址。此时执行ret，就会跳转到新的栈顶指针的地址，即原ebp+8处存储的地址。<br></code></pre></td></tr></table></figure>
+
+<p>在实际的程序汇编代码中，我们还需要利用如下图所示的代码：</p>
+<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-08-10_15-57-09.png" srcset="/img/loading.gif" lazyload></p>
+<p><code>rax, [rbp+buf]</code> 我们要知道这句汇编在干嘛，其实就是把 rbp+buf 的地址给到 rax。我们都知道栈溢出是先溢出到 rbp 再到 rip 的，我们可以通过栈溢出的方式控制 rbp 的值，在下面又将会把 rax 的值赋给 rsi ，通过这条汇编命令我们就可以控制 rbp 和 rsi 。</p>
+<p>像上图的例子，假设我们通过溢出控制了 rbp 为 0x123000，那么 read 命令就相当于在执行 <code>read(0,0x123000+buf,xx)</code> ，也就是读入的数据被写入了 0x123000。至此我们就可以实现任意地址的写入。</p>
+<p>但是这样<strong>只适用于我们只利用一次漏洞的情况</strong>，如果我们多次利用漏洞就需要为程序完整的构造一个栈结构，实现 “ 把栈搬走 ” 。</p>
+<p>大致的通用思路就是：</p>
+<ul>
+<li><p>第一次栈迁移修改 rbp 让接下来的输入指向我们想要写的地方</p>
+</li>
+<li><p>第二次栈迁移修改 rsp 让程序正常</p>
+</li>
+<li><p>第三次栈迁移进行攻击 rop 链的构造（例如泄露 libc ，修改 GOT 地址，在栈上布置 shell rop 链）</p>
+</li>
+<li><p>第四次重复第一次的操作</p>
+</li>
+<li><p>第五次构造 getshell rop 链</p>
+</li>
+</ul>
+<blockquote>
+<p>如果需要进行多次 rop 攻击，除了最后一次都需要重复 1、2 操作恢复栈结构</p>
+</blockquote>
 <h4 id="🌰-1："><a href="#🌰-1：" class="headerlink" title="🌰_1："></a>🌰_1：</h4><p>发现了一个靶场：<a target="_blank" rel="noopener" href="https://ropemporium.com/">ROP Emporium</a>，选择pivot-x_86</p>
 <p>给的压缩包里还有一个动态链接库 <code>libpivot32.so</code>，checksec 一下甚至出现了没见过的玩意 <code>RUNPATH:  &#39;.&#39;</code></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">Arch:</span>     <span class="hljs-string">i386-32-little</span><br><span class="hljs-attr">RELRO:</span>    <span class="hljs-string">Partial</span> <span class="hljs-string">RELRO</span><br><span class="hljs-attr">Stack:</span>    <span class="hljs-literal">No</span> <span class="hljs-string">canary</span> <span class="hljs-string">found</span><br><span class="hljs-attr">NX:</span>       <span class="hljs-string">NX</span> <span class="hljs-string">enabled</span><br><span class="hljs-attr">PIE:</span>      <span class="hljs-literal">No</span> <span class="hljs-string">PIE</span> <span class="hljs-string">(0x8048000)</span><br><span class="hljs-attr">RUNPATH:</span>  <span class="hljs-string">&#x27;.&#x27;</span><br></code></pre></td></tr></table></figure>
@@ -316,34 +341,6 @@
 <p>其中在第二个输入溢出时，只有<code>(0x38-0x28-4)</code>即12个字节的缓冲区可以利用，无法直接在栈上构造rop链。题目也有提示，我们需要将rop链存到buf中，再将栈转移到buf上。</p>
 <p>我们发现puts一条文本<code>Call ret2win() from libpivot</code>，没有在这个可执行文件中发现这个函数，但是题目还给了一个动态链接库 <code>libpivot32.so</code>，发现这是一个后门函数，我们可以控制程序跳转到这里执行为我们打开flag。</p>
 <p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-06-26_10-33-31.png" srcset="/img/loading.gif" lazyload></p>
-<p>首先我们需要了解函数在执行结束后会执行的 <code>leave;ret</code> 这条汇编代码的含义：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs assembly"># leave, 相当于执行<br>mov esp, ebp<br>pop ebp<br><br># retn, 相当于执行<br>pop eip<br><br>#执行leave指令后，首先绘将ebp的值赋给esp，然后做一个出栈操作，栈指针会向栈底移动一个地址。此时执行ret，就会跳转到新的栈顶指针的地址，即原ebp存储的地址的下一个地址。<br></code></pre></td></tr></table></figure>
-
-<p>使用ROPgadgets查找对应的代码片段 <code>ROPgadget --binary pivot32 --only &quot;leave|ret&quot;</code></p>
-<p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-06-26_10-17-07.png" srcset="/img/loading.gif" lazyload></p>
-<p>根据栈结构我们可以构造这样的payload：</p>
-<table>
-<thead>
-<tr>
-<th>Stack</th>
-<th align="center">buffer</th>
-<th align="center">EBP</th>
-<th align="center">return_addr</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Payload</td>
-<td align="center">buffer padding</td>
-<td align="center">fake EBP</td>
-<td align="center">retn_addr</td>
-</tr>
-</tbody></table>
-<ul>
-<li>buffer padding：在输入数据之前添加一些填充数据，以达到覆盖EBP和return_addr的目的。</li>
-<li>fake EBP：构造一个伪造的EBP值，将其设置为攻击者控制的目标地址。这样，在函数执行<code>leave</code>指令时，将会把EBP的值设置为攻击者控制的目标地址。</li>
-<li>retn_addr：设置返回地址为ROP链的起始地址，使程序执行ROP链中的指令序列。</li>
-</ul>
-<p>我们可以溢出到ebp，从而实现eip的劫持，完成栈转移。</p>
 <p>需要注意的是程序执行到我们填入的<code>leave;ret</code>指令之前，自己也执行了一次该指令。也就是说这个指令被执行了两次</p>
 <p><img src="/img/%E7%9C%9F%E7%9A%84%E5%BE%88%E8%8F%9C%E8%8F%9C%E7%9A%84ROP/Snipaste_2023-07-04_15-45-03.png" srcset="/img/loading.gif" lazyload></p>
 <p>由于每次ret都会使得esp+4，所以，伪造的ebp的地址要减去4。</p>
