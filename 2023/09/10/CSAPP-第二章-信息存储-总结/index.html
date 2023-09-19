@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8-%E6%80%BB%E7%BB%93/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-09-10T12:06:43.000Z">
-<meta property="article:modified_time" content="2023-09-17T03:03:10.621Z">
+<meta property="article:modified_time" content="2023-09-17T03:04:27.444Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="CSAPP">
@@ -235,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7k 字
+          6.9k 字
         
       </span>
     
@@ -246,7 +246,7 @@
         
         
         
-          59 分钟
+          58 分钟
         
       </span>
     
@@ -376,7 +376,7 @@
 <p>对于地址，在几乎所有的机器上，所字节对象都被存储为连续的字节序列，对象的地址就是<strong>所使用的字节中最小的地址</strong>。例如，一个四字节的 int 整数被储存在 0x100、0x101、0x102、x103 的位置，那么它的地址就是 0x100。</p>
 <p>字节的排列表示方法有两个规则，分别为<strong>大端序</strong>和<strong>小端序</strong>。</p>
 <p>以数据 0x12345678 为例，他的最高有效位是 12 ，最低有效位是 78。大端序的排列方式是最高有效位排列在最前面，小端序的排列方式是最低有效位排列在最前面。具体的对应关系如下：</p>
-<p>![](&#x2F;img&#x2F; CSAPP-第二章-信息存储-总结&#x2F;2-大端序和小端序.png)</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8-%E6%80%BB%E7%BB%93/2-%E5%A4%A7%E7%AB%AF%E5%BA%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E5%BA%8F.png" srcset="/img/loading.gif" lazyload></p>
 <p>由上图来看，大端序更符合人类平时的阅读习惯，但需要注意的是，大多数的 Intel 兼容机器使用的都是小端模式。我们在编写汇编语言时，也需要按照小端序的方式书写。</p>
 <p>我们可以通过下面的函数来输出不同程序对象的字节表示，其中 <em>start</em> 为该对象的起始地址，<em>len</em> 为显示的字节数</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">show_bytes</span><span class="hljs-params">(<span class="hljs-type">void</span> *start,<span class="hljs-type">size_t</span> len)</span>&#123;    <br>    <span class="hljs-type">size_t</span> i;<br>    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">0</span>;i&lt;len;i++)<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%.2x &quot;</span>,*(<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(start+i));<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
@@ -493,7 +493,7 @@
 <p>需要注意的是，通常C语言中<strong>大多数的数字都默认为有符号</strong>，要创建无符号常量必须加上后缀字符 <code>&#39;u&#39;</code> 或 <code>&#39;U&#39;</code>。例如声明 <code>12345</code> 这样的常量就被认为是有符号的， <code>0x12b4u</code> 才会被认为是无符号常量。</p>
 <h4 id="无符号数的编码"><a href="#无符号数的编码" class="headerlink" title="无符号数的编码"></a>无符号数的编码</h4><p>无符号数实际上就是非负数，就是只包括正数和 0 的部分。无符号数没有符号位，因此他们的编码范围始终从 0 开始。</p>
 <p>无符号整数的编码方法通常基于二进制表示，每位（或位组合）可以表示 2 个可能的值：0和1。编码中没有符号位，<strong>最高位通常是最高有效位</strong>，表示最大的权值。</p>
-<p>![](&#x2F;img&#x2F; CSAPP-第二章-信息存储-总结&#x2F;2-无符号编码.png)</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8-%E6%80%BB%E7%BB%93/2-%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%BC%96%E7%A0%81.png" srcset="/img/loading.gif" lazyload></p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">4</span>位二进制编码：<span class="hljs-number">0000</span> (<span class="hljs-number">0</span>), <span class="hljs-number">1001</span> (<span class="hljs-number">9</span>), <span class="hljs-number">1111</span> (<span class="hljs-number">5</span>)<br><span class="hljs-attribute">8</span>位二进制编码：<span class="hljs-number">00000000</span> (<span class="hljs-number">0</span>), <span class="hljs-number">01011010</span> (<span class="hljs-number">90</span>), <span class="hljs-number">11111111</span> (<span class="hljs-number">255</span>)<br></code></pre></td></tr></table></figure>
 
 <blockquote>
@@ -542,7 +542,7 @@
 <h4 id="除以2的幂"><a href="#除以2的幂" class="headerlink" title="除以2的幂"></a>除以2的幂</h4><p>除以 2 的幂通过右移运算来实现，无符号和补码数分别使用逻辑移位和算术移位来实现。</p>
 <h2 id="浮点数"><a href="#浮点数" class="headerlink" title="浮点数"></a>浮点数</h2><h3 id="二进制小数"><a href="#二进制小数" class="headerlink" title="二进制小数"></a>二进制小数</h3><p>二进制小数的表示方法和十进制原理相同，只不过十进制的底数为 10，二进制的权值底数变成了 2。</p>
 <h3 id="IEEE-浮点表示"><a href="#IEEE-浮点表示" class="headerlink" title="IEEE 浮点表示"></a>IEEE 浮点表示</h3><p>IEEE浮点标准用如下的公式来表示一个数：</p>
-<p>![](&#x2F;img&#x2F; CSAPP-第二章-信息存储-总结&#x2F;2-IEEE浮点数表示方法.png)</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8-%E6%80%BB%E7%BB%93/2-IEEE%E6%B5%AE%E7%82%B9%E6%95%B0%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95.png" srcset="/img/loading.gif" lazyload></p>
 <ul>
 <li>符号(s)：<code>1</code> 表示负数，<code>0</code> 表示正数</li>
 <li>尾数(M)：是一个二进制的小数，取值范围为 <code>[1,2)</code></li>
@@ -717,6 +717,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2023/09/19/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-datalab/" title="CSAPP-第二章-datalab">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CSAPP-第二章-datalab</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
