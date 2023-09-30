@@ -18,23 +18,23 @@
   
     <meta name="description" content="C语言指令对应的机器表示">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CSAPP 第三章 程序的机器级表示">
+<meta property="og:title" content="CSAPP 第三章 程序的机器级表示 总结">
 <meta property="og:url" content="https://shmodifier.github.io/2023/09/30/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/index.html">
 <meta property="og:site_name" content="Modifier">
 <meta property="og:description" content="C语言指令对应的机器表示">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-09-30T09:12:38.000Z">
-<meta property="article:modified_time" content="2023-09-30T09:29:34.739Z">
+<meta property="article:modified_time" content="2023-09-30T09:38:40.803Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="CSAPP">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
   
   
   
-  <title>CSAPP 第三章 程序的机器级表示 - Modifier</title>
+  <title>CSAPP 第三章 程序的机器级表示 总结 - Modifier</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -212,7 +212,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="CSAPP 第三章 程序的机器级表示"></span>
+            <span id="subtitle" data-typed-text="CSAPP 第三章 程序的机器级表示 总结"></span>
           
         </div>
 
@@ -284,7 +284,7 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">CSAPP 第三章 程序的机器级表示</h1>
+            <h1 style="display: none">CSAPP 第三章 程序的机器级表示 总结</h1>
             
             
               <div class="markdown-body">
@@ -363,7 +363,7 @@
 </li>
 </ul>
 <p>如果我们直接 <code>cat filename.s</code>，输出的汇编代码如下图所示：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E6%9F%A5%E7%9C%8B%E6%B1%87%E7%BC%96%E6%96%87%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E6%9F%A5%E7%9C%8B%E6%B1%87%E7%BC%96%E6%96%87%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>其中以 <code>.</code> 开头的都是知道汇编器和编译器的伪指令，我们可以忽略。我们在表示汇编代码时会省略这些伪指令，同时，汇编代码的格式也有不同，分为 AT&amp;T 和 Inter 两种风格：</p>
 <blockquote>
 <p>gcc 默认输出的是 AT&amp;T ，微软系列都是 Inter</p>
@@ -464,10 +464,10 @@
 </tbody></table>
 <p>需要注意的是，虽然4字节的整数和双精度浮点数都是用 l 来表示，但是不会产生歧义，因为两种数据类型使用的是完全不同的两组指令和寄存器。</p>
 <h3 id="访问信息"><a href="#访问信息" class="headerlink" title="访问信息"></a>访问信息</h3><p>寄存器用来存储数据和指针，最初的16位系统中有八个16位的寄存器，分别是 ax , bx , cx , dx , d i, si , sp , bp 。后来发展到 32 位，寄存器也拓展成 32 位，在原本寄存器名字的前面加上 <code>e</code> 来表示，如 eax 。现在的 x86-64 中，寄存器对应拓展为 64 位，把所有的 <code>e</code> 替换成了 <code>r</code>，并且新增了 8 个寄存器 r8~r15。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%AF%84%E5%AD%98%E5%99%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%AF%84%E5%AD%98%E5%99%A8.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="操作数指示符"><a href="#操作数指示符" class="headerlink" title="操作数指示符"></a>操作数指示符</h4><p>大多数的指令都有一个或多个操作数，指示出执行一个操作中要使用的源数据值以及放置结果的目的位置。操作数可以是立即数、寄存器或者内存引用。</p>
 <p>其中，内存引用会根据计算出的有效地址去访问内存位置。同时，有许多种寻址模式，允许不同形式的内存引用。书上也给出了很多寻址模式的解析：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F.png" srcset="/img/loading.gif" lazyload></p>
 <p>我们最常用的寻址方式是图上的最后一个，是<strong>比例变址寻址</strong>的一种，表示为 <code>Imm(x,y,z)</code>，表示了地址为 <code>x+yz+Imm</code> 的内存空间。</p>
 <h4 id="数据传送指令"><a href="#数据传送指令" class="headerlink" title="数据传送指令"></a>数据传送指令</h4><p>数据传送指令，就是字面意思，把数据从一个位置复制到另一个位置的指令。</p>
 <p>我们把对应执行操作相同，但是执行的操作数大小不同的不同指令称之为同一个<strong>指令类</strong>。</p>
@@ -853,14 +853,14 @@
 </tr>
 </tbody></table>
 <p>这两个指令对应的寄存器层面的变化如下：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6%E5%9C%B0%E5%9D%80.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6%E5%9C%B0%E5%9D%802.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6%E5%9C%B0%E5%9D%80.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6%E5%9C%B0%E5%9D%802.png" srcset="/img/loading.gif" lazyload></p>
 <p>call 指令执行前</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6call%E5%89%8D.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6call%E5%89%8D.png" srcset="/img/loading.gif" lazyload></p>
 <p>call 指令执行完毕后，<em>rip</em> 寄存器指向调用的函数 <code>foo()</code> 的地址 <code>0x4004e7</code>，此时 <em>rsp</em> 指向返回地址 <code>0x400514</code></p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6call%E5%90%8E.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6call%E5%90%8E.png" srcset="/img/loading.gif" lazyload></p>
 <p>ret 执行后 <em>rip</em> 寄存器指向原本 <code>foo()</code> 函数对应的返回地址 <code>0x400514</code></p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6ret%E5%90%8E.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E8%BD%AC%E7%A7%BB%E6%8E%A7%E5%88%B6ret%E5%90%8E.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="数据传送"><a href="#数据传送" class="headerlink" title="数据传送"></a>数据传送</h4><p>在函数调用的过程中，不仅要把控制在过程中传递，还需要传递数据参数。</p>
 <p>在 x86-64 中，大部分的过程间的数据传递是通过寄存器实现的。寄存器最多传递六个整数，顺序是： %rdi，%rsi，%rdx，%rcx，%r8，%r9 ，其余参数自右向左依次入栈。</p>
 <h4 id="栈上的局部存储"><a href="#栈上的局部存储" class="headerlink" title="栈上的局部存储"></a>栈上的局部存储</h4><p>有一些局部数据必须放在内存中，具体情况如下：</p>
@@ -893,7 +893,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">S</span>&#123;</span><br>    <span class="hljs-type">int</span> i;         <span class="hljs-comment">//+4</span><br>    <span class="hljs-type">char</span> c;        <span class="hljs-comment">//4+=1</span><br>    <span class="hljs-type">int</span> j;        <span class="hljs-comment">//8+=4</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>画出图就是下面的样子，灰色部分是为了对内对齐导致的两个数据成员之间的空的间隙</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/3-%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90.png" srcset="/img/loading.gif" lazyload></p>
 <p>因为不同的数据类型都必须对其相应的值K，具体如下表：</p>
 <table>
 <thead>
@@ -1077,7 +1077,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>CSAPP 第三章 程序的机器级表示</div>
+      <div>CSAPP 第三章 程序的机器级表示 总结</div>
       <div>https://shmodifier.github.io/2023/09/30/CSAPP-第三章-程序的机器级表示/</div>
     </div>
     <div class="license-meta">
