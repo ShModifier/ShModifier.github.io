@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 第三章 bomblab">
+<meta property="og:url" content="https://shmodifier.github.io/2023/10/03/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-10-03T07:46:35.000Z">
+<meta property="article:modified_time" content="2023-10-03T07:56:17.170Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="CSAPPlab">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>CSAPP 第三章 bomblab - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CSAPP 第三章 bomblab"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-03 15:46" pubdate>
+          2023年10月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          79 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CSAPP 第三章 bomblab</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示</p>
+<span id="more"></span>
+
+<p>实验给到一个可执行程序和一个C语言的源码，但是源码的函数没有给全，只能判断大致逻辑。</p>
+<p>设置了六个关卡需要全部通过之后才算成功，只要有一个关卡失败就会退出</p>
+<hr>
+<p>先看了一眼.c文件的源码，文件中有大致如下几个函数 ：<code>initialize_bomb()</code> 、<code>read_line()</code> 、<code>explode bomb()</code>、 <code>phase_[number]()</code> 、<code>phase_defuse</code>。</p>
+<p>其中 explode 用来引爆炸弹结束进程，defuse 拆弹<del>（这两个还有那个初始化炸弹都不太重要）</del>，phase 系列函数就是具体每一个关卡对应的函数，每次新关卡都是 <code>read_line()</code> 先接受用户输入再进行判断的。</p>
+<blockquote>
+<p>之前机器里装了 pwndbg 用来调试，我觉得比光秃秃的 gdb 更好用🤪所以我这次还是用它啦</p>
+</blockquote>
+<p>直接 <code>gdb bomb</code> 调试看看，命令 <code>b main</code> 在 main 下断点然后 <code>n</code> 步入到第一个关卡函数。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-read_line.png" srcset="/img/loading.gif" lazyload></p>
+<p>程序在 <code>read line()</code> 这里停止，接收用户输入。由于关卡在输入之后，所以先输入一些乱码跳过这个函数进入下面的 <code>phase_1</code> 。</p>
+<h3 id="phase-1"><a href="#phase-1" class="headerlink" title="phase_1"></a>phase_1</h3><p>使用 <code>s</code> 命令进入到函数内部，发现 <code>call  strings_not_equal</code> 指令，根据字面意思也可以知道这是比较两个字符串。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-strings_not_equal.png" srcset="/img/loading.gif" lazyload></p>
+<p>此时 <em>rdi</em> 存储我们刚刚输入的内容，<em>rsi</em> 存储程序将要进行比较判断的内容，也是我们应该输入的正确答案：</p>
+<p> <strong>Border relations with Canada have never been better.</strong>  </p>
+<p>我们这条命令执行完毕后发现返回值是 0x1 也就是 1，后面有一个 <code>test eax,eax</code> 指令跟随零跳转，也就是说只有比较<strong>两个字符串相等</strong>才会继续执行程序，如果返回值为 1就会调用 <code>explode_bomb</code> 函数结束程序。</p>
+<h3 id="phase-2"><a href="#phase-2" class="headerlink" title="phase_2"></a>phase_2</h3><p>进入下一个关卡，还是同样先输入再判断。先填充一些字符串进去再进入函数中调试观察。</p>
+<p>进入 phase_2 后看到一个 read_six_number 函数，顾名思义就是读取六个数字。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-read_six_number.png" srcset="/img/loading.gif" lazyload></p>
+<p>这里发现读取的数字是从我们开始 <code>read_line()</code> 中输入的字符串截取的，  之后 <code>cmp  dword ptr [rsp], 1</code> 指令会将栈指针 rsp 的值和 1 比较。其中 dword ptr 代表要比较的数据在内存中占据4个字节，也就是我们<strong>输入的第一个数字要是 1</strong> 。</p>
+<p>这样之后就会跳转到 <code>phase_2+52</code> 的地方去，我们发现它是一个循环</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-six_number_je.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中循环中的判断内容是取当前 rbx-4 的值也就是判断的上一个数字的值赋值给 eax， 执行 <code>add eax, eax</code> 将值乘 2 再与当前要判断的数字比较。</p>
+<p>总的来看是第一个数字是 1 ，之后的每一个数字都是前面的数字乘 2 。所以在这个关卡应该输入 <strong>1 2 4 8 16 32</strong> 。</p>
+<h3 id="phase-3"><a href="#phase-3" class="headerlink" title="phase_3"></a>phase_3</h3><p>进入到函数中发现有一个 <code>scanf()</code> 函数输出的格式化字符串是两个 <code>%d</code>，也就是我们在第三关要输入两个整数</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-scanf.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中返回值 <code>eax</code> 表示正确格式化的数据个数，这里的判断要求返回值要大于 1 。</p>
+<p>随后我们进入到 <code>phase_3+39</code> ，这里进的操作 <code>cmp   dword ptr [rsp+8], 7; ja    phase_3+106</code> ，目标操作数大于 7 才会进行跳转，跳转过去发现是 <code>explode_bomb()</code> 😅。</p>
+<p>我们调试看这个 <code>[rsp+8]</code> 存储的信息就是我们输入的第一个参数，也就是说我们<strong>输入的第一个数要是整数且要小于等于 7</strong>。</p>
+<p>下面就进入了一个跳转表</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-struct.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们查看跳转表储存的信息</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-struct_array.png" srcset="/img/loading.gif" lazyload></p>
+<p>这里也可以看出来输入的第一个值不能大于7 的原因，它还要用来匹配跳转表对应从0开始到7的索引值。</p>
+<p>第一个 <code>0x400f7c</code> 就是 <code>phase_3+57</code> 的地址，我就直接用它，对应我们输入的第一个数字是 0。</p>
+<p>这里的指令对应将 0xcf 也就是 207 赋值给 eax，随后将我们输入的第二个数字和 eax 比较，只有相等才能避开 <code>explode_bomb()</code></p>
+<blockquote>
+<p>看了看其他的选项都是给 eax 赋值再比较，原理是一样的</p>
+</blockquote>
+<p>所以说，综上我们知道第三次输入应该输入两个整数，我输入的是 <strong>0 207</strong></p>
+<h3 id="phase-4"><a href="#phase-4" class="headerlink" title="phase_4"></a>phase_4</h3><p>4和3是一样的套路，要求输入两个整数</p>
+<p>不过这次的第一个数要求小于等于 0xe 也就是 14 才能跳转</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-jbe_0xe.png" srcset="/img/loading.gif" lazyload></p>
+<p>随后我们进入 func4 ，在此之前可以发现其中的四个参数分别由前面的指令赋值：edx &#x3D; 0xe&#x3D;14 、 esi &#x3D; 0 、 edi &#x3D; 我们输入的第一个数字</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-mov.png" srcset="/img/loading.gif" lazyload></p>
+<p>进入 func4  ,太长了直接 <code>disass func4 </code> 看这个函数完整的汇编代码</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-fun4.png" srcset="/img/loading.gif" lazyload></p>
+<p>很明显就发现发现它 call 了很多次 func4 也就是说这个是个递归函数，人工反编译一下大概就是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">func4</span><span class="hljs-params">(x,y,z)</span>      <span class="hljs-comment">//第一次递归中，x=我们输入的第一个数，y=0,z=14</span><br>&#123;    <br>    <span class="hljs-type">int</span> arg=z;<br>    arg-=y;<br>    <span class="hljs-type">int</span> val=arg;<br>    val&gt;&gt;=<span class="hljs-number">31</span>;<br>    arg+=val;<br>    arg&gt;&gt;=<span class="hljs-number">1</span>;<br>    val=arg+y;<br>    <span class="hljs-keyword">if</span>(val&gt;x)<br>    &#123;<br>        z=val<span class="hljs-number">-1</span>;<br>        func4(x,y,z);<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>        arg=<span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">if</span>(val&lt;x)<br>        &#123;<br>            y+=<span class="hljs-number">1</span>;<br>            func4(x,y,z);<br>            arg=arg+arg+<span class="hljs-number">1</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> arg;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>整理简化一下，让它长得更像我们平时接触到的递归，大概就是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-type">int</span> <span class="hljs-title function_">func4</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y,<span class="hljs-type">int</span> z)</span><br>&#123;<br>    <span class="hljs-type">int</span> arg=z-y;<br>    <span class="hljs-type">int</span> val=arg&gt;&gt;<span class="hljs-number">31</span>;<br>    arg+=val;<br>    arg&gt;&gt;=<span class="hljs-number">1</span>;<br>    val=arg+y;<br>    <span class="hljs-keyword">if</span>(val&gt;x)<br>    &#123;<br>        arg=func4(x,y,val<span class="hljs-number">-1</span>);<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>    &#123;<br>        arg=<span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">if</span>(val&lt;x)<br>        &#123;<br>            arg=func4(x,y+<span class="hljs-number">1</span>,z);<br>            arg=arg*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>;<br>        &#125;<br>    &#125;<br>	<span class="hljs-keyword">return</span> arg;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>根据函数外 <code>phase_4+65</code> 处的判断，如果函数返回值为非 0 就会引爆炸弹，也就是说我们要让这个递归函数的最终返回值为0。写个测试代码运行一下发现 0、1、3 、7 都可以。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-phase4_return.png" srcset="/img/loading.gif" lazyload></p>
+<p>在返回值的检验后还有一个对 <code>rsp+0xc</code> 的检验，也就是我们输入的第二个值也要为0。</p>
+<p>所以第四处应该输入两个数字，<strong>第一个是 0、1、3、7 任选其一，第二个是0</strong>。</p>
+<h3 id="phase-5"><a href="#phase-5" class="headerlink" title="phase_5"></a>phase_5</h3><p>还是输入 aaaaaaaaa 进入到第五个关卡，有一个 <code>string_lenth()</code> 函数</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-stringlenth.png" srcset="/img/loading.gif" lazyload></p>
+<p>函数下方紧跟的指令 <code>cmp eax, 6</code> 判断函数的返回值必须是 6，也就是说我们要输入六个字符</p>
+<p>往下看成功跳转后的代码，里面还设置了一个 canary 保护，应该是检验上面的 6 长度字符的。代码依旧是很长我们直接看汇编代码</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-phase_5.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>箭头所指就是我们完成输入长度判断跳转后，关卡设置代码开始的地方</p>
+</blockquote>
+<p>先看 explode_bomb 前面用来判断的指令，有一个和 phase_1 一样的 <code>string_not_equal()</code> 函数，比较的文本是 flyers。也就是说我们输入的这个字符串最后的结果要是 “<strong>flyers</strong>“ ，但前面有那么多指令一定不是只输入一个 flyers 这么简单！</p>
+<p>让我们来看一下：</p>
+<p>在 +41 和 +74 之间有一个循环的部分，这个循环一定就是对字符串的处理了，同时，可以看出结束循环的标志是 <code>rax=6</code> 也就是说这个循环要进行六次。</p>
+<p>我们去掉每次的循环次数判断来分析一下每一行指令都做了什么：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs assembly">movzx  ecx,BYTE PTR [rbx+rax*1]    ;rbx=输入的字符串 rax=0，每次循环都会加1<br>mov    BYTE PTR [rsp],cl    <br>mov    rdx,QWORD PTR [rsp]    ;到此句指令每次循环中读取用户输入字符串的一个字符到寄存器中<br>and    edx,0xf    ;取当前字符的二进制低四位数字<br>movzx  edx,BYTE PTR [rdx+0x4024b0]     ;从0x4024b0读取第rdx的字符，rdx=edx<br>mov    BYTE PTR [rsp+rax*1+0x10],dl    ;保存截取的字符<br></code></pre></td></tr></table></figure>
+
+<p><code>0x4024b0</code> 处存储着一段字符串 “<strong>maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?</strong>“，四位的二进制最大是16，也就是说用来做判断的字符串有效值就是 maduiersnfotvbyl ，<del>后面是作者在内涵我们</del></p>
+<p>至此我们得出了字符串处理的方法，每次循环从输入的字符串按顺序取一个字符，检查所取字符的低四位数字，以这个数字为偏移在给定字符串中查找，要求最后的结果是 flyers。</p>
+<p>我写了一个函数来找可见字符串的组合：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> <br>&#123;<br>    <span class="hljs-type">int</span> targetValue[<span class="hljs-number">6</span>]=&#123;<span class="hljs-number">9</span>,<span class="hljs-number">15</span>,<span class="hljs-number">14</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>,<span class="hljs-number">7</span>&#125;; <br>    <span class="hljs-type">char</span> visibleChars[] = <span class="hljs-string">&quot; !#$%&amp;&#x27;()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz&#123;|&#125;~&quot;</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;<span class="hljs-number">6</span>;j++) <br>	&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n找到尾数为%d的字符：&quot;</span>,targetValue[j]);<br>		<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; visibleChars[i] != <span class="hljs-string">&#x27;\0&#x27;</span>; i++)<br>		&#123;<br>			<span class="hljs-type">char</span> currentChar = visibleChars[i];<br>            <span class="hljs-type">int</span> charValue = currentChar - <span class="hljs-string">&#x27;0&#x27;</span>; <span class="hljs-comment">// 将字符转换为对应的整数值</span><br>        	<span class="hljs-keyword">if</span> ((charValue &amp; <span class="hljs-number">0xF</span>) == targetValue[j]) &#123;<br>            	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c &quot;</span>, currentChar);<br>			&#125;<br>        &#125;<br>    &#125;<br>    getchar();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>	<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-5_result.png" srcset="/img/loading.gif" lazyload></p>
+<p>每一个拎出来一个组合一下就行，我选的 ionefg  <del>主要是全是小写字母不用大小写转换</del></p>
+<h3 id="phase-6"><a href="#phase-6" class="headerlink" title="phase_6"></a>phase_6</h3><blockquote>
+<p>本来说是这道题可以不做，但是我又不想这个国庆假期里去看新东西了（我是懒惰虫，就做了一下子，然后这一道题做了一天😿</p>
+</blockquote>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-6_six_number.png" srcset="/img/loading.gif" lazyload></p>
+<p>已经摸清套路了，这个环节要求输入六个数字。</p>
+<p>汇编代码很长，大致看了一下在整个函数里面跳来跳去的，看着就头昏。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs assembly">0x00000000004010f4 &lt;+0&gt;:	push   r14<br>0x00000000004010f6 &lt;+2&gt;:	push   r13<br>0x00000000004010f8 &lt;+4&gt;:	push   r12<br>0x00000000004010fa &lt;+6&gt;:	push   rbp<br>0x00000000004010fb &lt;+7&gt;:	push   rbx<br>0x00000000004010fc &lt;+8&gt;:	sub    rsp,0x50<br>0x0000000000401100 &lt;+12&gt;:	mov    r13,rsp<br>0x0000000000401103 &lt;+15&gt;:	mov    rsi,rsp<br>0x0000000000401106 &lt;+18&gt;:	call   0x40145c &lt;read_six_numbers&gt;    ;读六个数字<br>0x000000000040110b &lt;+23&gt;:	mov    r14,rspn<br>0x000000000040110e &lt;+26&gt;:	mov    r12d,0x0<br>0x0000000000401114 &lt;+32&gt;:	mov    rbp,r13<br>0x0000000000401117 &lt;+35&gt;:	mov    eax,DWORD PTR [r13+0x0]    ;取一个数字<br>0x000000000040111b &lt;+39&gt;:	sub    eax,0x1    ;将取出的数字-1<br>0x000000000040111e &lt;+42&gt;:	cmp    eax,0x5     ;结果要小于等于5<br>0x0000000000401121 &lt;+45&gt;:	jbe    0x401128 &lt;phase_6+52&gt;   <br>0x0000000000401123 &lt;+47&gt;:	call   0x40143a &lt;explode_bomb&gt;<br>0x0000000000401128 &lt;+52&gt;:	add    r12d,0x1<br>0x000000000040112c &lt;+56&gt;:	cmp    r12d,0x6    ;六次循环<br>0x0000000000401130 &lt;+60&gt;:	je     0x401153 &lt;phase_6+95&gt;    <br>0x0000000000401132 &lt;+62&gt;:	mov    ebx,r12d    <br>0x0000000000401135 &lt;+65&gt;:	movsxd rax,ebx<br>0x0000000000401138 &lt;+68&gt;:	mov    eax,DWORD PTR [rsp+rax*4]<br>0x000000000040113b &lt;+71&gt;:	cmp    DWORD PTR [rbp+0x0],eax      ;判断数字是否两两相等<br>0x000000000040113e &lt;+74&gt;:	jne    0x401145 &lt;phase_6+81&gt;<br>0x0000000000401140 &lt;+76&gt;:	call   0x40143a &lt;explode_bomb&gt;<br>0x0000000000401145 &lt;+81&gt;:	add    ebx,0x1<br>0x0000000000401148 &lt;+84&gt;:	cmp    ebx,0x5<br>0x000000000040114b &lt;+87&gt;:	jle    0x401135 &lt;phase_6+65&gt;<br>0x000000000040114d &lt;+89&gt;:	add    r13,0x4<br>0x0000000000401151 &lt;+93&gt;:	jmp    0x401114 &lt;phase_6+32&gt;  <br>0x0000000000401153 &lt;+95&gt;:	lea    rsi,[rsp+0x18]    <br>0x0000000000401158 &lt;+100&gt;:	mov    rax,r14<br>0x000000000040115b &lt;+103&gt;:	mov    ecx,0x7<br>0x0000000000401160 &lt;+108&gt;:	mov    edx,ecx    ;edx=7<br>0x0000000000401162 &lt;+110&gt;:	sub    edx,DWORD PTR [rax]    ;当前数字-7，结果覆盖原数字<br>0x0000000000401164 &lt;+112&gt;:	mov    DWORD PTR [rax],edx<br>0x0000000000401166 &lt;+114&gt;:	add    rax,0x4    ;准备读取下一个数字    <br>0x000000000040116a &lt;+118&gt;:	cmp    rax,rsi    ;判断是不是最后一次循环<br>0x000000000040116d &lt;+121&gt;:	jne    0x401160 &lt;phase_6+108&gt;    ;跳转回操作数字处理继续进行下一个数字的处理<br>0x000000000040116f &lt;+123&gt;:	mov    esi,0x0<br>0x0000000000401174 &lt;+128&gt;:	jmp    0x401197 &lt;phase_6+163&gt;<br>0x0000000000401176 &lt;+130&gt;:	mov    rdx,QWORD PTR [rdx+0x8] <br>0x000000000040117a &lt;+134&gt;:	add    eax,0x1<br>0x000000000040117d &lt;+137&gt;:	cmp    eax,ecx<br>0x000000000040117f &lt;+139&gt;:	jne    0x401176 &lt;phase_6+130&gt;<br>0x0000000000401181 &lt;+141&gt;:	jmp    0x401188 &lt;phase_6+148&gt;<br>0x0000000000401183 &lt;+143&gt;:	mov    edx,0x6032d0<br>0x0000000000401188 &lt;+148&gt;:	mov    QWORD PTR [rsp+rsi*2+0x20],rdx<br>0x000000000040118d &lt;+153&gt;:	add    rsi,0x4    <br>0x0000000000401191 &lt;+157&gt;:	cmp    rsi,0x18    <br>0x0000000000401195 &lt;+161&gt;:	je     0x4011ab &lt;phase_6+183&gt;<br>0x0000000000401197 &lt;+163&gt;:	mov    ecx,DWORD PTR [rsp+rsi*1]   <br>0x000000000040119a &lt;+166&gt;:	cmp    ecx,0x1   <br>0x000000000040119d &lt;+169&gt;:	jle    0x401183 &lt;phase_6+143&gt;   <br>0x000000000040119f &lt;+171&gt;:	mov    eax,0x1<br>0x00000000004011a4 &lt;+176&gt;:	mov    edx,0x6032d0<br>0x00000000004011a9 &lt;+181&gt;:	jmp    0x401176 &lt;phase_6+130&gt;<br>0x00000000004011ab &lt;+183&gt;:	mov    rbx,QWORD PTR [rsp+0x20]<br>0x00000000004011b0 &lt;+188&gt;:	lea    rax,[rsp+0x28]<br>0x00000000004011b5 &lt;+193&gt;:	lea    rsi,[rsp+0x50]<br>0x00000000004011ba &lt;+198&gt;:	mov    rcx,rbx<br>0x00000000004011bd &lt;+201&gt;:	mov    rdx,QWORD PTR [rax]<br>0x00000000004011c0 &lt;+204&gt;:	mov    QWORD PTR [rcx+0x8],rdx<br>0x00000000004011c4 &lt;+208&gt;:	add    rax,0x8<br>0x00000000004011c8 &lt;+212&gt;:	cmp    rax,rsi<br>0x00000000004011cb &lt;+215&gt;:	je     0x4011d2 &lt;phase_6+222&gt;<br>0x00000000004011cd &lt;+217&gt;:	mov    rcx,rdx<br>0x00000000004011d0 &lt;+220&gt;:	jmp    0x4011bd &lt;phase_6+201&gt;<br>0x00000000004011d2 &lt;+222&gt;:	mov    QWORD PTR [rdx+0x8],0x0<br>0x00000000004011da &lt;+230&gt;:	mov    ebp,0x5<br>0x00000000004011df &lt;+235&gt;:	mov    rax,QWORD PTR [rbx+0x8]<br>0x00000000004011e3 &lt;+239&gt;:	mov    eax,DWORD PTR [rax]<br>0x00000000004011e5 &lt;+241&gt;:	cmp    DWORD PTR [rbx],eax<br>0x00000000004011e7 &lt;+243&gt;:	jge    0x4011ee &lt;phase_6+250&gt;<br>0x00000000004011e9 &lt;+245&gt;:	call   0x40143a &lt;explode_bomb&gt;<br>0x00000000004011ee &lt;+250&gt;:	mov    rbx,QWORD PTR [rbx+0x8]<br>0x00000000004011f2 &lt;+254&gt;:	sub    ebp,0x1<br>0x00000000004011f5 &lt;+257&gt;:	jne    0x4011df &lt;phase_6+235&gt;<br>0x00000000004011f7 &lt;+259&gt;:	add    rsp,0x50    ;准备结束函数<br>0x00000000004011fb &lt;+263&gt;:	pop    rbx<br>0x00000000004011fc &lt;+264&gt;:	pop    rbp<br>0x00000000004011fd &lt;+265&gt;:	pop    r12<br>0x00000000004011ff &lt;+267&gt;:	pop    r13<br>0x0000000000401201 &lt;+269&gt;:	pop    r14<br>0x0000000000401203 &lt;+271&gt;:	ret    <br></code></pre></td></tr></table></figure>
+
+<p> <del>乱七八糟乱七八糟</del>    </p>
+<p>这个循环大概分为几个部分：</p>
+<ul>
+<li><p><em>+23 - +60</em> 判断输入的六个数字是否都小于等于6</p>
+</li>
+<li><p><em>+62 - +93</em> 两个小循环来判断输入的数字是不是重复的   </p>
+</li>
+<li><p><em>+108 -+128</em> 所有数字都与7做差再用结果覆盖原始值</p>
+</li>
+<li><p><em>+130 - +181</em> 重新安排链表</p>
+</li>
+<li><p><em>+183 - +257</em> 检验链表中的数据是否从大到小排序</p>
+</li>
+</ul>
+<p>关于链表的操作部分：</p>
+<p>+130 处的操作是 <code>mov rdx,QWORD PTR [rdx+0x8]</code> ，这是链表的一种表示方法，将链表中的节点串接起来。</p>
+<p>在 +176 处取了一个地址进行操作，查看此处内存数据：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-6_information.png" srcset="/img/loading.gif" lazyload></p>
+<p>根据信息存储的方式也可以判断出这是一个链表，从 1-6 每一个索引值对应节点存储的数据为：332，168，924，691，477，413</p>
+<p>也就是说这部分中，程序会先用7减去我们输入的数据，然后以我们输入的数据的顺序来重新排列链表中数据的顺序。比如我们输入 1、2、3、4、5、6 ，与 7 做差结果是 6、5、4、3、2、1，假设我们用 [n] 来表示原本链表中的第n个数据，那么它的排序顺序就是 [6]、5]、[4]、[3]、[2]、[1]，并且此时我们需要保证数据是从大到小排序的。</p>
+<p>所以可以逆向分析，我们先把原链表中的数据排序，顺序是 3、4、5、6、1、2。又因为我们需要先与 7 做差，再逆向推回去就是 <strong>4、3、2、1、6、5</strong>。</p>
+<hr>
+<p>我最后总的作答是这样的</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs txt">Border relations with Canada have never been better.<br>1 2 4 8 16 32<br>0 207<br>0 0<br>ionefg<br>4 3 2 1 6 5<br></code></pre></td></tr></table></figure>
+
+<p>完结撒花~🥳</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-result.png" srcset="/img/loading.gif" lazyload></p>
+<p>————————  手动分割一下  ————————</p>
+<p>原来这个实验我做了三天😶‍🌫️果然假期就是懒惰</p>
+<p>xsbb:</p>
+<p>在 phase_3 的跳转表那里，其实我当时根本没看出来这是跳转表，我去问了 chatCPT😿</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-struct_chat.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/CSAPPlab/">#CSAPPlab</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CSAPP 第三章 bomblab</div>
+      <div>https://shmodifier.github.io/2023/10/03/CSAPP-第三章-bomblab/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/09/30/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" title="CSAPP 第三章 程序的机器级表示 总结">
+                        <span class="hidden-mobile">CSAPP 第三章 程序的机器级表示 总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
