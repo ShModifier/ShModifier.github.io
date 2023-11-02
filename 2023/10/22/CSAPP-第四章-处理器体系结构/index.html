@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-10-22T09:21:16.000Z">
-<meta property="article:modified_time" content="2023-10-22T09:27:30.820Z">
+<meta property="article:modified_time" content="2023-10-22T09:29:46.825Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="CSAPP">
@@ -311,7 +311,7 @@
 <p>除此之外还有 3 个 1 位的<strong>条件码 ZF、SF 和 OF，用于条件跳转</strong>。程序状态的最后一个部分是<strong>状态码（Stat），表示程序的总体状态</strong>，提示程序正常是否运行或者是出现了某种异常。</p>
 <p>其他的概念我们都认为它和 x86-64 相同或更加简化。</p>
 <h3 id="Y86-64-指令"><a href="#Y86-64-指令" class="headerlink" title="Y86-64 指令"></a>Y86-64 指令</h3><p>如下图就是我们的 Y86-64 指令的简单描述，左边是指令的汇编码表示，右边是字节编码：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-Y86-64%E6%8C%87%E4%BB%A4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-Y86-64%E6%8C%87%E4%BB%A4.png" srcset="/img/loading.gif" lazyload></p>
 <h5 id="数据传送指令"><a href="#数据传送指令" class="headerlink" title="数据传送指令"></a>数据传送指令</h5><p>x86-64 的 movq 指令被分为了 4 个不同的指令，irmovq、rrmovq、mrmovq、rmmovq，分别对应了源和目的的种类数：立即数-寄存器，寄存器-寄存器，内存-寄存器，寄存器-内存。Y86-64 与 x86-64 相同，不允许直接从内存地址传送到另一个内存地址，必须通过寄存器传送。</p>
 <h5 id="整数操作指令"><a href="#整数操作指令" class="headerlink" title="整数操作指令"></a>整数操作指令</h5><p>有四种类型的整数操作（addq，subq，andq，xorq），他们只对寄存器进行操作。除此之外，这些指令还会设置条件码。</p>
 <h5 id="跳转指令"><a href="#跳转指令" class="headerlink" title="跳转指令"></a>跳转指令</h5><p>有七个跳转指令，一个无条件跳转和六个条件跳转（jle，jl，je，jne，jge，jg），工作原理和 X86-64 相同。</p>
@@ -322,7 +322,7 @@
 <p>具体图示如上一小节示例图</p>
 </blockquote>
 <p>每一个指令的第一个字节表示指令的类型，而这一个字节又分为两部分：高 4 位是代码部分，低 4 位是功能部分.其中功能值只有在一组相关指令共用一个代码才会被使用。如下图：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-Y86-64%E6%8C%87%E4%BB%A4%E5%85%B7%E4%BD%93%E5%8A%9F%E8%83%BD%E7%A0%81.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-Y86-64%E6%8C%87%E4%BB%A4%E5%85%B7%E4%BD%93%E5%8A%9F%E8%83%BD%E7%A0%81.png" srcset="/img/loading.gif" lazyload></p>
 <p>有的指令只有一字节长，有的就需要附加的寄存器指示符字节来指定一个或者两个寄存器，这些寄存器称为 rA 和 rB 。</p>
 <p>15 个寄存器每一个都有自己的标识符，范围是 0~0xE。如果寄存器的字段为0xF，就表示此处没有寄存器操作数，只需要一个寄存器的指令比如 pushq 和 popq 指令，也会将其他的寄存器设置为 0xF。</p>
 <p>分支指令调用的地址是绝对地址而不是 PC 寻址，因为我们更注重描述的简单性。</p>
@@ -414,7 +414,7 @@
 </li>
 </ul>
 <h3 id="字级的组合电路和HCL整数表达式"><a href="#字级的组合电路和HCL整数表达式" class="headerlink" title="字级的组合电路和HCL整数表达式"></a>字级的组合电路和HCL整数表达式</h3><p>利用逻辑门组合成的网，我们就可以设计出对数据字操作的电路。其中，组合电路分局输入字的每个位，用逻辑门分别计算输出字的每一位。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E5%AD%97%E7%BA%A7%E7%BB%84%E5%90%88%E7%94%B5%E8%B7%AF.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E5%AD%97%E7%BA%A7%E7%BB%84%E5%90%88%E7%94%B5%E8%B7%AF.png" srcset="/img/loading.gif" lazyload></p>
 <p>在 HCL 中，多路复用函数使用<strong>情况表达式</strong>来描述的，情况表达式的通用格式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hcl">[<br>	select1:expr1;<br>	select2:expr2;<br>	select3:expr3;<br>	...<br>	selectk:exprk;<br>]<br></code></pre></td></tr></table></figure>
 
@@ -436,10 +436,10 @@
 </ul>
 <p>需要注意的是硬件中的 ”寄存器“ 和机器级编程中的 ”寄存器“ 并不是完全相同的概念，硬件中的寄存器是一个电子元件，机器编程中寄存器代表 CPU 中可寻址的字，它们存储在寄存器文件中。我们分别称呼这两类寄存器位 ”硬件寄存器“ 和 ”程序寄存器“。</p>
 <p>大多时候，寄存器输出会一直保持在当前的寄存器状态上，只有每个时钟到达上升沿时，值才会从寄存器的输入传送到输出。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E5%AF%84%E5%AD%98%E5%99%A8%E6%96%87%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E5%AF%84%E5%AD%98%E5%99%A8%E6%96%87%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>如上图，每个寄存器文件都有两个读端口和一个写端口。这样的多端口访问机制允许同时进行多个读和写操作。</p>
 <p>同样，因为可以同时进行多个读写操作，就不可避免地发生冲突。这时候我们的随机访问寄存器就派上了用场。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AF%84%E5%AD%98%E5%99%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AF%84%E5%AD%98%E5%99%A8.png" srcset="/img/loading.gif" lazyload></p>
 <p>这个内存有一个地址输人，一个写的数据输入，以及一个读的数据输出。</p>
 <p>其中从内存中读的操作类似于组合逻辑，如果我们在输入 address 上提供一个地址, 并将 write 控制信号设置为 0, 那么在经过一些延迟之后，存储在那个地址上的值会出现在输出 data 上，内存将不会响应输入地址上的数据写入请求。如果地址超出了范围，error 信号会设置为 1，否则就设置为 0。</p>
 <p>写内存是由时钟控制的：我们将 address 设置为期望的地址，将 data in 设置为期望的值， write 设置为 1。然后当我们控制时钟时，只要地址是合法的，就会更新内存中指定的位置。</p>
@@ -469,12 +469,12 @@
 </ul>
 <p>处理器无限循环来执行这些阶段，在我们简化的实现中，任何一个阶段异常处理器都会停止。</p>
 <p>我们采用通用框架来将指令映射到硬件中，例如下表是对 Opq、rrmovq 和 irmovq 类型的指令所需要的处理：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-Y86-64%E6%8C%87%E4%BB%A4%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-Y86-64%E6%8C%87%E4%BB%A4%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0.png" srcset="/img/loading.gif" lazyload></p>
 <p>整数操作都遵循上面的通用模式，在取指阶段我们不需要常数，valP 的值计算为 PC+2 。</p>
 <p>需要注意 push 指令的实现，%rsp 的指针是先减去 8 再写入的，具体流程见下图：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-pushq%E5%AE%9E%E7%8E%B0.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-pushq%E5%AE%9E%E7%8E%B0.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="SEQ硬件结构"><a href="#SEQ硬件结构" class="headerlink" title="SEQ硬件结构"></a>SEQ硬件结构</h3><p>要完成 y86-64 指令的六个基本阶段，需要相应的硬件结构，如下图为硬件结构对应的抽象表示：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-SEQ%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-SEQ%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload></p>
 <p>硬件单元与各个阶段相关联：</p>
 <ul>
 <li>取指：将 PC 作为地址从对应的内存中读取指令，PC 增加器计算指令长度并将新的 PC 暂时放入值 valP 当中</li>
@@ -491,16 +491,16 @@
 <p>从不回读：处理器从来不需要为了完成一条指令的执行而去读由该指令更新了的状态。</p>
 </blockquote>
 <h3 id="SEQ阶段的实现"><a href="#SEQ阶段的实现" class="headerlink" title="SEQ阶段的实现"></a>SEQ阶段的实现</h3><p>我们为不同的常数值赋予了不同的意义，包括指示指令代码、功能码、寄存器值和ALU状态等等。具体如下表：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E5%B8%B8%E6%95%B0%E5%90%AB%E4%B9%89.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E5%B8%B8%E6%95%B0%E5%90%AB%E4%B9%89.png" srcset="/img/loading.gif" lazyload></p>
 <p>其中 nop 指令处了将 pc 加 1 不进行任何操作；halt 指令设置处理器状态，导致程序停止运行。</p>
-<h4 id="取指阶段"><a href="#取指阶段" class="headerlink" title="取指阶段"></a>取指阶段</h4><p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E5%8F%96%E6%8C%87.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="取指阶段"><a href="#取指阶段" class="headerlink" title="取指阶段"></a>取指阶段</h4><p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E5%8F%96%E6%8C%87.png" srcset="/img/loading.gif" lazyload></p>
 <p>取指阶段包括指令内存硬件单元，以 PC 作为第一个字节（字节 0）的地址，这个单元一次从内存读出 10 个字节。</p>
 <p>10字节中的第一个字节被解释成指令字节（Split），分为两个4位的net数。它又被分割得到 icode 和 ifun 。根据 icode 的值，会进一步判断指令是否合法、是否包含寄存器或者常数。</p>
 <p>对应的 Instr valid 、Need_regids、Need_valC 用 HCL 表示如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs HCL">Instr_valid=<br>icode in&#123;<br>	0xC,0xD,0xE,0xF    // 检查没有被赋予特殊意义的常数，也就是检查是否合法<br>&#125;；<br><br>Need_regids =<br>icode in &#123; <br>    IRRMOVQ,IOPQ,IPUSHQ,IPOPQ,<br>    IIRMOVQ,IRMMOVQ,IMRMOVQ<br>&#125;;<br><br>Need_valC=<br>icode in&#123;<br>	IIRMOVQ,IMRMOVQ,IRMMOVQ,<br>	IJXX,ICALL<br>&#125;；<br></code></pre></td></tr></table></figure>
 
 <h4 id="译码和写回阶段"><a href="#译码和写回阶段" class="headerlink" title="译码和写回阶段"></a>译码和写回阶段</h4><p>这两个阶段都要访问寄存器文件。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E8%AF%91%E7%A0%81%E5%92%8C%E5%86%99%E5%9B%9E.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E8%AF%91%E7%A0%81%E5%92%8C%E5%86%99%E5%9B%9E.png" srcset="/img/loading.gif" lazyload></p>
 <p>寄存器文件有四个端口，它支持同时进行两个读和两个写。</p>
 <p>每个端口都有一个地址连接和一个数据连接，地址连接是一个寄存器 ID，而数据连接是一组 64 根线路，既可以作为寄存器文件的输出字（对读端口来说），也可以作为它的输人字（对写端口来说）。 两个读端口的地址输人为 srcA 和 srcB，而两个写端口的地址输人为 dstE 和 dstM。如果某个地址端口上 的值为特殊标识符 OxF(RNONE)，则表明不需要访问 寄存器。</p>
 <p>也就是说， srcA 和 srcB 决定我们从哪个寄存器读数据，对应从 valA 和 valB 中读出。同理 destE 和 destM 决定要去写哪个寄存器，对应数据从 valE 和 valM 中写入。</p>
@@ -509,7 +509,7 @@
 
 <h4 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h4><p>执行阶段包括算数&#x2F;逻辑单元（ALU），这个单 元根据 alufun 信号的设置，对输人 aluA 和 aluB 执行 ADD、SUBTRACT、 AND 或 EXCLUSIVEOR 运算。这些数据和控制信号是由三个控制块产生的。ALU 的输出就是 valE 信号。</p>
 <p>如下图：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%89%A7%E8%A1%8C.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%89%A7%E8%A1%8C.png" srcset="/img/loading.gif" lazyload></p>
 <p>执行阶段的第一步就 是每条指令的 ALU 计算。列出的操作数 aluB 在 前面，后面是 aluA，这样是为了保证 subq 指令是 valB 减去 valA 。</p>
 <p>我们用如下的 HCL 表达式来描述 aluA 的行为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs hcl">word aluA=[<br>    icode in &#123; IRRMOVQ,IOPQ&#125;:valA; <br>    icode in &#123; IIRMOVQ,IRMMOVQ,IMRMOVQ&#125;:valC; <br>    icode in &#123; ICALL,IPUSHQ&#125;:-8; <br>    icode in &#123; IRET,IPOPQ&#125;:8;<br>    #Other instructions don&#x27;t need ALU<br>];<br></code></pre></td></tr></table></figure>
@@ -534,17 +534,17 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hcl">bool set_cc = icode in &#123;IOPQ&#125;;<br></code></pre></td></tr></table></figure>
 
 <h4 id="访存"><a href="#访存" class="headerlink" title="访存"></a>访存</h4><p>访存阶段的任务就是读或者写程序数据。两个控制块产生内存地址和内存输入数据（为写操作）的值。另外两个块产生表明应该执行读操作还是写操作的控制信号。当执行读操作时， 数据内存产生值 valM。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E8%AE%BF%E5%AD%98.png" srcset="/img/loading.gif" lazyload></p>
-<h4 id="更新-PC"><a href="#更新-PC" class="headerlink" title="更新 PC"></a>更新 PC</h4><p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%9B%B4%E6%96%B0PC.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E8%AE%BF%E5%AD%98.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="更新-PC"><a href="#更新-PC" class="headerlink" title="更新 PC"></a>更新 PC</h4><p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%9B%B4%E6%96%B0PC.png" srcset="/img/loading.gif" lazyload></p>
 <p>SEQ的最后阶段会更新程序计数器的值，根据指令类型和是否要选择分支，新的PC可能是 valC、valM 或 calP。</p>
 <h1 id="流水线的通用原理"><a href="#流水线的通用原理" class="headerlink" title="流水线的通用原理"></a>流水线的通用原理</h1><p>SQE 的缺点是要在一个周期内完成所有的操作，必须把时钟周期定的很慢，这样不能充分利用我们的硬件单元。为了解决这个问题，我们引入流水线来或获得更好的性能。</p>
 <p>所谓流水线就是我们所熟知的工厂流水线、自动洗车机这种“流水线化”的系统。在流水线系统中，待执行的任务被划分成了若干个独立的部分，而这些部分是同时进行的。就像汽车加工厂拧螺丝的机器一直在拧螺丝，而不是等一辆车制作完成后再拧下一颗螺丝。</p>
 <h3 id="计算流水线"><a href="#计算流水线" class="headerlink" title="计算流水线"></a>计算流水线</h3><p>下图是一个非流水线化的硬件系统的例子</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E9%9D%9E%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E9%9D%9E%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>由一些执行计算的逻辑以及一个保存结果的寄存器组成，时钟信号会在每个特定的时间间隔去保存寄存器。</p>
 <p>图中的计算块是用组合逻辑来实现的，意味着信号会穿过一系列逻辑门，在一定时间的延迟之后，输出就成为了输入的某个函数。</p>
 <p>下图又是一张流水线化的系统</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>我们将两个系统对比来看，我们假设连个系统运行同一个程序，运算逻辑需要300ps，加载寄存器需要 20ps，那么非流水线化的指令周期就是 320ps。我们将运算分为3个部分，每个阶段需要100ps。然后在各个阶段之间放上流水线寄存器，这样每条指令都会按照这三步经过这个系统，从头到尾完成一次就需要三个完整的时钟周期。</p>
 <blockquote>
 <p>ps（皮秒，10e-12S） 是时间单位</p>
@@ -552,35 +552,35 @@
 </blockquote>
 <p>这样就可以让三个阶段同时在工作，增加效率，但是执行单条指令所需时间增加。例如同样是这个计算逻辑，我们执行三次，非流水线化的程序需要三个完整的周期 960ps ，而流水线化的程序只需要 600ps （只是用于举例的计算，并不是实际过程中实现需要的时间）</p>
 <h3 id="流水线操作的详细说明"><a href="#流水线操作的详细说明" class="headerlink" title="流水线操作的详细说明"></a>流水线操作的详细说明</h3><p>就像上面的流水线化的程序，把指令分为三个阶段，同一时间可能就会有三条指令经过不同的阶段，比如 240-360。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%8C%BA%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%8C%BA%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
 <p>下面我们跟踪了相应的电路活动</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%97%B6%E9%92%9F%E5%91%A8%E6%9C%9F.png" srcset="/img/loading.gif" lazyload></p>
 <p>在时刻 240（点 1）时钟上升之前，指令 I1 和I2 已经完成了阶段 B 和 A ，阶段A中计算的指令 I2 的值已经到达第一个流水线寄存器的输入，但是该寄存器的状态和输出还保持为指令Il在阶段A中计算的值。在时钟上升后，这些指令开始传送到阶段 C 和 B，而指令 I3 开始经过阶段 A（点 2 和 3）。就像图中点 3 处的曲线化的波阵面（curved wavefront）表明的那样，信号可能以不同的速率通过各个不同的部分。在时刻 360 之前，结果值到达流水线寄存器的输入（点4）。当时刻 360 时钟上升时，各条指令会前进经过一个流水线阶段。</p>
 <p>从这个对流水线操作详细的描述中，我们可以看到减缓时钟不会影响流水线的行为。信号传播到流水线寄存器的输入，但是直到时钟上升时才会改变寄存器的状态。另一方面，如果时钟运行得太快，就会有灾难性的后果。值可能会来不及通过组合逻辑，因此当时钟上升时，寄存器的输人还不是合法的值。</p>
 <h3 id="流水线的局限性"><a href="#流水线的局限性" class="headerlink" title="流水线的局限性"></a>流水线的局限性</h3><p>在我们理想的流水线化系统中，各部分相互独立，每个部分所需的时间都是相同，但实际情况中会有一些因素来降低流水线的效率。</p>
 <h4 id="不一致的划分"><a href="#不一致的划分" class="headerlink" title="不一致的划分"></a>不一致的划分</h4><p>每一阶段的时间不是正好相同，就是降低效率的原因之一。比如下方程序被分为三个不同的阶段，但通过这些阶段的延迟从 50ps 到 150ps 不等。通过所有阶段的延迟和仍然为300ps。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E5%88%92%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E5%88%92%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
 <p>不过，运行时钟的速率是由最慢的阶段的延迟限制的。流水线图表明，每个时钟周期，阶段A都会空闲（用白色方框表示）100ps，而阶段C会空闲 50ps 。只有阶段B会一直处于活动状态。我们必须将时钟周期设为150+20&#x3D;170ps，得到吞吐量为5.88GIPS。另外，由于时钟周期减慢，延迟增加到了 510ps。</p>
 <p>需要注意的是，对硬件设计者来说，将指令过程进行等分是很困难的。通常，处理器中的某些硬件单元，如ALU和内存，是不能被划分成多个延迟较小的单元的。这就使得创建一组平衡的阶段非常困难</p>
 <h4 id="流水线过深，收益反而下降"><a href="#流水线过深，收益反而下降" class="headerlink" title="流水线过深，收益反而下降"></a>流水线过深，收益反而下降</h4><p>我们在这里划分了 50ps 一个阶段，那么我们所需最小时钟周期为 70ps，比起划分为 100ps 一个阶段，性能提高了 120&#x2F;70&#x3D;1.71 倍的效率，虽然我们将划分的<strong>阶段时长减小到了二分之一，但是效率确没有提高 2 倍</strong>，主要是流水线寄存器产生的延迟。如图这种情况，流水线寄存器的延迟占到了 28.6%。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%BB%B6%E8%BF%9F.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%BB%B6%E8%BF%9F.png" srcset="/img/loading.gif" lazyload></p>
 <p>许多现代的处理器都采用了很深的流水线（15 或者更多），它们把一条指令的执行分成很多简单的步骤，这样一来，每个阶段的延迟就很小。</p>
 <h3 id="待反馈的流水线系统"><a href="#待反馈的流水线系统" class="headerlink" title="待反馈的流水线系统"></a>待反馈的流水线系统</h3><p>在实际的系统中，我们的每一个指令都不是完全独立的，比如： <code>irmovq $50,%rax; addq %rax,%rbx</code> 这两句代码之间的 rax 就在传递。</p>
 <p>如果只是采用最普通的流水线就会发生异常，在第一条指令的执行阶段，可能第二条指令正在译码，需要去等待第一条指令 %rax 的最终结果，直到第一条指令写回才更新 %rax 寄存器，此时第二条指令已经过了执行阶段了。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E5%B8%A6%E5%8F%8D%E9%A6%88%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E5%B8%A6%E5%8F%8D%E9%A6%88%E7%9A%84%E6%B5%81%E6%B0%B4%E7%BA%BF.png" srcset="/img/loading.gif" lazyload></p>
 <p>此时我们引入带反馈的流水线，带需要注意，由于流水线改变了系统的行为，我们必须正确处理反馈的影响。</p>
 <p>像上图那样改变系统的行为是不可接受的。我们必须以某种方式来处理指令间的数据和控制相关，以使得到的行为与 ISA 定义的模型相符。</p>
 <h1 id="Y86-64-的流水线实现"><a href="#Y86-64-的流水线实现" class="headerlink" title="Y86-64 的流水线实现"></a>Y86-64 的流水线实现</h1><p>首先，对顺序的SEQ处理器做一点小的改动，将PC的计算挪到取指阶段。然后，在各个阶段之间加上流水线寄存器。在此基础上做一些修改，就能实现我们的目标——一个高效的、流水线化的实现 Y86-64 ISA 的处理器。</p>
 <h3 id="SEQ-：重新安排计算阶段"><a href="#SEQ-：重新安排计算阶段" class="headerlink" title="SEQ+：重新安排计算阶段"></a>SEQ+：重新安排计算阶段</h3><p>我们要调整一下 AEQ 中五个阶段的顺序，使更新 PC 阶段在一个时钟周期开始时进行，从而计算当前指令的 PC 值，而不是结束时执行。 调整后的设计称为 SQE+。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-SEQ+PC.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-SEQ+PC.png" srcset="/img/loading.gif" lazyload></p>
 <p>我们创建<strong>状态寄存器</strong>来保存在一条指令执行过程中计算出来的信号，这种改进称为电路重定时（circuit retiming）。重定时改变了一个系统的状态表示，但是并不改变它的逻辑行为。通常用它来平衡一个流水线系统中各个阶段之间的延迟。</p>
 <blockquote>
 <p>SEQ+不会有硬件寄存器来存放 PC，而是根据前一条指令保存下来的一些状态信息动态地计算 PC</p>
 </blockquote>
 <h3 id="插入流水线寄存器"><a href="#插入流水线寄存器" class="headerlink" title="插入流水线寄存器"></a>插入流水线寄存器</h3><p>如下图为 SEQ+ 的硬件结构，我们要在此基础上插入流水线寄存器：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-SEQ+%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-SEQ+%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>我们插入流水线寄存器后得到 PIPE- 架构，其中灰色底色的框框内就是流水线寄存器：</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-SEQ-%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-SEQ-%E7%A1%AC%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
 <p>流水线寄存器按如下方式标号：</p>
 <ul>
 <li>F（Fetch Code）保存程序计数器的预测值。</li>
@@ -590,7 +590,7 @@
 <li>W（Write Back）位于访存阶段和反馈路径之间，反馈路径将计算出来的值提供给寄存器文件写，而当完成ret指令时，它还要向PC选择逻辑提供返回地址。</li>
 </ul>
 <p>下面的代码就解释了流水线的步骤。</p>
-<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%844-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%AF%84%E5%AD%98%E5%99%A8%E6%B5%81%E7%A8%8B.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/4-%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%AF%84%E5%AD%98%E5%99%A8%E6%B5%81%E7%A8%8B.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="对型号进行重新排列和标号"><a href="#对型号进行重新排列和标号" class="headerlink" title="对型号进行重新排列和标号"></a>对型号进行重新排列和标号</h3><p>顺序实现 SEQ 和 SEQ+ 在一个时刻只处理一条指令，因此诸如 valc、srcA 和 valE 这样的信号值有唯一的值。但在流水线化的设计中，与各个指令相关联的这些值有多个版本，会随着指令一起流过系统。</p>
 <p>例如，在 PIPE- 的详细结构中，有4 个标号为 “Stat” 的白色方框，保存着 4 条不同指令的状态码。我们需要很小心以确保使用的是正确版本的信号。我们采用的命名机制，是<strong>在信号名前面加上大写的流水线寄存名字作为前缀</strong>，存储在流水线寄存器中的信号就可以被唯一地标识。</p>
 <blockquote>
