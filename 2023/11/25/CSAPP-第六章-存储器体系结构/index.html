@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-11-25T12:17:53.000Z">
-<meta property="article:modified_time" content="2023-11-25T12:24:39.740Z">
+<meta property="article:modified_time" content="2023-11-26T12:22:41.087Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
 <meta property="article:tag" content="CSAPP">
@@ -484,7 +484,7 @@
 <p><img src="/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/6-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="存储器体系结构中的缓存"><a href="#存储器体系结构中的缓存" class="headerlink" title="存储器体系结构中的缓存"></a>存储器体系结构中的缓存</h3><p><strong>高速缓存</strong>是一个小而快速的存储设备，它作为存储在更大、也更慢的设备中的数据对象的缓冲区域。使用高速缓存的过程称为<strong>缓存</strong>。</p>
 <p>存储器体系结构的中心思想是，对于每个 k ，位于 k 层的更快更小的存储设备作为位于 k+1 层的更大更慢的存储设备的缓存。例如，本地磁盘作为通过网络从远程磁盘取出的文件（例如Web页面）的缓存，主存作为本地磁盘上数据的缓存，依此类推，直到最小的缓存—— CPU 寄存器组。</p>
-<p><img src="D:/笔记/csapp/精美配图/6-缓存原理.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/6-%E7%BC%93%E5%AD%98%E5%8E%9F%E7%90%86.png" srcset="/img/loading.gif" lazyload></p>
 <p>如上图，数据总是以块大小为传送单元（transfer unit）在第 k 层和第 k+1 层之间来回复制的。</p>
 <p>虽然在层次结构中任何一对相邻的层次之间块大小是固定的，但是其他的层次对之间可以有不同的块大小，比如 CPU 和 Cache 之间可能只有十几个字节的大小，而主存到硬盘之间可能有几兆甚至几十兆的大小。</p>
 <h4 id="缓存命中"><a href="#缓存命中" class="headerlink" title="缓存命中"></a>缓存命中</h4><p>当程序刚好需要第 k+1 层的某个缓存数据对象 d 时，他首先会在当前存储的第 k 层的第一个块中寻找，倘若 d 刚好在 k 层中，那么就是我们所说的<strong>缓存命中</strong>。</p>
