@@ -1,0 +1,849 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="动态链接和静态链接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 第七章 链接">
+<meta property="og:url" content="https://shmodifier.github.io/2023/11/28/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="动态链接和静态链接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-11-28T10:11:23.000Z">
+<meta property="article:modified_time" content="2023-11-28T10:44:12.079Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="CSAPP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>CSAPP 第七章 链接 - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CSAPP 第七章 链接"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-28 18:11" pubdate>
+          2023年11月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CSAPP 第七章 链接</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>动态链接和静态链接</p>
+<span id="more"></span>
+
+<p>链接（linking）：将各种代码和数据片段收集并组合成为一个单一文件的过程，这个文件可被加载（复制）到内存并执行。就是我们之前有学过的编译文件的最后一步，分静态和动态链接两种可能。</p>
+<p>在现代系统中，链接是由叫做链接器（linker）的程序自动执行的。</p>
+<h1 id="编译器驱动程序"><a href="#编译器驱动程序" class="headerlink" title="编译器驱动程序"></a>编译器驱动程序</h1><p>我们这一章都是在用下面的小函数示例讲解学习的：</p>
+<blockquote>
+<p>这是两个源文件分别是 main.c 和 sum.c</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//main.c</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> *a, <span class="hljs-type">int</span> n)</span>;<br><span class="hljs-type">int</span> arry[<span class="hljs-number">2</span>]=&#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>&#125;<br><br><span class="hljs-type">int</span> main()<br>&#123;<br>	<span class="hljs-type">int</span> val=sum(<span class="hljs-built_in">array</span>,<span class="hljs-number">2</span>);<br>	<span class="hljs-keyword">return</span> val;<br>&#125;<br><br><span class="hljs-comment">//sum.c</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> *a,<span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> i,s=<span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">0</span>;i&lt;n;i++)<br>    &#123;<br>        s+=a[i]<br>    &#125;<br>    <span class="hljs-keyword">return</span> s;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>大多编译系统提供编译器驱动程序（如 gcc ），它实际上是广义的”编译器“，是语言预处理器、编译器、汇编器和连接器的集合。</p>
+<p>我们可以使用下面的命令把两个文件链接在一起编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -o prog main.c sum.c<br></code></pre></td></tr></table></figure>
+
+<p>当然也可以将这个命令拆来来编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#预编译：展开头文件和替换宏定义</span><br>cpp main.c /tmp/main.i<br><br><span class="hljs-comment">#编译：将高级语言翻译成低级语言</span><br>cc1 /tmp/main.i /tmp/main.s<br><br><span class="hljs-comment">#汇编：将汇编语言翻译成机器语言</span><br>as /tmp/main.s /tmp/main.o<br><br><span class="hljs-comment">#sum.c文件相同。</span><br><span class="hljs-comment">#链接：将文件连接在一起生成可执行文件</span><br>ld -o prog /tmp/main.o /tmp/sum.o <br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h1><p>我们的命令 ld 就是调用了 Linux LD 程序这样的静态链接器，它以一组可重定位目标文件和命令行参数作为输入，生成一个完全连接的、可以加载和运行的可执行目标文件作为输入。</p>
+<p>连接器要完成两个主要任务才能实现链接目的：</p>
+<ul>
+<li>符号解析：将每个符号引用和一个符号定义关联起来</li>
+<li>重定位：编译器和汇编器生成从地址 0 开始的代码和数据节，将每一个符号引用和一个内存位置关联起来。</li>
+</ul>
+<h1 id="目标文件"><a href="#目标文件" class="headerlink" title="目标文件"></a>目标文件</h1><p>目标文件有三种形式：</p>
+<ul>
+<li>可重定位目标文件（.o）：包含二进制代码和数据，其形式可以在编译时与其他可重定位目标文件合并起来，创建一个可执行目标文件。</li>
+<li>可执行目标文件（.elf）：包含二进制代码和数据，其形式可以被直接复制到内存并执行。</li>
+<li>共享目标文件（.libc）：一种特殊类型的可重定位目标文件，可以在加载或者运行时被动态地加载进内存并链接。</li>
+</ul>
+<h1 id="可重定目标文件"><a href="#可重定目标文件" class="headerlink" title="可重定目标文件"></a>可重定目标文件</h1><p>可重定目标文件分成几个部分：</p>
+<ul>
+<li>.text：已编译程序的机器代码段</li>
+<li>.rodata：只读数据段</li>
+<li>.data：已初始化的全局变量和静态变量</li>
+<li>.bss：未初始化全局变量和静态变量</li>
+<li>.symtab：符号表，保存全局变量的信息。默认生成，可以使用STRIP命令去除。</li>
+<li>.rel.text：一个.text 借中的位置表，被链接的时候会被修改位置。</li>
+<li>.rel.data：被模块引用或定义的所有全局变量的重定位信息，被链接的时候会被修改位置。</li>
+<li>.debug：调试符号表，只有以 -g 选项时会得到这张表，其中包含了局部变量的定义和类型，以及原始的 C 文件，只有 -g 命令会生成这张表。</li>
+<li>.line：原始 C源程序中的行号和text 节中机器指令之间的映射。只有以-g 选项调用编译器驱动程序时，才会得到这张表。</li>
+<li>.strtab：一个字符串表，其内容包括 .symtab 和 .debug 节中的符号表，以及节头部中的节名字。</li>
+</ul>
+<p>同是程序中的变量，区分 .bss 段 .data 段的原因是初始化的变量需要使用一段空间去保存初始化得到的值，而未初始化则不需要， .bss 段存储为初始化数据可以更好的节省空间</p>
+<h1 id="符号和符号表"><a href="#符号和符号表" class="headerlink" title="符号和符号表"></a>符号和符号表</h1><p>每个<strong>可重定位目标</strong>模块 m 都有一个符号表，它包含 m 定义和引用的符号的信息。在链接器的上下文中，有三种不同的符号：</p>
+<ul>
+<li><p>模块 m 定义并能被其他模块引用的全局符号。全局链接器符号对应于非静态的C函数和全局变量。</p>
+</li>
+<li><p>由其他模块定义并被模块 m 引用的全局符号。</p>
+</li>
+<li><p>只被模块 m 定义和引用的局部符号。它们对应了带 static 属性的 C 函数和全局变量。</p>
+</li>
+</ul>
+<p>.symtab 中的符号表并不包含对应于本地非静态程序变量的任何符号。这些符号在运行时在栈中被管理，连接器对此类符号不感兴趣。</p>
+<p>静态的局部变量不会在栈中管理，会放到 bss 或者是 data 段上。</p>
+<p>.symtab 节中会包含一个 ELF 符号表，这张符号表包含这样一个结构体条目的数组：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    <span class="hljs-type">int</span> name;        <span class="hljs-comment">/* String table offset */</span><br>    <span class="hljs-type">char</span> type:<span class="hljs-number">4</span>,     <span class="hljs-comment">/* Function or data (4 bits) */</span><br>    binding:<span class="hljs-number">4</span>;       <span class="hljs-comment">/* Local or global (4 bits) */</span><br>    <span class="hljs-type">char</span> reserved;   <span class="hljs-comment">/* Unused */</span><br>    <span class="hljs-type">short</span> section;   <span class="hljs-comment">/* Section header index */</span><br>    <span class="hljs-type">long</span> value;      <span class="hljs-comment">/* Section offset or absolute address */</span><br>    <span class="hljs-type">long</span> size;       <span class="hljs-comment">/* Object size in bytes */</span><br>&#125; Elf64_Symbol;<br></code></pre></td></tr></table></figure>
+
+<p>每个符号都被分配到目标文件的某个节，由 section 字段表示，该字段也是一个到节头部表的索引。</p>
+<p>对于 section 字段有三个特殊的伪节，它们在节头部表中是没有条目的：</p>
+<ul>
+<li>ABS 代表不该被重定位的符号。</li>
+<li>UNDEF 代表未定义的符号，也就是在本目标模块中用，但是却在其他地方定义的符号。</li>
+<li>COMMON 表示还未被分配位置的未初始化的数据目标。</li>
+</ul>
+<blockquote>
+<p>现代的GCC 版本根据以下规则来将可重定位目标文件中的符号分配到 COMMON 和 bss 中：</p>
+<p>COMMON：未初始化的全局变量</p>
+<p>.bss ：未初始化的静态变量，以及初始化为 0 的全局或静态变量</p>
+</blockquote>
+<h1 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h1><p>链接器解析符号引用的方法是将每个引用与它输入的可重定位目标文件的符号表中的一个确定的符号定义关联起来。</p>
+<p>静态局部变量也会有本地链接器符号，编译器还要确保它们拥有唯一的名字。不过，对全局符号的引用解析就棘手得多。当编译器遇到一个不是在当前模块中定义的符号（变量或函数名）时，会<strong>假设该符号是在其他某个模块中定义的，生成一个链接器符号表条目，并把它交给链接器处理</strong>。</p>
+<p>如果链接器在它的任何输人模块中都找不到这个被引用符号的定义，就输出一条(通常很难阅读的)错误信息并终止。</p>
+<p>例如下面的文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>;<br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>	foo();<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们编译和链接这个源文件，编译器会没有障碍地运行，但是当链接器无法解析对 foo 的引用时，就会终止。</p>
+<h3 id="连接器如何解析多重定义的全局符号"><a href="#连接器如何解析多重定义的全局符号" class="headerlink" title="连接器如何解析多重定义的全局符号"></a>连接器如何解析多重定义的全局符号</h3><p>连接器会将模块与对应的符号一一对应，如果碰到两个模块同名的情况，就不面具发生混淆。</p>
+<p>首先我们要理解一个强弱符号的概念：</p>
+<p>在编译时，编译器向汇编器输出每个全局符号，或者是强或者是弱，而汇编器把这个信息隐含地编码在可重定位目标文件的符号表里。函数和已初始化的全局变量是强符号，未初始化的全局变量是弱符号。</p>
+<p>而根据强弱符号的定义，Linux 链接器使用下面的规则来处理多重定义的符号名。规则：</p>
+<ul>
+<li>不允许有多个同名的强符号</li>
+<li>如果有一个强符号和多个弱符号同名，那么选择强符号</li>
+<li>如果有多个弱符号同名，那么从这些弱符号中任意选择一个</li>
+</ul>
+<p>有一个问题是：连接器只会对全局符号双重定义问题发出警告而不是报错。</p>
+<p>例如在两个模块链接在一起的模块中分别定义了 <code>double x;</code> 和 <code>int x;</code> ，它只会触发一个警告而不是报错。这就会导致我们定义了相同的两个符号，编译到一起之后，两边的函数操作的是同一个变量，而我们很难发现问题所在。</p>
+<p>为了避免这类错误，我们尽量加上 <code>-fno-common</code> 标志来高速链接器遇到多重符号定义的时候触发一个错误。</p>
+<h3 id="与静态库链接"><a href="#与静态库链接" class="headerlink" title="与静态库链接"></a>与静态库链接</h3><p>我们可以把所有标准函数都编译在一个<strong>可重定目标文件</strong>里，再通过下面的命令链接到自己的可执行文件中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc main.c /usr/lib/libc.o<br></code></pre></td></tr></table></figure>
+
+<p>但是这个方法对内存和磁盘空间来说都是极大的浪费，并且如果某一个模块发生了改变就要重新编译整个文件，维护和开发也很复杂。</p>
+<p>所以静态库概念被提出来，以解决这些缺点。</p>
+<p>在 Linux 系统中，静态库以一种称为存档（archive）的特殊文件格式存放在磁盘中。</p>
+<p>静态库允许将所有相关的目标模块打包成一个单独的文件，用作连接器的输入，并以一种称为存档（archive）的特殊文件格式存放在磁盘中。</p>
+<blockquote>
+<p>存档文件是一组连接起来的可重定位目标文件的集合，有一个头部用来描述每个成员目标文件的大小和位置。存档文件名由后缀 <code>.a</code> 标识。</p>
+</blockquote>
+<p>当链接器构造一个输出的可执行文件时，它只复制静态库里被应用程序引用的目标模块。例如我们调用C标准库和数学库中的函数：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">gcc main.c <span class="hljs-regexp">/usr.lib/</span>libm.a usr<span class="hljs-regexp">/lib/</span>libc.a<br></code></pre></td></tr></table></figure>
+
+<p>这就减少了可执行文件在磁盘和内存中的大小，同时应用程序员只需要包含较少的库文件的名字（C 编译器驱动程序总是默认传送 libc.a 给链接器，所以我们在命令行中可以省略对 lbc.a 的引用）。</p>
+<p>用命令 <code>ar rcs out.a xx1.o xx2.o ....</code> 命令把可重定位文件整合成 <code>out.a</code> 静态库。链接的时候，我们需要将我们编译出的可重定向文件和静态库文件一起作为链接器的数。</p>
+<h3 id="连接器如何使用静态库来解析引用"><a href="#连接器如何使用静态库来解析引用" class="headerlink" title="连接器如何使用静态库来解析引用"></a>连接器如何使用静态库来解析引用</h3><p>在符号解析阶段，链接器从左到右按照它们在编译器驱动程序命令行上出现的顺序来扫描可重定位目标文件和存档文件。</p>
+<p>链接过程维护了三个集合：</p>
+<ul>
+<li>E：可重定位目标文件，这个集合中的文件会被合并起来形成可执行文件</li>
+<li>U：未解析的符号，即引用了但是尚未定义的符号</li>
+<li>D：在前面输入文件中已定义的符号</li>
+</ul>
+<p>初始时，E、U 和 D 均为空。</p>
+<p>对于命令行上的每一个输入文件，会判断是目标文件还是静态库文件。如果是目标文件，就会修改 U 和 D 来反映文件中的符号引用，并继续下一个文件；如果是存档文件（.a），会对应匹配 U 中的一个引用，如果匹配成功会把对应的符号从 U 删除并加入到 D 中，并且会把 .a 中的对应的模块（.o）加入到 E 集合中，而不包含在 E 中的可重定位文件会被丢弃。</p>
+<p>如果扫描完所有的输入文件之后， U 非空，那么报错推出，否则合并 E 集合的可重定位文件输出可执行文件。</p>
+<p>需要注意的是，如果我们在静态链接的时候，把静态库放在了前面，那么会因为匹配不到任何一个 U 中的符号（因为一开始 U 为空）而直接被链接器丢弃。所以在上面的情况，我们如果使用命令 <code>gcc --static -o a.out libcmath.a main.c</code> 则会报错。</p>
+<h1 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h1><p>链接器完成符号解析后，就可以开始重定位步骤了。重定位有两个步骤：</p>
+<ul>
+<li>重定位节和符号定义：链接器将所有相同类型的节合并为同一类型的新的聚合节。当这一步完成时，程序中的每条指令和全局变量都有唯一的运行时内存地址了。</li>
+<li>重定位节中的符号引用：链接器修改代码节和数据节中对每个符号的引用，使得它们指向正确的运行时地址。</li>
+</ul>
+<h3 id="重定位条目"><a href="#重定位条目" class="headerlink" title="重定位条目"></a>重定位条目</h3><p>无论何时，汇编器遇到<strong>对最终位置未知的目标引用</strong>，它就会生成一个重定位条目，告诉链接器在将目标文件合并成可执行文件时该如何修改这个引用。其中，代码的重定位条目放在 <code>.rel.text</code> 中，已初始化数据的重定位条目放在 <code>.rel.data</code> 中。</p>
+<p>下面就是重定义位条目的格式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> </span><br><span class="hljs-class">&#123;</span><br>	<span class="hljs-type">long</span> offset;    <span class="hljs-comment">/* Offset of the reference to relocate */</span><br>	<span class="hljs-type">long</span> type:<span class="hljs-number">32</span>，  <span class="hljs-comment">/* Relocation type */</span><br>		 symbol:<span class="hljs-number">32</span>; <span class="hljs-comment">/* Symbol table index */</span><br>	<span class="hljs-type">long</span> addend;    <span class="hljs-comment">/* Constant part of relocation expression */</span><br>&#125;Elf64_Rela;<br></code></pre></td></tr></table></figure>
+
+<p>ELF 定义了32种不同类型的引用，这里我们只关心两种最基本的类型：</p>
+<ul>
+<li>PC 相对寻址 <code>R_X86_64_PC32</code> ：一个PC相对地址就是距程序计数器（PC）的当前运行时值的偏移量</li>
+<li>绝对地址引用 <code>R_X86_64_32</code> ：通过绝对寻址，CPU 直接使用在指令中编码的 32 位值作为有效地址，不需要进一步修改。</li>
+</ul>
+<h3 id="重定位符号引用"><a href="#重定位符号引用" class="headerlink" title="重定位符号引用"></a>重定位符号引用</h3><p>重定位符号引用也分为 PC 相对引用和绝对引用两种。</p>
+<p>判断 PC 相对引用和绝对引用的标准主要取决于指令或数据的寻址方式和地址计算方法。我们需要实现分支跳转和存储数据的指令就会采取 PC 相对引用，例如 call 指令；我们在程序运行时需要确定确切的内存地址来表示目标地址的指令，就需要采用绝对引用，例如 mov 指令。</p>
+<h1 id="可执行目标文件"><a href="#可执行目标文件" class="headerlink" title="可执行目标文件"></a>可执行目标文件</h1><p>可执行目标文件的格式类似于可重定位目标文件的格式，分为以下几个部分：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/7-ELF%E7%BB%93%E6%9E%84.png" srcset="/img/loading.gif" lazyload></p>
+<p>ELF 头描述文件的总体格式，它还包括程序的入口点（entry point），也就是当程序运行时要执行的第一条指令的地址。</p>
+<p><code>.text</code> 、.rodata 和 <code>.data</code> 节与可重定位目标文件中的节是相似的，不同的是这些节已经被重定位到它们最终的运行时内存地址。</p>
+<p><code>.init</code> 节定义了一个小函数，叫做 init，是程序的初始化代码。</p>
+<p>因为可执行文件是完全链接的（已被重定位），所以它不再需要 <code>.rel</code> 节。</p>
+<p>程序头部表中的其中 LOAD 段会告诉我们哪些段在哪个位置，权限是什么，如下：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/7-ELF%E5%A4%B4%E9%83%A8.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="加载可执行文件"><a href="#加载可执行文件" class="headerlink" title="加载可执行文件"></a>加载可执行文件</h1><p>在Linux中运行可执行目标文件prog，可以在Linux shell的命令行运行下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./prog<br></code></pre></td></tr></table></figure>
+
+<p>prog 是文件的名字，shell 通过调用某个驻留在存储器中叫做加载器的操作系统代码来运行它。</p>
+<p>加载器将可执行目标文件中的代码与数据从磁盘复制到内存，然后通过跳转到程序的第一条指令或入口点来运行该程序，这个将程序复制到内存并运行的过程叫做<strong>加载</strong>。</p>
+<p>加载器运行时，它创建如下图所示的内存映像。在程序头部表的引导下,加载器将可执行文件的片复制到代码段和数据段。接下来跳转到程序的入口点 <code>_start</code> 函数，这个函数会调用 <code>libc.so</code> 中的系统启动函数 <code>__libc_start_main</code> 函数去初始化执行环境，最后载调用用户层的 <code>main</code> 函数。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%93%BE%E6%8E%A5/7-%E5%8A%A0%E8%BD%BD%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="动态链接共享库"><a href="#动态链接共享库" class="headerlink" title="动态链接共享库"></a>动态链接共享库</h1><p>之前一直在讨论静态链接的内容，动态链接弥补了静态链接的缺点，致力于解决静态库缺陷的一个现代创新产物。</p>
+<p>共享库是一个目标模块，在运行或加载时，可以加载到任意的内存地址，并和一个在内存中的程序链接起来。这个过程称为<strong>动态链接（dynamic linking）</strong>，是由一个叫做<strong>动态链接器</strong>（dynamic linker）的程序来执行的。</p>
+<p>共享库也称为共享目标（shared object），在 Linux 系统中通常用 .so 后缀来表示。windows操作系统的共享库称为 DLL（动态链接库）。</p>
+<p>静态链接唯一的优势就是不依赖环境，只要架构支持，就一定能运行，而动态链接需要比较严格的环境要求。共享库是在运行时加载，可以加载到任意的内存，因此编译的时候，必须编译位置无关代码。</p>
+<p>我们可以使用下面的命令编译动态链接库：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs C">gcc -shared -fpic -o out.so file1.c file2.c<br>````<br><br> `-shared` 表明生成动态链接库文件，`-fpic` 参数要求生成位置无关代码<br><br>![](/img/CSAPP-第七章-链接/<span class="hljs-number">7</span>-动态链接库.png)<br><br>### 从应用程序中加载和链接共享库<br><br>应用程序允许它运行时要求动态链接器加载和链接某个共享库，而无需在编译时将那些库链接到应用中。<br><br>动态链接是一项强大有用的技术，有广泛的应用，例如：<br><br>- 分发软件：<br><br>  微软 Windows 应用的开发者常常利用共享库来分发软件更新。他们生成一个共享库的新版本，然后用户可以下载，并用它替代当前的版本。下一次他们运行应用程序时，应用将自动链接和加载新的共享库。<br><br>- 构建高性能 Web 服务器：<br><br>  早期的 Web 服务器通过使用 fork 和 execve 创建一个子进程，并在该子进程的上下文中运行 CGI 程序来生成动态内容。现代高性能的 Web 服务器可以使用基于动态接的更有效和完善的方法来生成动态内容。<br><br>其思路是将每个生成动态内容的函数打包在共享库中。当一个来自 Web 浏览器的请求到达时，服务器动态地加载和链接适当的函数，然后直接调用它，而不是使用 fork 和 execve 在子进程的上下文中运行函数。更进一步地说，在运行时无需停止服务器，就可以更新已存在的函数，以及添加新的函数。<br><br>Linux 为我们提供了一个接口—— `dlfcn.h` ，我们就可以利用文件中的一些函数来实时获取动态链接库的函数，使用函数指针接收。<br><br><br><br># 位置无关代码<br><br>可以加载而无需重定位的代码称为**位置无关代码**（Position-Independent Code，PIC）。用户对 GCC 使用 `-fpic` 选项指示 GNU 编译系统生成 PIC 代码。需要注意的是共享库的编译必须总是使用该选项。<br><br>无论我们在内存中的何处加载一个目标模块（包括共享目标模块），数据段与代码段的距离总是保持不变，我们也是运用这个事实来声称对全局变量的 PIC 引用的。<br><br>我们使用 PLT（过程链接表）和 GOT （全局偏移量表）来实现延迟绑定机制。~~这里不多说了~~<br><br><br><br># 库打桩机制<br><br>库打桩（library interpositioning）允许使用者截获对共享库函数的调用，取而代之执行自己的代码。使用打桩机制，可以追踪对某个特殊库函数的调用次数，验证和追踪它的输入和输出值，或者甚至把它替换成一个完全不同的实现。<br><br>打桩机制的基本思想是：<br><br>给定一个需要打桩的目标函数，创建一个包装函数，它的原型与目标函数完全一样。使用某种特殊的打桩机制，你就可以欺骗系统调用包装函数而不是目标函数了。包装函数通常会执行它自已的逻辑，然后调用月标函数，再将日标函数的返回值传递给调用者。<br><br>### 编译时打桩<br><br>先准备下面三个文件：<br><br><span class="hljs-built_in">malloc</span>.h：<br><br>```C<br><span class="hljs-meta">#<span class="hljs-keyword">define</span> malloc mymalloc</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> free myfree</span><br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">mymalloc</span><span class="hljs-params">(<span class="hljs-type">int</span>)</span>;<br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">myfree</span><span class="hljs-params">(<span class="hljs-type">void</span> *)</span>;<br></code></pre></td></tr></table></figure>
+
+<p>malloc.c：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta"># <span class="hljs-keyword">ifdef</span> COMPILETIME</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-comment">/* malloc wrapper function */</span><br><span class="hljs-type">void</span> * <span class="hljs-title function_">mymalloc</span><span class="hljs-params">(<span class="hljs-type">size_t</span> size)</span><br>&#123;<br>    <span class="hljs-type">void</span> * ptr = <span class="hljs-built_in">malloc</span>(size); <br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;malloc(%d)=%p\n&quot;</span>,(<span class="hljs-type">int</span>)size, ptr); <br>    <span class="hljs-keyword">return</span> ptr;<br>&#125;<br><br><span class="hljs-comment">/* free wrapper function */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">myfree</span><span class="hljs-params">(<span class="hljs-type">void</span> * ptr)</span><br>&#123;<br>    <span class="hljs-built_in">free</span> (ptr); <br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;free(%p)\n&quot;</span>, ptr);<br>&#125;<br><span class="hljs-meta"># <span class="hljs-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+
+<p>main.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;malloc.h&gt;</span></span><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">void</span> *p=<span class="hljs-built_in">malloc</span>(<span class="hljs-number">0x20</span>);<br>    <span class="hljs-built_in">free</span>(p);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们想要 <code>mymalloc.c</code> 中的包装函数调用目标函数，打印追踪记录，并返回。只需要像下面这两条命令一样编译程序：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -I.-o intc int.c mymalloc.o<br></code></pre></td></tr></table></figure>
+
+<p>由于有 <code>-I</code>参数，所以会进行打桩，它告诉 C 预处理器在搜索通常的系统目录之前,先在当前目录中查找 <code>malloc.h</code>。</p>
+<h3 id="链接时打桩"><a href="#链接时打桩" class="headerlink" title="链接时打桩"></a>链接时打桩</h3><p>我们调用 <code>-wrap f</code> 标志进行链接时打桩。</p>
+<p>链接时库打桩不能自定义调用名，在我们自己写的模块中，我们定义的函数必须是 <code>__wrap_xxx</code> ，比如 <code>__wrap_malloc</code> ，我们在 <code>__wrap_malloc</code> 中调用真实的 <code>malloc</code> 要写成 <code>__real_malloc</code> 去调用。</p>
+<p>我们在 malloc 和 free 两个函数打桩，可以使用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -Wl,--wrap,malloc -Wl,--wrap,free -o a.out main.o malloc.o<br></code></pre></td></tr></table></figure>
+
+<p>每个 <code>-Wl,--wrap,xxx</code> 就表示使用 <code>__wrap_xxx</code> 函数去替换 <code>xxx</code> 函数。</p>
+<h3 id="运行时打桩"><a href="#运行时打桩" class="headerlink" title="运行时打桩"></a>运行时打桩</h3><p>编译时打桩需要能够访问程序的源代码，链接时打桩需要能够访问程序的可重定位对象文件。不过，基于动态链接器的 LD_PRELOAD 环境变量机制能够在运行时打桩，它只需要能够访问可执行目标文件。</p>
+<blockquote>
+<p>如果 LD_PRELOAD 环境变量被设置为一个共享库路径名的列表(以空格或分号分隔),那么当你加载和执行一个程序，需要解析未定义的引用时，动态链接器（LD-LINUX.SO）会先搜索 LD_PRELOAD 库，然后才搜索任何其他的库。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-comment">//malloc.c</span><br><span class="hljs-meta"># <span class="hljs-keyword">define</span> _GNU_SOURCE</span><br><span class="hljs-meta"># <span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta"># <span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta"># <span class="hljs-keyword">include</span> <span class="hljs-string">&lt;dlfcn.h&gt;</span></span><br><span class="hljs-comment">/* malloc wrapper function */</span><br><br><span class="hljs-type">void</span> * <span class="hljs-title function_">malloc</span><span class="hljs-params">(<span class="hljs-type">size_t</span> size)</span><br>&#123;<br>    <span class="hljs-type">void</span> *(* mallocp) (<span class="hljs-type">size_t</span> size); <br>    mallocp = dlsym(RTLD_NEXT, <span class="hljs-string">&quot;malloc&quot;</span>); <span class="hljs-comment">/* Get address of libc malloc */</span><br>    <span class="hljs-type">char</span> * ptr = mallocp(size); <span class="hljs-comment">/* Call libc malloc */</span><br>    <span class="hljs-keyword">return</span> ptr;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">free</span><span class="hljs-params">(<span class="hljs-type">void</span> *ptr)</span><br>&#123;<br>    <span class="hljs-type">void</span> (*freep) (<span class="hljs-type">void</span> *) = <span class="hljs-literal">NULL</span>; <br>    <span class="hljs-keyword">if</span> (!ptr)<br>        <span class="hljs-keyword">return</span>; <br>    freep = dlsym(RTLD_NEXT, <span class="hljs-string">&quot;free&quot;</span>); <span class="hljs-comment">/* Get address of libc free:*/</span> <br>    freep(ptr); <span class="hljs-comment">/* Call libc free */</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;free(%p)\n&quot;</span>, ptr);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用命令 <code>gcc malloc.c -o malloc.so -ldl -shared -fPIC</code> 编译得到 <code>.so</code> 库。</p>
+<p>然后使用命令 <code>LD_PRELOAD=&quot;./malloc.so&quot; ./xxxx</code> 来运行时加载 <code>malloc.so</code> 进行打桩。</p>
+<h1 id="处理目标文件的工具"><a href="#处理目标文件的工具" class="headerlink" title="处理目标文件的工具"></a>处理目标文件的工具</h1><ul>
+<li>ar：创建静态库，插入、删除、列出和提取成员。</li>
+<li>strings：列出一个目标文件中所有可打印的字符串。</li>
+<li>strip：从目标文件中删除符号表信息。</li>
+<li>nm：列出一个目标文件的符号表中定义的符号。</li>
+<li>size：列出目标文件中节的名字和大小。</li>
+<li>readelf：显示一个目标文件的完整结构，包括ELF头中编码的所有信息。包含 SIZE 和 NM 的功能。</li>
+<li>objdump：所有二进制工具之母。能够显示一个目标文件中所有的信息。它最大勺作用是反汇编.text节中的二进制指令。</li>
+<li>ldd：列出一个动态链接 ELF 文件的链接库</li>
+</ul>
+<blockquote>
+<p>那些没有符号表的题目是不是就是用了 strip 命令！</p>
+</blockquote>
+<hr>
+<p>这里的知识都是学过的，所以进行起来比较快</p>
+<p>打桩是新知识！感觉很神奇！🤗</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/CSAPP/">#CSAPP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CSAPP 第七章 链接</div>
+      <div>https://shmodifier.github.io/2023/11/28/CSAPP-第七章-链接/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/25/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" title="CSAPP 第六章 存储器层次结构">
+                        <span class="hidden-mobile">CSAPP 第六章 存储器层次结构</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
