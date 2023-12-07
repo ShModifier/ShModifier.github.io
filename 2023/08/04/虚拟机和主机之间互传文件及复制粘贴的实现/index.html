@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-08-04T12:33:42.000Z">
-<meta property="article:modified_time" content="2023-12-02T07:46:59.449Z">
+<meta property="article:modified_time" content="2023-12-02T07:50:13.138Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="ubuntu">
 <meta property="article:tag" content="VMware Tools">
@@ -296,7 +296,7 @@
 <p>这个解决方法适合老版本比如16，18。我在互联网上冲浪冲了这么久看到大家都在说22版本不支持拖拽，无所谓了姐麻了</p>
 </blockquote>
 <p>首先需要确保虚拟机的启用拖放和启用复制粘贴选项开启</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_20-12-12.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_20-12-12.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="只能复制粘贴不能拖拽"><a href="#只能复制粘贴不能拖拽" class="headerlink" title="只能复制粘贴不能拖拽"></a>只能复制粘贴不能拖拽</h3><p>虚拟机”启用拖拽”功能已开启，但是从本机往虚拟机拖拽文件时依旧被禁止！</p>
 <p>安装 open-vm-tools-desktop 软件，它是 VMware Tools 其中的一个组件，负责支持虚拟机和主机之间的拖拽。</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">sudo apt-<span class="hljs-built_in">get</span> install <span class="hljs-keyword">open</span>-<span class="hljs-keyword">vm</span>-tools-desktop<br></code></pre></td></tr></table></figure>
@@ -305,23 +305,23 @@
 
 <h3 id="既不能复制粘贴也不能拖拽"><a href="#既不能复制粘贴也不能拖拽" class="headerlink" title="既不能复制粘贴也不能拖拽"></a>既不能复制粘贴也不能拖拽</h3><p><strong>重装 VMware Tools！</strong></p>
 <p>首先要安装 VMware Tools，如果你是曾经有过VMware Tools 按钮会显示重新安装</p>
-<p><img src="D:/img/修师傅修虚拟机系列/11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/11.png" srcset="/img/loading.gif" lazyload></p>
 <p>开机后会发现桌面上或者侧边栏多了一个光盘图标，点进去把压缩包复制到桌面</p>
 <blockquote>
 <p>下图是 Ubuntu22，我的 Ubuntu18 是一个光盘图标直接出现在桌面上</p>
 </blockquote>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_16-32-05.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_16-32-05.png" srcset="/img/loading.gif" lazyload></p>
 <p>直接选中右键 “copy to” </p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_16-37-20.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_16-37-20.png" srcset="/img/loading.gif" lazyload></p>
 <p>在桌面打开 terminal， </p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">tar zxfv [vmwatr-install-name]<br></code></pre></td></tr></table></figure>
 
 <p>凡是让你回答 yes 或者 no 的都输入 yes 并回车</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_16-50-55.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_16-50-55.png" srcset="/img/loading.gif" lazyload></p>
 <p>凡是 [&#x2F;…&#x2F;…] 都按回车键</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_16-51-21.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_16-51-21.png" srcset="/img/loading.gif" lazyload></p>
 <p>下图这样就是安装好了</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_16-54-21.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_16-54-21.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="安装VMware-Tools选项显示灰色"><a href="#安装VMware-Tools选项显示灰色" class="headerlink" title="安装VMware Tools选项显示灰色"></a>安装VMware Tools选项显示灰色</h3><p>只需要以下三个步骤：</p>
 <p>1.关闭虚拟机</p>
 <p>2.在虚拟机设置分别设置<strong>CD&#x2F;DVD、CD&#x2F;DVD2和软盘三个部分</strong>为自动检测（如果你本来就是自动检测，就换成VMware安装目录中的 linux.iso）</p>
@@ -331,17 +331,17 @@
 <p>快准狠！点击重新安装！！！</p>
 </blockquote>
 <h3 id="另辟新道路"><a href="#另辟新道路" class="headerlink" title="另辟新道路"></a>另辟新道路</h3><p>不就是想在主机和虚拟机之间共享文件嘛，直接打开浏览器登陆微信文件传输助手传输文件</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-08-04_17-32-09.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-08-04_17-32-09.png" srcset="/img/loading.gif" lazyload></p>
 <h1 id="实现共享文件夹"><a href="#实现共享文件夹" class="headerlink" title="实现共享文件夹"></a>实现共享文件夹</h1><blockquote>
 <p>VMware Tools要先装好嗷~</p>
 </blockquote>
 <p>因为省赛断网我那个文件传输助手的招式不能用了，所以还是要建一个共享文件夹</p>
 <h4 id="主机新建共享文件夹"><a href="#主机新建共享文件夹" class="headerlink" title="主机新建共享文件夹"></a>主机新建共享文件夹</h4><p>在主机里建一个文件夹，设置共享属性为所有人都能访问</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-11-09_10-17-20.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-11-09_10-17-20.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="虚拟机设置"><a href="#虚拟机设置" class="headerlink" title="虚拟机设置"></a>虚拟机设置</h4><p>在虚拟机设置里面设置共享文件夹</p>
-<p><img src="D:/img/修师傅修虚拟机系列/image-20231109205001186.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/image-20231109205001186.png" srcset="/img/loading.gif" lazyload></p>
 <p>选择主机里设置的文件夹，设置 ”总是启用“</p>
-<p><img src="D:/img/修师傅修虚拟机系列/Snipaste_2023-11-09_20-51-03.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/%E4%BF%AE%E5%B8%88%E5%82%85%E4%BF%AE%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%B3%BB%E5%88%97/Snipaste_2023-11-09_20-51-03.png" srcset="/img/loading.gif" lazyload></p>
 <p>开机后在命令行输入以下命令查看共享文件夹，会输出主机中的文件夹名</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ vmware-hgfsclient<br></code></pre></td></tr></table></figure>
 

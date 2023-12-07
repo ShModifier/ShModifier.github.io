@@ -1,0 +1,894 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="主要是虚拟内存和地址翻译的内容">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 第九章 虚拟内存">
+<meta property="og:url" content="https://shmodifier.github.io/2023/12/07/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="主要是虚拟内存和地址翻译的内容">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-12-07T11:41:12.000Z">
+<meta property="article:modified_time" content="2023-12-07T11:45:44.606Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="CSAPP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>CSAPP 第九章 虚拟内存 - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CSAPP 第九章 虚拟内存"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-07 19:41" pubdate>
+          2023年12月7日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          92 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CSAPP 第九章 虚拟内存</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>主要是虚拟内存和地址翻译的内容</p>
+<span id="more"></span>
+
+<p>虚拟内存是硬件异常、硬件地址翻译、主存、磁盘文件和内核软件的完美交互，它为每个进程提供了一个大的、一致的和私有的地址空间。虚拟内存提供了三个重要的能力：</p>
+<ul>
+<li>它将主存视为硬盘的高速缓存，在主存只保留活动区域（局部性原理）</li>
+<li>它为每个进程提供一致的地址空间</li>
+<li>它保护了进程的内存，防止被其他进程破坏</li>
+</ul>
+<h1 id="物理和虚拟寻址"><a href="#物理和虚拟寻址" class="headerlink" title="物理和虚拟寻址"></a>物理和虚拟寻址</h1><p>计算机系统的主存被组织成一个由 M 个连续的字节大小的单元组成的数组。每字节都有一个唯一的物理地址（Physical Address，PA）。第一个字节的地址为 0，接下来的字节地址为1，再下一个为 2，依此类推。</p>
+<p>CPU 访问内存的最自然的方式就是使用物理地址。我们把这种方式称为<strong>物理寻址</strong>（physical addressing）。如下图是一个示例：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-CPU%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E8%AE%BF%E5%AD%98.png" srcset="/img/loading.gif" lazyload></p>
+<p>早期的 CPU 使用物理寻址，直到现在诸如数字信号处理器、嵌入式微控制器以及 Cray 超级计算机这样的系统仍然继续使用这种寻址方式。</p>
+<p>现代处理器使用的是一种称为<strong>虚拟寻址</strong>（virtual addressing）的寻址形式。如下图：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E5%AD%98.png" srcset="/img/loading.gif" lazyload></p>
+<p>使用虚拟寻址，CPU通过生成一个虚拟地址（Virtual Address，VA）来访问主存，这个虚拟地址在被送到内存之前先转换成适当的物理地址。将一个虚拟地址转换为物理地址的任务叫做<strong>地址翻译</strong>（address translation）。就像异常处理一样，地址翻需要 CPU 硬件和操作系统之间的紧密合作。CPU 芯片上叫做<strong>内管理单元（Memory Management Unit，MMU）</strong>的专用硬件，利用存放在主存中的查询表来动态翻译虚拟地址，该表的内容由操作系统管理。</p>
+<h1 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h1><p>地址空间是一个非负整数地址的有序集合，为了简化讨论，我们假设地址空间是线性地址空间。</p>
+<blockquote>
+<p>如果地址空间中的整数是连续的，那么我们说它是<strong>线性地址空间</strong>。</p>
+</blockquote>
+<p>在带虚拟存储器的系统中，CPU从一个有 $$2^n$$ 个地址的地址空间中生成虚拟地址，这个地址空间称为<strong>虚拟地址空间</strong>：{0，1，2，···，N-1}。</p>
+<p>一个地址空间的大小是由表示最大地址所需要的位数来描述的。例如，一个包含 $$N&#x3D;2^n$$ 个地址的虚拟地址空间叫做一个 n 位地址空间。现代系统通常支持32位或者64位虚拟地址空间。</p>
+<p>一个系统还有<strong>物理地址空间</strong>，对应系统中物理存储器的 M 个字节相：{0，1，2，···，N-1}。实际上，M 并不要求是 2 的幂。但为了简化讨论，我们一般假设 $$M&#x3D;2^m$$ 。</p>
+<p>地址空间的概念非常重要。它清楚地区分了数据对象（字节）和它们的属性（地址）。允许每个数据对象有多个独立的地址，其中每一个地址都选自一个不同的地址空间，这就是虚拟存储器的基本思想。<strong>主存中的每个字节都有一个选自虚拟地址空间的虚拟地址和一个选自物理地址空间的物理地址。</strong></p>
+<h1 id="虚拟内存作为缓存的工具"><a href="#虚拟内存作为缓存的工具" class="headerlink" title="虚拟内存作为缓存的工具"></a>虚拟内存作为缓存的工具</h1><p>VM 系统通过将虚拟内存分割为称为虚拟页（Virtual Page，VP）的大小固定的块来分割磁盘上的数据。每个虚拟页的大小为 $$P&#x3D;2^P$$ 字节。</p>
+<p>类似地，物理内存被分割为物理页（Physical Page，PP），也被称为页帧（page frame），大小也为 P字节)。</p>
+<p>在任意时刻，虚拟页面的集合都分为三个不相交的子集：</p>
+<ul>
+<li>未分配的：VM 系统还未分配或者创建的页。未分配的块没有任何数据和它们相关联，因此也就不占用任何磁盘空间。</li>
+<li>缓存的：当前已缓存在物理内存中的已分配页。</li>
+<li>未缓存的：未缓存在物理内存中的已分配页。</li>
+</ul>
+<p>下图是一个示例：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E5%86%85%E5%AD%98%E5%88%86%E9%A1%B5.png" srcset="/img/loading.gif" lazyload></p>
+<p>虚拟页 0 和 3 还没有被分配，因此在磁盘上还不存在。虚拟页 1、4 和 6 被缓存在物理内存中。页 2、5 和 7 已经被分配了，但是当前并未缓存在主存中。</p>
+<h3 id="DRAM缓存的组织结构"><a href="#DRAM缓存的组织结构" class="headerlink" title="DRAM缓存的组织结构"></a>DRAM缓存的组织结构</h3><blockquote>
+<p>我们用 SRAM 缓存来表示 L1、L2、L3 高速缓存，用 DARM 来表示虚拟内存中的缓存。</p>
+</blockquote>
+<p>DRAM 比 SRAM 慢 10 倍，而磁盘读取速度比 DRAM 慢了 100 000 倍，因此 DRAM 中的不命中需要很大的开销。因此 DRAM 作为磁盘的高速缓存，采用全相联高速缓存，即任何虚拟页可以放在任意的物理页中。我们的替换策略也很重要，因为替换错了的成本也非常高。最后因为访问时间的关系，往往采用写回而不是直写。</p>
+<h3 id="页表"><a href="#页表" class="headerlink" title="页表"></a>页表</h3><p>页表用于将虚拟页映射到物理页。每次地址翻译硬件讲一个虚拟地址转换为物理地址时，都会读取页表。     </p>
+<p>页表就是一个页表条目的数组。虚拟地址空间在每一个页表中一个固定偏移量处都有一个 PTE 。PTE 由一个有效位和 n 位地址字段组成。如果设置了有效位，那么 n 位的字段表示 DRAM 中相应的物理页的起始位置（已缓存）。如果没设置有效位，就表示这个虚拟页还未被分配。否则，这个地址指向虚拟页在磁盘上的起始位置。</p>
+<p>例如：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E9%A1%B5%E8%A1%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p>上图中有 8 个虚拟页和 4 个物理页的系统的页表。四个虚拟页（VP 1、VP 2、VP 4 和 VP 7）当前被缓存在 DRAM 中。两个页（VP 0 和 VP 5 ）还未被分配，而剩下的页（VP 3 和 VP 6）已经被分配了，但是当前还未被缓存。</p>
+<p>注意，因为 DRAM 缓存是全相联的，所以任意物理页都可以包含任意虚拟页。</p>
+<h3 id="页命中"><a href="#页命中" class="headerlink" title="页命中"></a>页命中</h3><p>地址翻译硬件将虚拟地址作为一个索引来定位 PTE 2，并从内存中读取它。因为它设置了有效位，所以地址翻译硬件就知道 VP 2 是缓在内存中的了。它使用 PTE 中的物理内存地址（该地址指向 PP1中缓存页的起始位置），构造出这个字的物理地址，这就是页命中。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E9%A1%B5%E5%91%BD%E4%B8%AD.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="缺页"><a href="#缺页" class="headerlink" title="缺页"></a>缺页</h3><p>DRAM 缓存不命中称为缺页。</p>
+<p>如下图是一个缺页异常处理的示例：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%BC%BA%E9%A1%B5%E5%BC%82%E5%B8%B81.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%BC%BA%E9%A1%B5%E5%BC%82%E5%B8%B82.png" srcset="/img/loading.gif" lazyload></p>
+<p>当 CPU 尝试访问一个<strong>已分配但未缓存</strong>的页面（此例为 VP 3 ，CPU 引用了其中的字，但并未缓存在 DRAM 中）时会引发<strong>缺页异常</strong>。缺页异常调用内核中的缺页异常处理程序，该程序会选择一个牺牲页（此例为 VP 4），如果牺牲页被修改过，会把这个页再复制回磁盘。无论牺牲页如何，内核都会修改页表把牺牲页替换掉，把当前要用的页在页表中替换上物理地址。</p>
+<p>在虚拟内存的习惯说法中，块被称为页。在磁盘和内存之间传送页的活动叫做<strong>交换</strong>（swapping）或者<strong>页面调度</strong>（paging）。页从磁盘换入（或者页面调入）DRAM 和从DRAM 换出（或者页面调出）磁盘。一直等待，直到最后时刻，也就是当有不命中发生时，才换入页面的这种策略称为<strong>按需页面调度</strong>（demand paging）。当然也有其他的调度方式，但是所有现代系统都使用的是按需页面调度的方式。</p>
+<h3 id="分配页面"><a href="#分配页面" class="headerlink" title="分配页面"></a>分配页面</h3><p>分配一个页的分配过程是在<strong>磁盘</strong>上创建空间并更新页表，使它指向磁盘上这个新创建的页面。</p>
+<h3 id="局部性"><a href="#局部性" class="headerlink" title="局部性"></a>局部性</h3><blockquote>
+<p>原来的小节标题“又是局部性救了我们”这个翻译好中二哈哈哈哈哈</p>
+</blockquote>
+<p>我们前面有说虚拟内存的不命中处罚很大，页面调度是否会影响我们的程序性能呢？</p>
+<p>答案是否定的，由于局部性原则保证了在任何时刻，程序将趋向于在一个较小的活动页面集合上工作，这个集合叫做工作集或者常驻集合。在初始开销，也就是将工作集页面调度到内存中之后，接下来对这个工作集的引用将导致命中，而不会产生额外的磁盘流量。</p>
+<p>如果工作集的大小超出了物理内存的大小，那么程序将产生一种不幸的状态，叫做抖动(thrashing)，这时页面将不断地换进换出。如果程序突然运行的很慢，我们就要考虑是不是发生了抖动。</p>
+<h1 id="虚拟内存作为内存管理的工具"><a href="#虚拟内存作为内存管理的工具" class="headerlink" title="虚拟内存作为内存管理的工具"></a>虚拟内存作为内存管理的工具</h1><p>实际上，操作系统为每个进程都提供了一个独立的页表，也就是一个独立的虚拟地址空间。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%8B%AC%E7%AB%8B%E9%A1%B5%E8%A1%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p>VM 简化了连接和加载、代码和数据共享以及程序中的内存分配：</p>
+<ul>
+<li><p>简化链接：我们可以看到，在 Linux x86-64 下面链接得到的可执行文件，它的地址几乎是一样的，都是从 <code>0x400000</code> 开始的代码段，正是由于虚拟内存导致我们可以不需要考虑当时电脑的运行状态，因为不同进程的 <code>0x400000</code> 地址所映射到的物理内存地址都是不一样的。如果直接使用物理地址的话，那么不同进程必须划分地址出来，占用相同地址空间的程序将不能同时运行。</p>
+</li>
+<li><p>简化加载：加载运行一个文件时，我只需要将页表标记到磁盘的指定位置，并标记为无效的（未缓存的），CPU 尝试访问这个虚拟内存的时候，发现没有被缓存，自动从磁盘调入数据到内存中，虚拟内存机制帮我们简化了从磁盘复制数据到内存的过程。</p>
+</li>
+<li><p>简化共享：如果我们想加载一个动态链接库到另外一个内存，我们只需要先看看有没有已加载的内存，如果有直接让希望加载动态链接库的进程直接映射一块虚拟内存过去即可。</p>
+</li>
+<li><p>简化内存分配：由于虚拟内存机制的存在，我们想要分配一个很大的连续的虚拟地址空间可以允许我们用不同的物理内存页，更高效地利用了碎片化的内存。</p>
+</li>
+</ul>
+<h1 id="虚拟内存作为内存保护的工具"><a href="#虚拟内存作为内存保护的工具" class="headerlink" title="虚拟内存作为内存保护的工具"></a>虚拟内存作为内存保护的工具</h1><p>每次 CPU 生成一个地址时，地址翻译硬件都会读一个 PTE ，并在 PTE 上添加额外的许可位来控制对虚拟页面内容的访问。</p>
+<p>许可位有三个，分别是 SUP 位、READ 位和 WRITE 位。SUP 位表示进程是否必须运行在内核模式下才能访问该页。READ位和 WRITE 位控制对页面的读和写访问。</p>
+<h1 id="地址翻译"><a href="#地址翻译" class="headerlink" title="地址翻译"></a>地址翻译</h1><p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%E7%AC%A6%E5%8F%B7.png" srcset="/img/loading.gif" lazyload></p>
+<p>形式上来说，地址翻译是一个 N 元素的虚拟地址空间（VAS）中的元素和一个 M 元素的物理地址空间（PAS）中元素之间的映射。</p>
+<p>下面一张图反映了这关系：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E4%BD%BF%E7%94%A8%E9%A1%B5%E8%A1%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E6%98%A0%E5%B0%84.png" srcset="/img/loading.gif" lazyload></p>
+<p>如上图，CPU 中的页表基址寄存器（PTBR）指向当前页面。n 位的虚拟地址包含两个部分：一个 P 位的虚拟页面偏移（VPO）和一个 n-p 位的虚拟页号（VPN）。MMU 也一依据 VPN 来选择 PTE 。</p>
+<p>页面命中时，CPU 硬件执行的步骤如下：</p>
+<ul>
+<li>第 1 步：处理器生成一个虚拟地址，并把它传送给 MMU。</li>
+<li>第 2 步：MMU 生成 PTE 地址，并从高速缓存&#x2F;主存请求得到它。</li>
+<li>第 3 步：高速缓存&#x2F;主存向 MMU 返回 PTE。</li>
+<li>第 4 步：MMU 构造物理地址，并把它传送给高速缓存&#x2F;主存。</li>
+<li>第 5 步：高速缓存&#x2F;主存返回所请求的数据字给处理器。</li>
+</ul>
+<p>缺页时从第四步开始不同：</p>
+<ul>
+<li>第 4 步：PTE 中的有效位是零，所以 MMU 触发了一次异常，传递 CPU 中的控制到操作系统内核中的缺页异常处理程序。</li>
+<li>第 5 步：缺页处理程序确定出物理内存中的牺牲页，如果这个页面已经被修改了，则把它换出到磁盘。</li>
+<li>第 6 步：缺页处理程序页面调入新的页面，并更新内存中的 PTE 。</li>
+<li>第 7 步：缺页处理程序返回到原来的进程，再次执行导致缺页的指令。CPU 将引起缺页的虚拟地址重新发送给 MMU。因为虚拟页面现在缓存在物理内存中，所以就会命中，之后就跟正常一样，主存会将所请求字返回给处理器。</li>
+</ul>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%BC%BA%E9%A1%B5%E5%92%8C%E4%B8%8D%E7%BC%BA%E9%A1%B5.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="结合高速缓存和虚拟内存"><a href="#结合高速缓存和虚拟内存" class="headerlink" title="结合高速缓存和虚拟内存"></a>结合高速缓存和虚拟内存</h3><p>在及使用虚拟内存又使用 SRAM 高速缓存的系统中，大多数系统选择物理寻址，得知翻译发生在高速缓存查找之前。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E5%92%8CSRAM.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="利用-TLB-加速地址翻译"><a href="#利用-TLB-加速地址翻译" class="headerlink" title="利用 TLB 加速地址翻译"></a>利用 TLB 加速地址翻译</h3><p>TLB 是一个小的、虚拟寻址的缓存，其中每一行都保存着一个由单个 PTE 组成的块。TLB通常有高度的相联度。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-TLB.png" srcset="/img/loading.gif" lazyload></p>
+<p>在TLB 中，<code>VPN</code> 的低 t 位是索引，剩余高 <code>n-p-t</code> 位为标记。</p>
+<p>TLB 的地址翻译都是在芯片中的 MMU 进行的，就避免了去读取内存，所以非常快.</p>
+<h3 id="多级页表"><a href="#多级页表" class="headerlink" title="多级页表"></a>多级页表</h3><p>实际的系统中，我们采用层次结构的页表。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p>以32位程序为例，二级页表中的每个 PTE 都负责映射一个 4KB 的虚拟内存页面，</p>
+<p>这种方法从两个方面减少了内存要求：</p>
+<ul>
+<li><p>如果一级页表中的一个 PTE 是空的，那么相应的二级页表就根本不会存在。</p>
+</li>
+<li><p>只有一级页表才需要总是在主存中，只有最经常使用的二级页表才需要缓存在主存中。虚拟内存系统可以在需要时创建、页面调人或调出二级页表，这就减少了主存的压力。</p>
+</li>
+</ul>
+<p>那么对于一个 32 位的内存地址，每个地址都会被划分为 k 个 VPN 和 1 个 VPO。每个 VPNi 都是一个到第级页表的索引。第 i 级页表中的每个 PTE，都指向第 j+1级的某个页表的基址。可以理解为，前 10 位就表示一级页表偏移，中间 10 位表示二级页表偏移，剩下 12 位就是页内偏移了。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E4%BD%BF%E7%94%A8K%E7%BA%A7%E9%A1%B5%E8%A1%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="端到端的地址翻译"><a href="#端到端的地址翻译" class="headerlink" title="端到端的地址翻译"></a>端到端的地址翻译</h3><p>我们假设系统参数如下：</p>
+<ul>
+<li>内存是按字节寻址的。</li>
+<li>内存访问是针对 1 字节的字的（不是 4 字节的字）。</li>
+<li>虚拟地址是 14 位长的（n&#x3D;14）。</li>
+<li>物理地址是 12 位长的（m&#x3D;12）。</li>
+<li>页面大小是 64 字节（P&#x3D;64）。</li>
+<li>TLB 是四路组相联的，总共有 16 个条目。</li>
+<li>L1 d-cache 是物理寻址、直接映射的，行大小为 4 字节，而总共有 16 个组。</li>
+</ul>
+<p>我们对虚拟地址和物理地址的格式划分如下图：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AF%E5%9C%B0%E5%9D%80%E5%88%92%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
+<p>下图是小内存系统的一个快照，包括 TLB、页表的一部分和 L1 高速缓存：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AFTLB.png" srcset="/img/loading.gif" lazyload></p>
+<p>TLB 是利用 VPN 的位进行虚拟寻址的。因为 TLB 有 4 个组，所以 VPN 的低 2 位就作为组索引（TLBI）。VPN 中剩下的高 6位作为标记（TLBT），用来区别可能映射到同一个 TLB 组的不同的 VPN。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AF%E9%A1%B5%E8%A1%A8.png" srcset="/img/loading.gif" lazyload></p>
+<p>页表是一个单级设计，一共有 $$2^8&#x3D;256 $$ 个页表条目（PTE）。我们只展示了开头的 16 个。为了方便，我们用索引它的 VPN 来标识每个 PTE。</p>
+<p>但是要注意这些 VPN 并不是页表的一部分，也不储存在内存中。另外，图中有效位被标记为 0 的 PTE 的 PPN 都用一个破折号来表示。无论这里存储的是什么位值，都是没有任何意义的。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AF%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98.png" srcset="/img/loading.gif" lazyload></p>
+<p>直接映射的缓存是通过物理地址中的字段来寻址的。因为每个块都是 4 字节，所以物理地址的低 2 位作为块偏移（CO）。因为有 16 组，所以接下来的 4 位就用来表示组索引（CI），剩下的 6 位作为标记（CT）。</p>
+<p>以上就是所有的初始化的设定。</p>
+<p>我们看看当 CPU 执行一条读地址 0x03d4 处字节的加载指令时会发生什么。</p>
+<p>首先我们把地址划分一下：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AF%E5%9C%B0%E5%9D%80%E5%88%92%E5%88%86%E5%AE%9E%E4%BE%8B.png" srcset="/img/loading.gif" lazyload></p>
+<p>开始时,MMU会从虚拟地址中取出 VPN(0xF) ，并检查 TLB。在上方初始设定中的页表图中，我们能找到一个 PPN 为 0xD 的记录，那么拿到这个 PPN 之后，我们和 VPO(0x14) 拼接就算出物理地址（0x354）了。</p>
+<p>接下来,MMU 发送物理地址到缓存，缓存从物理地址中划分出 CO、 CI、和 CT 。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%AB%AF%E5%88%B0%E7%AB%AF%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E5%88%92%E5%88%86.png" srcset="/img/loading.gif" lazyload></p>
+<p>组 0x5 中的标记与 CT 相匹配，所以缓存检测到一个命中，读出在偏移量 CO处的数据字节（0x36），并将它返给 MMU，随后 MMU 将它传递回 CPU。</p>
+<h1 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h1><p>Linux 通过将一个虚拟内存区域与一个磁盘上的对象关联起来，以初始化这个虚拟内存区域的内容，这个过程称为<strong>内存映射（memory mapping）</strong>。</p>
+<p>虚拟内存区域可以映射到以下两种对象中：</p>
+<ul>
+<li>Linux 文件系统中的普通文件：我们尝试去打开一个文件或者是执行一个文件时，都会创建数个虚拟内存页，并把它标记到这个文件所在磁盘的位置，那么尝试读这块内存的时候由<strong>缺页处理程序</strong>负责把磁盘中的文件加载到内存中。</li>
+<li>匿名文件：一个区域也可以映射到一个匿名文件，匿名文件是由内核创建的，包含的全是二进制零，匿名文件存在的意义是用于父子进程之间通信而不被其它进程获取。</li>
+</ul>
+<p>无论在哪种情况中，一旦一个虚拟页面被初始化了，它就在一个由内核维护的专门的<strong>交换文件（swap file）</strong>之间换来换去，换文件也叫做交换空间或者交换区域。</p>
+<p>在任何时刻，交换文件都限制着当前运行的进程能够分配的虚拟页面的总数。</p>
+<h3 id="共享对象"><a href="#共享对象" class="headerlink" title="共享对象"></a>共享对象</h3><p>一个对象可以被映射到虚拟内存的一个区域，要么作为共享对象，要么作为私有对象。如果一个进程将一个共享对象映射到他的虚拟地址的一个区域，那么它对这个区域的操作对其他进程可见，同时可以反映到磁盘上，但是如果映射到了私有区域，那么其他进程不可见，而且不会在磁盘上发生变化。</p>
+<p>如下图，我们假设进程1将共享对象映射到虚拟内存（a），而后进程2将同一个通向对象映射到它的地址区域。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为每一个对象都有唯一的文件名，内核就可以迅速锁定虚拟进程已经映射，所以物理地址只需要存放共享对象的一个副本。</p>
+<p>私有对象使用写时复制的技术映射到虚拟内存中。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E7%A7%81%E6%9C%89%E5%AF%B9%E8%B1%A1%E6%98%A0%E5%B0%84.png" srcset="/img/loading.gif" lazyload></p>
+<p>第一次写内存区域时，重新分配新的物理内存，并把此段内存拷贝到上面去，然后重新改变那个进程的页表，把对应的虚拟内存区域映射改到我们新复制的物理内存区域。</p>
+<h3 id="fork函数"><a href="#fork函数" class="headerlink" title="fork函数"></a>fork函数</h3><p>当 fork 函数被当前进程调用时，内核为新进程创建各种数据结构，并分配给它一个唯一的 PID。为了给这个新进程创建虚拟内存，它创建了当前进程的 mm_struct、区域结构和页表的原样副本。它将两个进程中的每个页面都标记为只读，并将两个进程中的每个区域结构都标记为私有的写时复制。</p>
+<p>当 fork 在新进程中返回时，新进程现在的虚拟内存刚好和调用 fork 时存在的虚拟内存相同。当这两个进程中的任一个后来进行写操作时，写时复制机制就会创建新页面。因此，也就为每个进程保持了私有地址空间的抽象概念。</p>
+<h3 id="execve函数"><a href="#execve函数" class="headerlink" title="execve函数"></a>execve函数</h3><p>当我们的进程调用 <code>execve(&quot;a.out&quot;,NULL,NULL);</code>，加载并运行 a.out 有以下几个步骤：</p>
+<ol>
+<li><strong>删除已存在的用户区域</strong>：删除当前进程虚拟地址的用户部分中的已存在的区域结构。</li>
+<li><strong>映射私有区。</strong>：为新程序的代码、数据、bss 和栈区域创建新的区域结构。所有这些新的区域都是私有的、写时复制的。代码和数据区域被映射为 a.out 文件中的. text 和. data 区。bss 区域是请求二进制零的，映射到匿名文件，其大小包含在 a.out 中。栈和堆区域也是请求二进制零的，初始长度为零。图中概括了私有区域的不同映射。</li>
+<li><strong>映射共享区域</strong>：如果 a.out 程序与共享对象（或目标）链接，比如标准 C 库 libc.so，那么这些对象都是动态链接到这个程序的，然后再映射到用户虚拟地址空间中的共享区域内。</li>
+<li><strong>设置程序计数器（PC）</strong>：execve 做的最后一件事情就是设置当前进程上下文中的程序计数器，使之指向代码区域的入口点。</li>
+</ol>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-exevce.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="使用-mmap-函数的用户及内存映射"><a href="#使用-mmap-函数的用户及内存映射" class="headerlink" title="使用 mmap 函数的用户及内存映射"></a>使用 mmap 函数的用户及内存映射</h3><p>Linux 进程可以使用 mmap 函数来创建新的虚拟内存区域，并将对象映射到这些区域中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/mman.h&gt;</span></span><br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">mmap</span><span class="hljs-params">(<span class="hljs-type">void</span> *start, <span class="hljs-type">size_t</span> length, <span class="hljs-type">int</span> prot, <span class="hljs-type">int</span> flags,</span><br><span class="hljs-params">           <span class="hljs-type">int</span> fd, <span class="hljs-type">off_t</span> offset)</span>;<br><br><span class="hljs-comment">// 返回：若成功时则为指向映射区域的指针，若出错则为 MAP_FAILED(-1)。</span><br></code></pre></td></tr></table></figure>
+
+<p>mmap 函数要求内核创建一个新的虚拟内存区域，最好是从地址 start 开始的一个区域，并将文件描述符 fd 指定的对象的一个连续的片（chunk）映射到这个新的区域。连续的对象片大小为 length 字节，从距文件开始处偏移量为 offset 字节的地方开始。start 地址仅仅是一个暗示，通常被定义为 NULL。为了我们的目的，我们总是假设起始地址为 NULL。</p>
+<p>下图描述了参数的意义：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-mmap%E5%8F%82%E6%95%B0.png" srcset="/img/loading.gif" lazyload></p>
+<p>其中参数 prot 包含描述新映射的虚拟内存区域的访问权限位（即在相应区域结构中的 vm_prot 位）。</p>
+<ul>
+<li>PROT_EXEC：这个区域内的页面由可以被 CPU 执行的指令组成。</li>
+<li>PROT_READ：这个区域内的页面可读。</li>
+<li>PROT_WRITE：这个区域内的页面可写。</li>
+<li>PROT_NONE：这个区域内的页面不能被访问</li>
+</ul>
+<p>参数 flags 由描述被映射对象类型的位组成。如果设置了 MAP_ANON 标记位，那么被映射的对象就是一个匿名对象，而相应的虚拟页面是请求二进制零的。MAP_PRI-VATE 表示被映射的对象是一个私有的、写时复制的对象，而 MAP_SHARED 表示是一个共享对象。</p>
+<p>例如：<code>bufp = Mmap(NULL, size, PROT_READ, MAP_PRIVATE|MAP_ANON, 0, 0);</code></p>
+<p>让内核创建一个新的包含 size 字节的只读、私有、请求二进制零的虚拟内存区域。如果调用成功，那么 bufp 包含新区域的地址。</p>
+<p>使用 ummap 删除在虚拟内存中映射的区域：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/mman.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">munmap</span><span class="hljs-params">(<span class="hljs-type">void</span> *start, <span class="hljs-type">size_t</span> length)</span>;<br><br><span class="hljs-comment">// 返回：若成功则为 0，若出错则为 -1。</span><br></code></pre></td></tr></table></figure>
+
+<p>删除之后之后再对此区域引用会引发段错误。</p>
+<h1 id="动态内存分配"><a href="#动态内存分配" class="headerlink" title="动态内存分配"></a>动态内存分配</h1><p>动态内存分配器维护着一个进程的虚拟内存区域，称为堆（heap）。堆是一个请求二进制零的区域，它紧接在未初始化的数据区域后开始，并向上生长。对于每个进程，内核维护着一个变量 brk，它指向堆的顶部。</p>
+<p>分配器将堆视为一组不同大小的块的集合来维护。每个块就是一个连续的虚拟内存片（chunk），要么是已分配的，要么是空闲的。已分配的块显式地保留为供应用程序使用，空闲块可用来分配。空闲块保持空闲，直到它显式地被应用所分配；一个已分配的块保持已分配状态，直到它被释放，这种释放要么是应用程序显式执行的，要么是内存分配器自身隐式执行的。</p>
+<p>分配器有两种风格：</p>
+<ul>
+<li>显式分配器（explicit allocator）：要求块在不用的时候进行释放，否则会造成内存资源泄露。例如，C程序通过调用 malloc 数来分配一个块，并通过调用 free 函数来释放一个块。这两个操作对应C++中的 new 和 delete 操作符。</li>
+<li>隐式分配器（implicit allocator）：就是自动回收不再需要的已分配块。隐式分配器也叫做垃圾收集器（garbage collector），而自动释放未使用的已分配的块的过程叫做垃圾收集（garbage collection）。例如，诸如 Lisp、ML 以及 Java 之类的高级语言就依赖垃圾收集来释放已分配<br>的块。</li>
+</ul>
+<h3 id="malloc-和-free-函数"><a href="#malloc-和-free-函数" class="headerlink" title="malloc 和 free 函数"></a>malloc 和 free 函数</h3><p>出现了！堆部分！</p>
+<p>之后单独写🤗</p>
+<h1 id="垃圾收集"><a href="#垃圾收集" class="headerlink" title="垃圾收集"></a>垃圾收集</h1><p>在前面有提到过分配器，显示分配器中提到，显示分配器也称为垃圾收集器。</p>
+<p><strong>垃圾收集器</strong>（garbage collector）是一种动态内存分配器，它自动释放程序不再需要的已分配块。这些块被称为<strong>垃圾</strong>（garbage）（因此术语就称之为垃圾收集器）。自动回收堆存储的过程叫做<strong>垃圾收集</strong>（garbagecollection）。在一个支持垃圾收集的系统中，应用显式分配堆块，但是从不显示地释放它们。在 C 程序的上下文中，应用调用 malloc，但是从不调用 free。反之，垃圾收集器定期识别垃圾块，并相应地调用 free，将这些块放回到空闲链表中。</p>
+<h3 id="垃圾收集器的基本知识"><a href="#垃圾收集器的基本知识" class="headerlink" title="垃圾收集器的基本知识"></a>垃圾收集器的基本知识</h3><p>垃圾收集器将内存视为一张有向可达图，如下图：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%8F%AF%E8%BE%BE%E6%9C%89%E5%90%91%E5%9B%BE.png" srcset="/img/loading.gif" lazyload></p>
+<p>也就是说当我们在外部的内存中，没有指针能够访问的某个堆块的时候，这个堆块就是一个“垃圾”了。</p>
+<h3 id="Mark-amp-Sweep-垃圾收集器"><a href="#Mark-amp-Sweep-垃圾收集器" class="headerlink" title="Mark&amp;Sweep 垃圾收集器"></a>Mark&amp;Sweep 垃圾收集器</h3><p>Mark&amp;Sweep 垃圾收集器由标记（mark）阶段和清除（sweep）阶段组成，标记阶段标记出根节点的所有可达的和已分配的后继，而后面的清除阶段释放每个未被标记的已分配块。</p>
+<p>块头部中空闲的低位中的一位通常用来表示这个块是否被标记了。</p>
+<p>我们假设 Mark&amp;Sweep 垃圾收集器使用如下函数进行操作：</p>
+<ul>
+<li><code>ptr isPtr (ptr p)</code>：如果 p 指向一个已分配块中的某个字，那么就返回一个指向这个块的起始位置的指针 b，否则返回 NULL。</li>
+<li><code>int blockMarked(ptr b)</code>：如果块 b 是已标记的，那么就返回 true。</li>
+<li><code>int blockAllocated(ptr b)</code>：如果块 b 是已分配的，那么就返回 true。</li>
+<li><code>void markBlock(ptr b)</code>：标记块 b。</li>
+<li><code>int length (b)</code>：返回块 b 的以字为单位的长度（不包括头部）。</li>
+<li><code>void unmarkBlock(ptr b)</code>：将块 b 的状态由已标记的改为未标记的。</li>
+<li><code>ptr nextBlock(ptr b)</code>：返回堆中块 b 的后继。</li>
+</ul>
+<p><img src="/img/CSAPP-%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/9-mark%E5%92%8Csweep%E7%9A%84%E4%BC%AA%E4%BB%A3%E7%A0%81.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="标记阶段"><a href="#标记阶段" class="headerlink" title="标记阶段"></a>标记阶段</h4><p>标记阶段为<strong>每个根节点调用一次 mark 函数</strong>。如果 p 不指向一个已分配并且未标记的堆块，mark 函数就立即返回。否则，它就标记这个块，并对块中的每个字递归地调用它自己。</p>
+<p>每次对 mark 函数的调用都标记某个根节点的所有未标记并且可达的后继节点。在标记阶段的末尾，任何未标记的已分配块都被认定为是不可达的，是垃圾，可以在清除阶段回收。</p>
+<h4 id="清除阶段"><a href="#清除阶段" class="headerlink" title="清除阶段"></a>清除阶段</h4><p>清除阶段是<strong>对 sweep 函数的一次调用</strong>。sweep 函数在堆中<strong>每个块上反复循环</strong>，释放它所遇到的所有未标记的已分配块（也就是垃圾）。</p>
+<h1 id="C-程序常见的与内存有关的错误"><a href="#C-程序常见的与内存有关的错误" class="headerlink" title="C 程序常见的与内存有关的错误"></a>C 程序常见的与内存有关的错误</h1><h3 id="间接引用坏指针"><a href="#间接引用坏指针" class="headerlink" title="间接引用坏指针"></a>间接引用坏指针</h3><p>在进程的虚拟地址空间中有很大的区域并没有映射到任何有意义的数据。如果我们试图间接引用一个指向这些区域的指针，那么操作系统就会以段异常中止程序。除此之外，虚拟内存的某些区域是只读的，试图写这些区域将会以保护异常中止这个程序。</p>
+<p>非常常见的错误就是 scanf 错误。</p>
+<p>假设我们想要使用 scanf 从 stdin 读一个整数到一个变量。正确的方法是传递给 scanf 一个格式串和变量的地址：<code>scanf(&quot;%d&quot;，&amp;val)</code> 。然而，我们经常会忘记取地址符号写成：<code>scanf(&quot;%d&quot;，val)</code> 。</p>
+<p>在这种情况下，scanf 将把 val 的内容解释为一个地址，并试图将一个字写到这个位置。</p>
+<p>在最好的情况下，程序立即以异常终止。在最糟糕的情况下，val 的内容对应于虚拟内存的某个合法的读&#x2F;写区域，于是我们就覆盖了这块内存，如果这块内存存储了重要的信息，那么后果将不堪设想。</p>
+<h3 id="读未初始化的地址"><a href="#读未初始化的地址" class="headerlink" title="读未初始化的地址"></a>读未初始化的地址</h3><p>虽然 bss 内存位置总是被加载器初始化为零，但是对于堆内存却并不是这样的。并且，malloc 申请过来的内存不一定是空的，我们需要 memset 手动清空，或者是拿到内存就直接写而不进行任何读的操作。</p>
+<h3 id="允许缓冲区溢出"><a href="#允许缓冲区溢出" class="headerlink" title="允许缓冲区溢出"></a>允许缓冲区溢出</h3><p>很常见，就像<code>gets()</code></p>
+<h3 id="假设指针和它们指向的对象大小相同"><a href="#假设指针和它们指向的对象大小相同" class="headerlink" title="假设指针和它们指向的对象大小相同"></a>假设指针和它们指向的对象大小相同</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Create an nxm array */</span><br><span class="hljs-type">int</span> **<span class="hljs-title function_">makeArray1</span><span class="hljs-params">(<span class="hljs-type">int</span> n, <span class="hljs-type">int</span> m)</span><br>&#123;<br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-type">int</span> **A = (<span class="hljs-type">int</span> **)Malloc(n * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br>    <br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++)<br>        A[i] = (<span class="hljs-type">int</span> *)Malloc(m * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br>    <span class="hljs-keyword">return</span> A;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里的目的是创建一个由 n 个指针组成的数组，每个指针都指向一个包含 m 个 int 的数组。程序员在第 5行将  <code>sizeof(int *)</code> 写成了 <code>sizeof(int)</code> ，代码实际上创建的是一个 int 的数组。这个程序只会在 32 位环境下运行良好，如果在 64 位的环境下会出现不可预测的错误。</p>
+<h3 id="造成错误行位错误"><a href="#造成错误行位错误" class="headerlink" title="造成错误行位错误"></a>造成错误行位错误</h3><p>错位（off-by-one）错误是另一种很常见的造成覆盖错误的来源。</p>
+<p>最常见的就是 <code>int a[n];for(int i=1;i&lt;=n;i++)</code> 这种类型的代码。很显然，<code>int a[n]</code> 的定义中不包括下标 <code>n</code>，会覆盖目标数组之外的内存区域，造成的错误也是不可预估的。</p>
+<h3 id="引用指针，而不是它所指向的对象"><a href="#引用指针，而不是它所指向的对象" class="headerlink" title="引用指针，而不是它所指向的对象"></a>引用指针，而不是它所指向的对象</h3><p>比如常见的 <code>*p++</code>，虽然说 <code>++</code> 和取值运算符优先级一样，但是它是从右往左结合的，所以实际上我们并没有给 p 所指向的值 +1 而是让指针后移了一位再取值。</p>
+<h3 id="误解指针运算"><a href="#误解指针运算" class="headerlink" title="误解指针运算"></a>误解指针运算</h3><p>这种错误是忘记了指针的算术操作是以它们指向的对象的大小为单位来进行的，而这种大小单位并不一定是字节。</p>
+<p>例如下面函数的目的是扫描一个 int 的数组，并返回一个指针。但每次循环第四行都会把指针加 4 ，函数就会不正确的扫描数组中的每 4 个整数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> *<span class="hljs-title function_">search</span><span class="hljs-params">(<span class="hljs-type">int</span> *p, <span class="hljs-type">int</span> val)</span><br>&#123;<br>    <span class="hljs-keyword">while</span> (*p &amp;&amp; *p != val)<br>        p += <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>); <span class="hljs-comment">/* Should be p++ */</span><br>    <span class="hljs-keyword">return</span> p;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>因为指针与 int 运算已经重载了 <code>+ - += -=</code> 等运算符，所以我们没必要多此一举乘上一个 sizeof。</p>
+<h3 id="引用不存在的变量"><a href="#引用不存在的变量" class="headerlink" title="引用不存在的变量"></a>引用不存在的变量</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> *<span class="hljs-title function_">stackref</span> <span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">int</span> val;<br>    <br>    <span class="hljs-keyword">return</span> &amp;val;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个函数返回一个指针，指向栈里的一个局部变量，然后弹出它的栈帧。尽管 p 仍然指向一个合法的内存地址，但是它已经不再指向一个合法的变量了。当以后在程序中调用其他函数时，内存将重用它们的栈帧。</p>
+<h3 id="引用空闲堆块中的数据"><a href="#引用空闲堆块中的数据" class="headerlink" title="引用空闲堆块中的数据"></a>引用空闲堆块中的数据</h3><p>就是 UAF 啦</p>
+<h3 id="引起内存泄漏"><a href="#引起内存泄漏" class="headerlink" title="引起内存泄漏"></a>引起内存泄漏</h3><p>内存泄漏理解为内存资源泄露，就是没有释放不使用的空间，导致程序所占用的空间非常大，但是大部分空间又不使用，那这一部分的空间就会被浪费了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/CSAPP/">#CSAPP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CSAPP 第九章 虚拟内存</div>
+      <div>https://shmodifier.github.io/2023/12/07/CSAPP-第九章-虚拟内存/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/02/ubuntu%E5%90%84%E7%A7%8D%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98/" title="ubuntu各种网络问题">
+                        <span class="hidden-mobile">ubuntu各种网络问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
