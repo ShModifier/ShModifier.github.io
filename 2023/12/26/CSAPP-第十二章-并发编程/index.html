@@ -1,0 +1,799 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="如果逻辑控制流在时间上重叠，那么它们就是并发的。 并发不仅仅局限于内核，它也可以在应用程序中扮演重要角色。应用级并发在其他情况下也是很有用的：  访问慢速 I&#x2F;0 设备 与人交互 通过推迟工作以降低延迟 服务多个网络客户端 在多核机器上进行并行计算  现代操作系统提供三种基本的构造并发程序的方法：进程、I&#x2F;O 多路复用、线程。 基于进程的并发编程构造并发程序最简单的方法就是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP 第十二章 并发编程">
+<meta property="og:url" content="https://shmodifier.github.io/2023/12/26/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="如果逻辑控制流在时间上重叠，那么它们就是并发的。 并发不仅仅局限于内核，它也可以在应用程序中扮演重要角色。应用级并发在其他情况下也是很有用的：  访问慢速 I&#x2F;0 设备 与人交互 通过推迟工作以降低延迟 服务多个网络客户端 在多核机器上进行并行计算  现代操作系统提供三种基本的构造并发程序的方法：进程、I&#x2F;O 多路复用、线程。 基于进程的并发编程构造并发程序最简单的方法就是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-12-26T12:48:01.000Z">
+<meta property="article:modified_time" content="2023-12-26T12:53:26.440Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="CSAPP，并发编程">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>CSAPP 第十二章 并发编程 - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CSAPP 第十二章 并发编程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-26 20:48" pubdate>
+          2023年12月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          64 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CSAPP 第十二章 并发编程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <span id="more"></span>
+
+<p>如果逻辑控制流在时间上重叠，那么它们就是并发的。</p>
+<p>并发不仅仅局限于内核，它也可以在应用程序中扮演重要角色。应用级并发在其他情况下也是很有用的：</p>
+<ul>
+<li>访问慢速 I&#x2F;0 设备</li>
+<li>与人交互</li>
+<li>通过推迟工作以降低延迟</li>
+<li>服务多个网络客户端</li>
+<li>在多核机器上进行并行计算</li>
+</ul>
+<p>现代操作系统提供三种基本的构造并发程序的方法：进程、I&#x2F;O 多路复用、线程。</p>
+<h1 id="基于进程的并发编程"><a href="#基于进程的并发编程" class="headerlink" title="基于进程的并发编程"></a>基于进程的并发编程</h1><p>构造并发程序最简单的方法就是用进程，使用 fork、exec 和 waitpid 等函数。一个构造并发服务器的自然方法就是，在父进程中接受客户端连接请求，然后创建一个新的子进程来为每个新客户端提供服务。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/12-%E8%BF%9B%E7%A8%8B%E5%B9%B6%E5%8F%911.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/12-%E8%BF%9B%E7%A8%8B%E5%B9%B6%E5%8F%912.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="基于进程的并发服务器"><a href="#基于进程的并发服务器" class="headerlink" title="基于进程的并发服务器"></a>基于进程的并发服务器</h3><p>服务器通常会运行很长的时间，这意味着操作系统不会帮助进程回收内存，我们需要做到以下几点：</p>
+<ul>
+<li>包括一个 SIGCHLD 处理程序来回收僵死进程，因为 Linux 的信号是不排队的，所以说一次要处理完所有的子进程。</li>
+<li>对于父进程，需要在 fork 之后马上 close 建立连接的描述符，对于子进程来说，也要关闭所有的文件描述符。</li>
+</ul>
+<h3 id="进程的优劣"><a href="#进程的优劣" class="headerlink" title="进程的优劣"></a>进程的优劣</h3><p>进程共享文件表，但是不共享用户地址空间（这既是优点也是缺点），不会发生内存覆盖的情况，但是也造成了通信困难。</p>
+<p>为了通信，需要使用 IPC（进程间通信）机制，但它通常比较慢。</p>
+<h1 id="基于-I-x2F-O-多路复用的并发编程"><a href="#基于-I-x2F-O-多路复用的并发编程" class="headerlink" title="基于 I&#x2F;O 多路复用的并发编程"></a>基于 I&#x2F;O 多路复用的并发编程</h1><p>如果我们同时响应这两个 I&#x2F;O 事件： 1) 网络客户端发起连接请求，2) 用户在键盘上键人命令行。那我们该先响应哪一个呢？。如果在 accept 中等待一个连接请求，我们就不能响应输入的命令。类似地，如果在 read中<br>等待一个输人命令，我们就不能响应任何连接请求。</p>
+<p>针对这种困境的一个解决办法就是 <strong>I&#x2F;O 多路复用技术</strong>。基本的思路就是使用 select 函数，要求内核挂起进程，只有在一个或多个 I&#x2F;O 事件发生后，才将控制返回给应用程序，</p>
+<p>例如下面的示例：</p>
+<blockquote>
+<p>select 是一个复杂的函数，有许多不同的使用场景。我们只讨论第一种场景：等待一组描述符准备好读。</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/select.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">select</span><span class="hljs-params">(<span class="hljs-type">int</span> n, fd_set *fdset, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>)</span>;<br><span class="hljs-comment">// 返回已准备好的描述符的非零的个数，若出错则为 -1。</span><br><br>FD_ZERO(fd_set *fdset);           <span class="hljs-comment">/* Clear all bits in fdset */</span><br>FD_CLR(<span class="hljs-type">int</span> fd, fd_set *fdset);    <span class="hljs-comment">/* Clear bit fd in fdset */</span><br>FD_SET(<span class="hljs-type">int</span> fd, fd_set *fdset);    <span class="hljs-comment">/* Turn on bit fd in fdset */</span><br>FD_ISSET(<span class="hljs-type">int</span> fd, fd_set *fdset);  <span class="hljs-comment">/* Is bit fd in fdset on? */</span><br><span class="hljs-comment">// 处理描述符集合的宏。</span><br></code></pre></td></tr></table></figure>
+
+<p>select 函数处理类型为 <code>fd_set</code> 的集合，也叫做描述符集合。逻辑上，我们将描述符集合看成一个大小为 n 的位向量 $$b_n$$ 。<strong>当且仅当 $$b_k$$&#x3D;1，描述符才表明是描述符集合的一个元素。</strong></p>
+<p>这个函数只允许对描述符集合做三件事：1) 分配它们，2) 将一个此种类型的变量赋值给另一个变量，3) 用 FD ZERO、FD SET、FD CLR 和 FD ISSET 宏来修改和检查它们。</p>
+<p>针对我们的目的，select 函数有两个输人：一个称为读集合的**描述符集合(fd_set)<strong>和该读集合的</strong>基数(n)**（实际上是任何描述符集合的最大基数）。select 函数会一直阻塞，直到读集合中至少有一个描述符准备好可以读。当且仅当一个从该描述符读取一个字节的请求不会阻塞时，描述符 k 就表示准备好可以读了。</p>
+<p>我们看下面的例子：</p>
+<p>假设有两个文件 fd1、fd2，我要实现当某个描述符准备时进行读取对应的文件。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;sys/select.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;unistd.h&gt;</span></span><br>fd_set readset，ready_set;<br>FD_CLR(&amp;readset);<br>FD_SET(fd1,&amp;readset);<br>FD_SET(fd2,&amp;readset);<br><span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)<br>&#123;<br>    ready_set = readset;<span class="hljs-comment">//每次需要重新赋值一遍</span><br>    select(listenfd + <span class="hljs-number">1</span>, &amp;readset, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">if</span>(FD_ISSET(fd1,&amp;readset))<br>    &#123;<br>        read(fd1,buffer,<span class="hljs-number">0x100</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span>(FD_ISSET(fd2),&amp;readset)<br>    &#123;<br>        read(fd2,buffer,<span class="hljs-number">0x100</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>如果两个都没有准备好，就会阻塞了。</p>
+<p><del>接下来的小节讲了一个实例，略🤪</del></p>
+<h3 id="I-x2F-O-多路复用技术的优劣"><a href="#I-x2F-O-多路复用技术的优劣" class="headerlink" title="I&#x2F;O 多路复用技术的优劣"></a>I&#x2F;O 多路复用技术的优劣</h3><p>优点：</p>
+<p>调试方便，每个逻辑流都能访问该进程的全部地址空间，且不需要上下文切换。</p>
+<p>缺点：</p>
+<p>如果面对网络延迟较高的用户，那么这个用户会阻塞整个服务，甚至会有恶意用户故意只发送部分文本行，导致整个服务被阻塞。</p>
+<h1 id="基于线程的并发编程"><a href="#基于线程的并发编程" class="headerlink" title="基于线程的并发编程"></a>基于线程的并发编程</h1><p>线程就是运行在进程上下文中的逻辑流。线程由内核自动调度，每个线程都有它自己的线程上下文，包括一个唯一的整数线程 ID、栈、栈指针、程序计数器、通用目的寄存器和条件码。所有的运行在一个进程里的线程共享该进程的整个虚拟地址空间。</p>
+<h3 id="线程执行模型"><a href="#线程执行模型" class="headerlink" title="线程执行模型"></a>线程执行模型</h3><p>每个进程开始的时候都是一个单一线程，就是主线程。在某一时刻，主线程创建一个<strong>对等线程</strong>（peer thread），从这个时间点开始，两个线程就并发地运行。最后，因为主线程执行一个慢速系统调用，例如 read 或者 sleep，或者因为被系统的间隔计时器中断，控制就会通过上下文切换传递到对等线程。对等线程会执行一段时间，然后控制传递回主线程，依次类推。</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/12-%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B.png" srcset="/img/loading.gif" lazyload></p>
+<p>线程的上下文切换速度比进程要快的多，因为线程大部分数据是共享的。同时，线程不像进程那样有严格的父子层次关系。<strong>和一个进程相关的线程组成一个对等(线程)池，独立于其他线程创建的线程。</strong>主线程和其他线程的区别仅在于它总是进程中第一个运行的线程。</p>
+<p>对等(线程)池概念的主要影响是，一个线程可以杀死它的任何对等线程，或者等待它的任意对等线程终止。</p>
+<h3 id="POSIX-线程"><a href="#POSIX-线程" class="headerlink" title="POSIX 线程"></a>POSIX 线程</h3><p>Posix 线程（Pthreads）就是在 C 程序中处理线程的一个标准接口。Pthreads 定义了大约 60个函数，允许程序创建杀死和回收线程，与对等线程安全地共享数据，还可以通知对等线程系统状态的变化。</p>
+<h3 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h3><p>线程通过 <code>pthread_create</code> 函数来创建其他线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-keyword">typedef</span> <span class="hljs-type">void</span> *(func)(<span class="hljs-type">void</span> *);<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_create</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> *tid, <span class="hljs-type">pthread_attr_t</span> *attr,</span><br><span class="hljs-params">                   func *f, <span class="hljs-type">void</span> *arg)</span>;<br><span class="hljs-comment">// 若成功则返回 0，若出错则为非零。</span><br></code></pre></td></tr></table></figure>
+
+<p><code>pthread_create</code> 函数创建一个新的线程，并带着一个输入变量 <em>arq</em>，在新线程的上下文中运行线程例程 <em>f</em> 。能用 <em>attr</em> 参数来改变新创建线程的默认属性。</p>
+<p>当 <code>pthread_create</code> 返回时，参数 <em>tid</em> 包含新创建线程的 ID。新线程可以通过调用 <code>pthread_self</code> 函数来获得它自己的线程 ID 。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><br><span class="hljs-type">pthread_t</span> <span class="hljs-title function_">pthread_self</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>;<br><span class="hljs-comment">//返回调用者的线程 ID。</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="终止线程"><a href="#终止线程" class="headerlink" title="终止线程"></a>终止线程</h3><p>一个线程是以下列方式之一来终止的：</p>
+<ul>
+<li>当顶层的线程例程返回时，线程会隐式地终止。</li>
+<li>通过调用 <code>pthread_exit</code> 函数，线程会显式地终止。如果主线程调用 <code>pthread_exit</code>，它会等待所有其他对等线程终止，然后再终止主线程和整个进程，返回值为 thread_return 。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">pthread_exit</span><span class="hljs-params">(<span class="hljs-type">void</span> *thread_return)</span>;<br><span class="hljs-comment">//从不返回。</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>某个对等线程调用 Linux 的 <code>exit</code> 函数，该函数终止进程以及所有与该进程相关的线程。</li>
+<li>另一个对等线程通过以当前线 ID 作为参数调用 <code>pthread_cancel</code> 函数来终止当前线程。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_cancel</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> tid)</span>;<br><span class="hljs-comment">//若成功则返回0，若出错则为非零。</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="回收已终止线程的资源"><a href="#回收已终止线程的资源" class="headerlink" title="回收已终止线程的资源"></a>回收已终止线程的资源</h3><p>线程通过调用 <code>pthread_join</code> 函数等待其他线程终止。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_join</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> tid, <span class="hljs-type">void</span> **thread_return)</span>;<br><span class="hljs-comment">//若成功则返回 0，若出错则为非零。</span><br></code></pre></td></tr></table></figure>
+
+<p><code>pthread_join</code> 函数会阻塞，直到线程 <em>tid</em> 终止，将线程例程返回的通用 <em>(void*)</em> 指针赋值为 <em>thread_return</em> 指向的位置，然后回收已终止线程占用的所有内存资源。</p>
+<p>需要注意的是，和 Linux 的 <code>wait</code> 函数不同，**<code>pthread_join</code> 函数只能等待一个指定的线程终止，没有办法让 <code>pthread_wait</code> 等待任意一个线程终止。**</p>
+<h3 id="分离线程"><a href="#分离线程" class="headerlink" title="分离线程"></a>分离线程</h3><p>在任何一个时间点上，线程是<strong>可结合的</strong>（joinable）或者是<strong>分离的</strong>（detached）。一个可结合的线程能够被其他线程收回和杀死。在被其他线程回收之前，它的内存资源（例如栈）是不释放的。一个分离的线程是不能被其他线程回收或杀死的。它的内存资源在它终止时由系统自动释放。</p>
+<p>为了避免内存泄露，线程创建就是可结合的。每个可结合线程都应该要么被其他线程显示的回收，或者使用 <code>pthread_detach</code> 函数去分离。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread,h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_detach</span><span class="hljs-params">(<span class="hljs-type">pthread_t</span> tid)</span>;<br><span class="hljs-comment">//若成功则返回 0，若出错则为非客</span><br></code></pre></td></tr></table></figure>
+
+<p>对于一些 web 服务器，我们就可以分离线程让主线程不必等待，等到线程自己执行完毕后等待系统回收内存资源。</p>
+<h3 id="初始化线程"><a href="#初始化线程" class="headerlink" title="初始化线程"></a>初始化线程</h3><p>pthread_once 函数允许你初始化与线程例程相关的状态。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><br><span class="hljs-type">pthread_once_t</span> once_control = PTHREAD_ONCE_INIT;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_once</span><span class="hljs-params">(<span class="hljs-type">pthread_once_t</span> *once_control,<span class="hljs-type">void</span> (*init_routine)(<span class="hljs-type">void</span>))</span>;<br><span class="hljs-comment">// 总是返回 0。</span><br></code></pre></td></tr></table></figure>
+
+<p>当你第一次用参数 once_control 调用 <code>pthread_once</code> 时，它调用 <code>init_routine</code>，这是一个没有输人参数、也不返回什么的函数。接下来的以 once_control 为参数的 <code>pthread_once</code> 调用不做任何事情。</p>
+<p>当我们需要动态初始化多个线程共享的全局变量时，<code>pthread_once</code> 函数是很有用的。</p>
+<h3 id="基于线程的并发服务器"><a href="#基于线程的并发服务器" class="headerlink" title="基于线程的并发服务器"></a>基于线程的并发服务器</h3><p>在 accept 请求时会返回一个连接描述符，假如在线程中还没有拿这个值，此时主线程下一个 accept 已经到来。就会导致这个线程取出了一个错误的描述符。这就导致了一个<strong>竞争</strong>的危险。</p>
+<h1 id="多线程程序中的共享变量"><a href="#多线程程序中的共享变量" class="headerlink" title="多线程程序中的共享变量"></a>多线程程序中的共享变量</h1><p>主要就是在讲线程中什么变量是共享的</p>
+<h3 id="线程内存模型"><a href="#线程内存模型" class="headerlink" title="线程内存模型"></a>线程内存模型</h3><p>寄存器是不共享的，但是虚拟内存是共享的。它们的栈说是独立的，其实也可以是共享的，只要知道内存地址，便可以轻松访问其它线程的栈，</p>
+<h3 id="将变量映射到内存"><a href="#将变量映射到内存" class="headerlink" title="将变量映射到内存"></a>将变量映射到内存</h3><p>多线程中的C 程序的变量根据它们的存储类型被映射到虚拟内存：</p>
+<ul>
+<li>全局变量，在 bss 或者 data 段上。</li>
+<li>本地变量，在栈或者是寄存器上。</li>
+<li>本地静态变量，在 bss 或者 data 段上。</li>
+</ul>
+<h4 id="共享变量"><a href="#共享变量" class="headerlink" title="共享变量"></a>共享变量</h4><p>我们说一个变量 “是共享的，当且仅当它的<strong>一个实例被一个以上的线程引用。</strong></p>
+<h1 id="用信号量同步线程"><a href="#用信号量同步线程" class="headerlink" title="用信号量同步线程"></a>用信号量同步线程</h1><p>共享变量引入了同步错误的可能性。</p>
+<p>例如，多线程执行 <code>cnt++</code> ，我们预测最终的结果是每个线程做加法的和，但实际上并不是相加的次数。</p>
+<p>我们需要了解一下执行计数的这一句代码，它在汇编层面被分成了三步：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs assembly">movq 	cnt(%rip),%rdx<br>addq	$1,%rdx<br>movq	%rdx,cnt(%rip)<br></code></pre></td></tr></table></figure>
+
+<p>我们知道，多线程同时运行时，并不能保证这个 <code>cnt++</code> 代码完整的执行完以后才转换到另一个线程。可能发生这种情况：线程 1 从内存中取值，正在进行 add 操作，但并没有返回内存。这时线程 2 从内存中取值，取到的值还是线程 1 没有处理过的值，所以这两个线程分别进行加一的操作并存储回内存，得到的结果只是加了一次，就出现了错误。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><p><strong>信号量 s 是具有非负整数值的全局变量</strong>，只能由两种特殊的操作来处理，这两种操作称为 P和V：</p>
+<ul>
+<li>P(s)：如果 s 是非零的，那么 P 将减 1，并且立即返回。如果为零，那么就挂起这个线程，直到 s 变为非零，而一个V 操作会重启这个线。在重启之后，P 操作将 s 减 1，并将控制返回给调用者。</li>
+<li>V(s):：V 操作将 s 加 1。如果有任何线程阻塞在 P 操作等待变成非零，那么 V 操作会重启这些线程中的一个，然后该线程将 s 减 1，完成它的 P 操作。</li>
+</ul>
+<h3 id="使用信号量来实现互斥"><a href="#使用信号量来实现互斥" class="headerlink" title="使用信号量来实现互斥"></a>使用信号量来实现互斥</h3><p>将每个共享变量（或者一组相关的共享变量）与一个信号量 s（初始为 1）联系起来，然后用 <code>P(s)</code> 和 <code>V(s)</code> 操作将相应的临界区包围起来。以这种方式来保护共享变量的信号量叫做二元信号量（binary semaphore），因为它的值总是 0 或者 1。</p>
+<p>以提供互斥为目的的二元信号量常常也称为互斥锁（mutex）。在一个互斥锁上执行 P 操作称为<strong>对互斥锁加锁</strong>。类似地，执行 V 操作称为<strong>对互斥锁解锁</strong>。对一个互斥锁加了锁但是还没有解锁的线程称为<strong>占用这个互斥锁</strong>。</p>
+<h3 id="使用信号量来调度共享资源"><a href="#使用信号量来调度共享资源" class="headerlink" title="使用信号量来调度共享资源"></a>使用信号量来调度共享资源</h3><blockquote>
+<p>实现我真的看不懂我就写写问题原理啥的剩下的再补，也可能不会补(x</p>
+</blockquote>
+<p>信号量调度对共享资源的访问。在这种场景中，一个线程用信号量操作来通知另一个线程，程序状态中的某个条件已经为真了。</p>
+<p>两个经典的例子是生产者-消费者和读者-写者问题。</p>
+<h4 id="生产者-消费者"><a href="#生产者-消费者" class="headerlink" title="生产者-消费者"></a>生产者-消费者</h4><p>这个例子是很形象的，生产者和消费者线程共享一个有 n 个槽的有限缓冲区。生产者线程反复地生成新的项目，并把它们插入到缓冲区中。消费者线程不断地从缓冲区中取出这些项目，然后消费(使用)它们。</p>
+<p>我们必须保证对缓冲区的访问是互斥的，还需要调度对缓冲区的访问。如果缓冲区是满的，那么生产者必须等待直到有一个槽位变为可用。与之相似，如果缓冲区是空的，那么消费者必须等待直到有一个项目变为可用。</p>
+<p>生产者和消费者共用一个信号量，同时也共用锁。</p>
+<h4 id="读者-写者"><a href="#读者-写者" class="headerlink" title="读者-写者"></a>读者-写者</h4><p>修改对象的线程叫做写者。只读对象的线程叫做读者。写者必须拥有对对象的独占的访问，而读者可以和无限多个其他的读者共享对象。一般来说，有无限多个并发的读者和写者。</p>
+<p>例如我们抢演唱会门票，我和另一个人选了同一个座位，点进去的时候显示是有票（读数据库）。这时我结算订单比她快（写数据库），她付款的时候就会显示没票。</p>
+<p>这个问题分读者有限和写者优先两种方案。</p>
+<h1 id="其他并发问题"><a href="#其他并发问题" class="headerlink" title="其他并发问题"></a>其他并发问题</h1><h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>一个函数被称为线程安全的，当且仅当<strong>被多个并发线程反复地调用时，它会一直产生正确的结果</strong>。如果一个函数不是线程安全的，我们就说它是线程不安全的。</p>
+<p>以下四种函数被认为是不安全的：</p>
+<ul>
+<li>不保护共享变量的函数</li>
+<li>保持跨越多个调用状态的函数</li>
+<li>返回指向静态变量的指针的函数</li>
+<li>调用线程不安全函数的函数</li>
+</ul>
+<p>处理线程不安全函数有两种方法：1）重写函数 ，2）使用加锁 - 复制技术</p>
+<h3 id="竞争和死锁"><a href="#竞争和死锁" class="headerlink" title="竞争和死锁"></a>竞争和死锁</h3><h4 id="竞争"><a href="#竞争" class="headerlink" title="竞争"></a>竞争</h4><p><strong>当一个程序的正确性依赖于一个线程 a 要在另一个线程 b 到达 $$y_b$$点之前到达它的控制流中的 $$z_x$$ 点时，就会发生竞争（race）</strong>。通常发生竞争是因为程序员假定线程将按照某种特殊的轨迹线穿过执行状态空间，而忘记了另一条准则规定：多线程的程序必须对任何可行的轨迹线都正确工作。</p>
+<p>例如下面的实例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> N 4</span><br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">thread</span><span class="hljs-params">(<span class="hljs-type">void</span> *vargp)</span><br>&#123;<br>    <span class="hljs-type">int</span> myid=*((<span class="hljs-type">int</span> *)vargp);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello from thread %d\n&quot;</span>,myid);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">pthread_t</span> tid[N];<br>    <span class="hljs-type">int</span> i;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; N; i++) &#123; <br>        pthread_create(&amp;tid[i], <span class="hljs-literal">NULL</span>, thread, &amp;i);<br>    &#125;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; N; i++) &#123;<br>        pthread_join(tid[i], <span class="hljs-literal">NULL</span>); <br>    &#125;<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们理想的状态是依次输出 ID 0，1，2，3。但实际上的运行结果如下：</p>
+<p><img src="/img/CSAPP-%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/12-race.png" srcset="/img/loading.gif" lazyload></p>
+<p>这就是由每个对等线程和主线程之间的竞争引起的。</p>
+<p>代码中的两个 for 循环中，第一个 for 循环传递了一个指向本地栈变量的指针。在下一次 for 循环对 i 加1和<code>*thread</code> 参数的间接引用和赋值之间就发生了竞争。如果对等线程在主线程执行对加1之前就执行了 <code>*thread</code> ，那么 myid 变量就得到正确的 ID。否则，它包含的就会是其他线程的 ID。</p>
+<p>解决方案就是为每个整数 ID 分配一个独立的快，并传递给线租例程一个指向这个块的指针。如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> N 4</span><br><br><span class="hljs-type">void</span> *<span class="hljs-title function_">thread</span><span class="hljs-params">(<span class="hljs-type">void</span> *vargp)</span><br>&#123;<br>    <span class="hljs-type">int</span> myid = *((<span class="hljs-type">int</span> *)vargp);<br>    <span class="hljs-built_in">free</span>(vargp);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello from thread %d\n&quot;</span>，myid);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span><br>&#123;<br>    <span class="hljs-type">pthread_t</span> tid[N];<br>    <span class="hljs-type">int</span> i,*ptr;<br>    <br>    <span class="hljs-keyword">for</span> (i =<span class="hljs-number">0</span>;i&lt;N;i++) <br>    &#123;<br>        ptr = Malloc(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br>        *ptr = i;<br>        pthread_create(&amp;tid[i],<span class="hljs-literal">NULL</span>，thread,ptr);<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>;i&lt;N;i++)<br>    &#123;<br>        pthread_join(tid[i]，<span class="hljs-literal">NULL</span>);<br>    &#125;<br>    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>死锁就是指一组线程被阻塞了，等待一个永远也不会为真的条件。</p>
+<p>比较糟糕的是，死锁错误不可预测，且错误不可重读，因为每一不同的执行都有不同的轨迹线。很有可能我们执行很多次测试都没有出现问题，最后交给上面领导运行一下就死锁了。</p>
+<p>当使用二元信号量来实现互斥时，我们可以应用互斥锁加锁顺序规则来避免死锁。</p>
+<p>互斥锁加锁顺序规则： 给定所有互斥操作的一个全序，如果每个线程都是以一种顺序获得互斥锁并以相反的顺序释放，那么这个程序就是无死锁的。</p>
+<hr>
+<p>大板砖 overover !!</p>
+<p>明天去杭电吃饭！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="category-chain-item">读书笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/CSAPP%EF%BC%8C%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#CSAPP，并发编程</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CSAPP 第十二章 并发编程</div>
+      <div>https://shmodifier.github.io/2023/12/26/CSAPP-第十二章-并发编程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/25/CSAPP-%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" title="CSAPP 第十一章 网络编程">
+                        <span class="hidden-mobile">CSAPP 第十一章 网络编程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

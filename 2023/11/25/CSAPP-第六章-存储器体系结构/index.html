@@ -25,10 +25,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
 <meta property="article:published_time" content="2023-11-25T12:17:53.000Z">
-<meta property="article:modified_time" content="2023-11-26T12:23:16.535Z">
+<meta property="article:modified_time" content="2023-12-26T12:55:29.234Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="Knowledge">
-<meta property="article:tag" content="CSAPP">
+<meta property="article:tag" content="CSAPP，DRAM，高速缓存">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://shmodifier.github.io/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
   
@@ -312,7 +312,7 @@
 <p>每个 DRAM 芯片被连接到某个称为内存控制器（emory controller）的电路，这个电路可以一次传送 w 位到每个 DRAM 芯片或一次从每个 DRAM 芯片传出 w 位。为了读出超单元 <code>(i,j)</code>的内容，内存控制器将行地址发送到 DRAM，然后是列地址j。DRAM 把超单元 <code>(i,j)</code> 的内容发回给控制器为响应。行地址称为 RAS（Row Access Strobe，行访问选通脉冲）请求。列地址 i 称为 CAS（Column Access Strobe，列访问选通脉冲）请求。</p>
 <p>需要注意的是，RAS 和 CAS 请求共享相同的 DRAM 地址引脚。</p>
 <p><img src="/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/6-%E8%AF%BB%E4%B8%80%E4%B8%AADRAM%E7%9A%84%E5%86%85%E5%AE%B9.png" srcset="/img/loading.gif" lazyload></p>
-<h4 id="内存模块"><a href="#内存模块" class="headerlink" title="内存模块"></a>内存模块</h4><p>DRAM芯片封装在内模块（memory module）中</p>
+<h4 id="内存模块"><a href="#内存模块" class="headerlink" title="内存模块"></a>内存模块</h4><p>DRAM 芯片封装在内模块（memory module）中</p>
 <p><img src="/img/CSAPP-%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/6-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9D%97.png" srcset="/img/loading.gif" lazyload></p>
 <p>要取出内存地址 A 处的一个字，内存控制器将 A 转换成一个超单元地址 <code>(i,j)</code> ，并将它发送到内存模块，然后内存模块再将和广播到每个 DRAM。作为响应，每个 DRAM 输出它的 <code>(i,j)</code> 超单元的8 位内容。模块中的电路收集这些输出，并把它们合并成一个 64 位字，再返回给内存控制器。</p>
 <h4 id="非易失性存储器"><a href="#非易失性存储器" class="headerlink" title="非易失性存储器"></a>非易失性存储器</h4><p>如果断电，DRAM 和 SRAM 会丢失它们的信息，从这个意义上说，它们是易失的（volatile）。而非易失性存储器（nonvolatile memory）即使是在关电后仍然保存着它们的信息。</p>
@@ -861,7 +861,7 @@
       
         <a href="/tags/Knowledge/">#Knowledge</a>
       
-        <a href="/tags/CSAPP/">#CSAPP</a>
+        <a href="/tags/CSAPP%EF%BC%8CDRAM%EF%BC%8C%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">#CSAPP，DRAM，高速缓存</a>
       
     </div>
   
