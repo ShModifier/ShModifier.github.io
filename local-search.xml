@@ -95,7 +95,9 @@
       
       <tag>Knowledge</tag>
       
-      <tag>CSAPP，并发编程</tag>
+      <tag>CSAPP</tag>
+      
+      <tag>并发编程</tag>
       
     </tags>
     
@@ -234,7 +236,9 @@
       
       <tag>Knowledge</tag>
       
-      <tag>CSAPP，虚拟内存</tag>
+      <tag>CSAPP</tag>
+      
+      <tag>虚拟内存</tag>
       
     </tags>
     
@@ -286,7 +290,9 @@
       
       <tag>Knowledge</tag>
       
-      <tag>CSAPP，异常</tag>
+      <tag>CSAPP</tag>
+      
+      <tag>异常</tag>
       
     </tags>
     
@@ -340,7 +346,11 @@
       
       <tag>Knowledge</tag>
       
-      <tag>CSAPP，DRAM，高速缓存</tag>
+      <tag>CSAPP</tag>
+      
+      <tag>DRAM</tag>
+      
+      <tag>高速缓存</tag>
       
     </tags>
     
@@ -955,9 +965,9 @@
       
       <tag>Knowledge</tag>
       
-      <tag>x86汇编</tag>
-      
       <tag>ubuntu</tag>
+      
+      <tag>x86汇编</tag>
       
     </tags>
     
