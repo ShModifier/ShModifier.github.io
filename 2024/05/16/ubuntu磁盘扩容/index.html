@@ -16,24 +16,25 @@
   <meta name="author" content="Modifier">
   <meta name="keywords" content="">
   
-    <meta name="description" content="关于物理地址，虚拟地址和逻辑地址的定义和之间的关系">
+    <meta name="description" content="磁盘炸了怎么办！🤡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="物理地址，虚拟地址和逻辑地址">
-<meta property="og:url" content="https://shmodifier.github.io/2023/04/03/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/index.html">
+<meta property="og:title" content="ubuntu磁盘扩容">
+<meta property="og:url" content="https://shmodifier.github.io/2024/05/16/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/index.html">
 <meta property="og:site_name" content="Modifier">
-<meta property="og:description" content="关于物理地址，虚拟地址和逻辑地址的定义和之间的关系">
+<meta property="og:description" content="磁盘炸了怎么办！🤡">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shmodifier.github.io/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
-<meta property="article:published_time" content="2023-04-03T13:36:01.000Z">
-<meta property="article:modified_time" content="2023-04-03T14:03:20.081Z">
+<meta property="og:image" content="https://shmodifier.github.io/img/ubuntu%20%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta property="article:published_time" content="2024-05-16T09:13:05.000Z">
+<meta property="article:modified_time" content="2024-05-16T09:16:58.345Z">
 <meta property="article:author" content="Modifier">
-<meta property="article:tag" content="Knowledge">
+<meta property="article:tag" content="ubuntu">
+<meta property="article:tag" content="VMware">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://shmodifier.github.io/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
+<meta name="twitter:image" content="https://shmodifier.github.io/img/ubuntu%20%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg">
   
   
   
-  <title>物理地址，虚拟地址和逻辑地址 - Modifier</title>
+  <title>ubuntu磁盘扩容 - Modifier</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -205,13 +206,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/ubuntu%20%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E9%A1%B5%E9%A6%96%E5%9B%BE.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="物理地址，虚拟地址和逻辑地址"></span>
+            <span id="subtitle" data-typed-text="ubuntu磁盘扩容"></span>
           
         </div>
 
@@ -222,8 +223,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-03 21:36" pubdate>
-          2023年4月3日 晚上
+        <time datetime="2024-05-16 17:13" pubdate>
+          2024年5月16日 下午
         </time>
       </span>
     
@@ -234,7 +235,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.9k 字
+          476 字
         
       </span>
     
@@ -245,7 +246,7 @@
         
         
         
-          25 分钟
+          4 分钟
         
       </span>
     
@@ -283,84 +284,36 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">物理地址，虚拟地址和逻辑地址</h1>
+            <h1 style="display: none">ubuntu磁盘扩容</h1>
             
             
               <div class="markdown-body">
                 
-                <p>关于物理地址，虚拟地址和逻辑地址的定义和之间的关系</p>
+                <p>磁盘炸了怎么办！🤡</p>
 <span id="more"></span>
 
-<p>虽然写了这么多知识点但脑袋还是乱乱的，希望哪天突然开窍叭🥱</p>
-<h3 id="理解内存"><a href="#理解内存" class="headerlink" title="理解内存"></a>理解内存</h3><p>我们平时使用的各种数据都是存储在硬盘等存储器上，但硬盘的运行速度很慢。所以需要运行程序或者使用数据时，这些数据必须从硬盘上转到另一种容量小但速度快很多的存储器，之后才送进CPU进行处理。这中间的存储器就是内存。</p>
-<p>无论何种存储器，软盘、硬盘、光盘或者内存，都有地址。</p>
-<p>其中：</p>
-<ul>
-<li>我们程序所使用的内存地址叫做<strong>虚拟内存地址</strong>（<em>Virtual Memory Address</em>）</li>
-<li>实际存在硬件里面的空间地址叫<strong>物理内存地址</strong>（<em>Physical Memory Address</em>）。</li>
-</ul>
-<h1 id="物理地址"><a href="#物理地址" class="headerlink" title="物理地址"></a>物理地址</h1><p><strong>物理地址就是常说的内存地址，是内存当中存储数据的一个标识，并不是数据本身，通过内存地址可以找到内存当中存储的数据。</strong></p>
-<p>计算机将内存划分为一个个小的内存单元，同时对其编号，这样就能有效管理内存。在空间划分实践中，一个<strong>内存单元</strong>的大小为1<strong>字节</strong>。一个字节是八个比特，相当于八个二进制位，两个十六进制位。</p>
-<blockquote>
-<p>可以理解为一栋叫内存的楼，每一套商品房都有自己的门牌号叫内存单元，每一个家庭是一个数据，每一位家庭成员所居住的小房间则不会进行编号。</p>
-</blockquote>
-<p>每个内存单元都有编号（内存编号），内存编号可以称为<strong>地址</strong>，在<code>C</code>语言中也称为<strong>指针</strong>。</p>
-<h5 id="🌰"><a href="#🌰" class="headerlink" title="🌰"></a>🌰</h5><p>在内存中存储”修饰符“或”MOD“，可以示意为：</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/Snipaste_2023-03-28_20-14-36.png" srcset="/img/loading.gif" lazyload></p>
-<p>![]&#x2F;img&#x2F;物理地址，虚拟地址和逻辑地址&#x2F;Snipaste_2023-03-28_20-23-49.png)</p>
-<blockquote>
-<p>数字后面加H表示十六进制</p>
-</blockquote>
-<p>在第一行中，每一格表示一段内存，而格子里的内容是这段内容记下的数据；第二行中每一格内数字就是对应的内存的地址。</p>
-<p>汉字在一个地址空间里储存不下，会放进两个连续的地址空间里。而字母或者阿拉伯数字就可以放进一个内存地址里。在上图中，”修“的内存地址为1000H，或者M的内存地址为”1000H”。</p>
-<h1 id="虚拟地址"><a href="#虚拟地址" class="headerlink" title="虚拟地址"></a>虚拟地址</h1><p>虚拟存储器不是任何实际的物理存储器，而是借助磁盘等辅助存储器来扩大主存容量，使之为更大或更多的程序所使用。</p>
-<p><strong>虚拟地址用于指示虚拟存储器的地址，它是用逻辑地址指示的</strong></p>
-<p>在程序运行时，我们需要将进程与物理地址映射起来，才能区分这些内存中存储的数据属于哪个进程。但内存大小有限，进程却可以很多，甚至可能同时进行多个进程。为了实现让很多进程共用一个存储资源有限的内存，我们引出虚拟地址的概念，我们先将进程与虚拟地址映射起来，再将虚拟地址与物理地址映射起来。</p>
-<p>操作系统引入了虚拟内存，进程持有的虚拟地址会通过 CPU 芯片中的内存管理单元（MMU）的映射关系，来转换变成物理地址，然后再通过物理地址访问内存，如下图所示：</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/v2-0204ff048148735a260fa5f94f475f14_r.png" srcset="/img/loading.gif" lazyload></p>
-<h1 id="逻辑地址"><a href="#逻辑地址" class="headerlink" title="逻辑地址"></a>逻辑地址</h1><p>逻辑地址，就是指机器语言指令中用来指定一个操作数或一条指令的地址，<strong>由一个段(segment)和偏移量(offset)组成</strong>，说地直白点就是CPU拿到的地址。</p>
-<p>段号：用来查找段的起始地址，它被存储在段寄存器当中</p>
-<p>偏移地址：是存储单元的物理地址与所在起始段的差值</p>
-<h1 id="各种内存的关系"><a href="#各种内存的关系" class="headerlink" title="各种内存的关系"></a>各种内存的关系</h1><p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/bba9443a9c0249ffa501df86649ce5d8.png" srcset="/img/loading.gif" lazyload></p>
-<h2 id="虚拟地址和物理地址"><a href="#虚拟地址和物理地址" class="headerlink" title="虚拟地址和物理地址"></a>虚拟地址和物理地址</h2><h3 id="内存分段"><a href="#内存分段" class="headerlink" title="内存分段"></a>内存分段</h3><p>程序是由若干个逻辑分段组成的，如可由代码分段、数据分段、栈段、堆段组成。不同的段是有不同的属性的，所以就用分段（Segmentation）的形式把这些段分离出来。</p>
-<p>分段机制下的虚拟地址由两部分组成，<strong>段选择子</strong>和<strong>段内偏移量</strong>。</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/v2-4803e11dc95cf478d95674f25efd9a7f_720w.webp" srcset="/img/loading.gif" lazyload></p>
-<h4 id="段选择子"><a href="#段选择子" class="headerlink" title="段选择子"></a>段选择子</h4><p>段选择子保存在寄存器里。段选择子最重要的是段号，用作段表的索引。段表里保存的是这个段的基地址、段的界限和特权等级等。</p>
-<p>段选择子是十六位的，其中十四位表示地址信息</p>
-<h4 id="段偏移量"><a href="#段偏移量" class="headerlink" title="段偏移量"></a>段偏移量</h4><p>偏移量定义为：把存储单元的<strong>实际地址</strong>与其所在段的<strong>段地址</strong>之间的距离称为段内偏移，也称为“有效地址”或“偏移量”。</p>
-<p>虚拟地址中的段偏移量应该位于0和段界限之间。如果段内偏移量是合法的，就将其段及地址加到段内偏移量得到物理内存地址。</p>
-<p>分段机制会把程序的虚拟地址分成 4 个段，每个段在段表中有一个项，在这一项找到段的基地址，再加上偏移量，于是就能找到物理内存中的地址。</p>
-<h4 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h4><ul>
-<li>内存碎片</li>
-</ul>
-<p>举例来说。假设我们现在占有 1G 的物理内存，用户执行了多个程序，游戏占用了 512MB 内存，浏览器占用了 128MB 内存，音乐占用了 256 MB 内存。</p>
-<p>这个时候，我们关闭浏览器，则空闲内存还有 1024 - 512 - 256 &#x3D; 256MB。但如果这个 256MB 不是连续的，被分成了两段 128 MB 内存，这就会导致没有空间再打开一个 200MB 的程序。</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/v2-4803e11dc95cf478d95674f25efd9a7f_720w.webp" srcset="/img/loading.gif" lazyload></p>
-<p>这里的内存碎片的问题共有两处地方：</p>
-<p>外部内存碎片，也就是产生了多个<strong>不连续</strong>的小物理内存，导致新的程序无法被装载；</p>
-<p>内部内存碎片，程序所有的内存都被装载到了物理内存，但是这个程序有部分的内存可能并不是很常使用，这也会导致<strong>内存的浪费</strong></p>
-<ul>
-<li>内存交换效率低</li>
-</ul>
-<p>对于外部内存碎片的问题，我们采用内存交换的解决措施。</p>
-<p>可以把音乐程序占用的那 256MB 内存写到硬盘上，然后再从硬盘上读回来到内存里。不过再读回的时候，我们不能装载回原来的位置，而是紧紧跟着那已经被占用了的 512MB 内存后面。这样就能空缺出连续的 256MB 空间，于是新的 200MB 程序就可以装载进来。</p>
-<p>对于多进程的系统来说，用分段的方式，内存碎片是很容易产生的，产生了内存碎片，那不得不重新重新规划内存区域，这个过程会产生性能瓶颈。</p>
-<p>因为硬盘的访问速度要比内存慢太多了，每一次内存交换，我们都需要把一大段连续的内存数据写到硬盘上。</p>
-<p>所以，<strong>如果内存交换的时候，交换的是一个占内存空间很大的程序，这样整个机器都会显得卡顿。</strong></p>
-<h3 id="内存分页"><a href="#内存分页" class="headerlink" title="内存分页"></a>内存分页</h3><p>为了解决内存分段的内存碎片和内存交换效率低的问题，就出现了内存分页。<strong>分页是把整个虚拟和物理内存空间切成一段段固定尺寸的大小</strong>。这样一个连续并且尺寸固定的内存空间，我们叫<strong>页</strong>（<em>Page</em>）</p>
-<p>虚拟地址与物理地址之间通过页表来映射：</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/v2-e63c20d1bace757600fccb051a29eaf6_720w.webp" srcset="/img/loading.gif" lazyload></p>
-<p>页存储在内存里，由CPU的内存管理单元即MMU负责映射转换的工作吗，这样CPU 就可以直接通过 MMU，找出要实际要访问的物理内存地址。</p>
-<p>由于内存空间都是预先划分好的，也就不会像分段会产生间隙非常小的内存。采用了分页，那么释放的内存都是以页为单位释放的，也就不会产生无法给进程使用的小内存。</p>
-<p>如果内存空间不够，操作系统会把其他正在运行的进程中的「最近没被使用」的内存页面给释放掉，也就是暂时写在硬盘上，称为<strong>换出</strong>（<em>Swap Out</em>）。一旦需要的时候，再加载进来，称为<strong>换入</strong>（<em>Swap In</em>）。所以，一次性写入磁盘的也只有少数的一个页或者几个页，不会花太多时间，内存交换的效率就相对比较高。</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/v2-23f19a580a47fa6c731b32d7df6b6735_720w.webp" srcset="/img/loading.gif" lazyload></p>
-<p>在分页机制下，虚拟地址分为两部分，<strong>页号</strong>和<strong>页内偏移</strong>。页号作为页表的索引，<strong>页表</strong>包含物理页每页所在<strong>物理内存的基地址</strong>，这个基地址与页内偏移的组合就形成了物理内存地址</p>
-<h4 id="其他东西"><a href="#其他东西" class="headerlink" title="其他东西"></a>其他东西</h4><p>再来，为了解决简单分页产生的页表过大的问题，就有了<strong>多级页表</strong>，它解决了空间上的问题，但这就会导致 CPU 在寻址的过程中，需要有很多层表参与，加大了时间上的开销。于是根据程序的<strong>局部性原理</strong>，在 CPU 芯片中加入了 <strong>TLB</strong>，负责缓存最近常被访问的页表项，大大提高了地址的转换速度。</p>
-<hr>
-<p>冲浪冲到的，我觉得比起枯燥的文字，这个更好理解</p>
-<p><img src="/img/%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%EF%BC%8C%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80/Snipaste_2023-03-29_21-54-52.png" srcset="/img/loading.gif" lazyload></p>
-<hr>
-<p>之前觉得自己很牛直接开始做题，靠一些老本还是能做几道题，但最近发现偏移量和内存地址啥的根本不会看也不会算，还是老老实实打基础叭😳</p>
+<p>最近想去搞搞内核，偷懒直接用的之前常用的虚拟机，屡次报错磁盘空间不足，才发现当时只给磁盘分配了 20G ，我的一个没 make 好的内核文件就有 11G ，所以就想着扩一下容。</p>
+<p>首先需要在设置里面增加一下磁盘容量</p>
+<p><img src="/img/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E6%89%A9%E5%AE%B9-1.png" srcset="/img/loading.gif" lazyload></p>
+<p>整理文件碎片可以多一点空间，但没什么大用处。</p>
+<p>扩展磁盘容量需要把之前的快照都删掉。不过放心，在外部扩容不会影响虚拟机内部的文件，可以扩充后再拍。</p>
+<p>开机之后我们可以通过命令 <code>df -h</code> 查看磁盘分区</p>
+<p><img src="/img/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%5C%E6%89%A9%E5%AE%B9-2.png" srcset="/img/loading.gif" lazyload></p>
+<p>此时 sda1 还是只有 20G，接下来进行下面的操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo fdisk /dev/sda（格式化分区/dev/sda）<br></code></pre></td></tr></table></figure>
+
+<p>进入 fdisk 之后按 d 对现在存在的 sda 开头的分区进行删除，以便我们接下来新建立的分区 </p>
+<p><img src="/img/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E6%89%A9%E5%AE%B9-3.png" srcset="/img/loading.gif" lazyload></p>
+<p>删除完毕后就可以开始建立新的分区了，依次输入选项：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">n <br>p<br>两次回车<br>+59.9G   #这里根据大家前面分配的磁盘空间来，我分配60G，但是正好60的话它会提示超过了最大值，改小一点就好啦<br>w  #保存更改退出<br></code></pre></td></tr></table></figure>
+
+<p>到此就分配结束啦！我们需要<strong>重启</strong>虚拟机刷新一下。</p>
+<p>重启后执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo resize2fs /dev/sda1<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E6%89%A9%E5%AE%B9-5.png" srcset="/img/loading.gif" lazyload></p>
+<p>这个时候我们再看就发现已经扩容成功啦！</p>
+<p><img src="/img/ubuntu%E7%A3%81%E7%9B%98%E6%89%A9%E5%AE%B9/%E6%89%A9%E5%AE%B9-6.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
@@ -394,7 +347,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Knowledge/">#Knowledge</a>
+        <a href="/tags/ubuntu/">#ubuntu</a>
+      
+        <a href="/tags/VMware/">#VMware</a>
       
     </div>
   
@@ -406,8 +361,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>物理地址，虚拟地址和逻辑地址</div>
-      <div>https://shmodifier.github.io/2023/04/03/物理地址，虚拟地址和逻辑地址/</div>
+      <div>ubuntu磁盘扩容</div>
+      <div>https://shmodifier.github.io/2024/05/16/ubuntu磁盘扩容/</div>
     </div>
     <div class="license-meta">
       
@@ -419,7 +374,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年4月3日</div>
+          <div>2024年5月16日</div>
         </div>
       
       
@@ -457,18 +412,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/04/13/%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5GOT%E4%B8%8EPLT/" title="动态链接GOT与PLT">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">动态链接GOT与PLT</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/04/01/DLLInjector-%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" title="DLLInjector 使用手册">
-                        <span class="hidden-mobile">DLLInjector 使用手册</span>
+                      <a href="/2024/03/24/%E5%A4%8D%E5%81%A52-0/" title="复健2.0">
+                        <span class="hidden-mobile">复健2.0</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
