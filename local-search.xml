@@ -4,19 +4,6 @@
   
   
   <entry>
-    <title>LLVM从入门到放弃</title>
-    <link href="/2024/07/10/LLVM%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83/"/>
-    <url>/2024/07/10/LLVM%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E6%94%BE%E5%BC%83/</url>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>无痛使用wsl</title>
     <link href="/2024/06/29/%E6%97%A0%E7%97%9B%E4%BD%BF%E7%94%A8wsl/"/>
     <url>/2024/06/29/%E6%97%A0%E7%97%9B%E4%BD%BF%E7%94%A8wsl/</url>
@@ -33,11 +20,11 @@
     
     <tags>
       
-      <tag>Windows</tag>
-      
       <tag>Ubuntu</tag>
       
       <tag>虚拟机</tag>
+      
+      <tag>Windows</tag>
       
     </tags>
     
@@ -925,9 +912,9 @@
     
     <tags>
       
-      <tag>Windows</tag>
-      
       <tag>Git</tag>
+      
+      <tag>Windows</tag>
       
     </tags>
     
